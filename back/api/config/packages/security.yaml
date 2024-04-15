@@ -18,7 +18,7 @@ security:
             pattern: ^/api/
             stateless: true
             provider: users
-            jwt: ~
+            jwt: ~       
         main:
             json_login:
                 check_path: auth # The name in routes.yaml is enough for mapping
@@ -31,4 +31,5 @@ security:
         - { path: ^/$, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
         - { path: ^/docs, roles: PUBLIC_ACCESS } # Allows accessing API documentations and Swagger UI docs
         - { path: ^/auth, roles: PUBLIC_ACCESS }
+        #- { path: ^/api/auth, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

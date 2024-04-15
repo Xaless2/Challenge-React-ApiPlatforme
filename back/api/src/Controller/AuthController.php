@@ -19,7 +19,6 @@ class AuthController extends AbstractController
         $this->jwtManager = $jwtManager;
     }
 
-    #[Route(path: '/api/login', name:'api_login', methods:['POST'])]
     public function login(Request $request, UserInterface $user)
     {
 

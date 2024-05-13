@@ -3,15 +3,15 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\PrestationsRepository;
+use App\Repository\PerformanceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: PrestationsRepository::class)]
-class Prestations
+#[ORM\Entity(repositoryClass: PerformanceRepository::class)]
+class Performance
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,30 +20,30 @@ class Prestations
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Etablissements $etablissementId = null;
+    private ?Establishment $establishment_id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $pisplayName = null;
+    private ?string $performance_name = null;
 
-    #[ORM\ManyToMany(targetEntity: Sports::class)]
-    private Collection $sportId;
+    #[ORM\ManyToMany(targetEntity: Sport::class)]
+    private Collection $sport_id;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?int $nombreClientMax = null;
+    private ?int $number_of_clients_max = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $stripePriceId = null;
+    private ?string $stripe_price_id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Choice(["pending", "confirmed", "canceled"])]
+    #[Assert\Choice(["pending", "confirmed", "refused", "canceled"])]
     private ?string $status = null;
 
     public function __construct()
     {
-        $this->sportId = new ArrayCollection();
+        $this->sport_id = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -58,50 +58,50 @@ class Prestations
         return $this;
     }
 
-    public function getEtablissementId(): ?Etablissements
+    public function getEstablishmentId(): ?Establishment
     {
-        return $this->etablissementId;
+        return $this->establishment_id;
     }
 
-    public function setEtablissementId(?Etablissements $etablissementId): static
+    public function setEstablishmentId(?Establishment $establishment_id): static
     {
-        $this->etablissementId = $etablissementId;
+        $this->establishment_id = $establishment_id;
 
         return $this;
     }
 
-    public function getPisplayName(): ?string
+    public function getPerformanceName(): ?string
     {
-        return $this->pisplayName;
+        return $this->performance_name;
     }
 
-    public function setPisplayName(string $pisplayName): static
+    public function setPerformanceName(?string $performance_name): static
     {
-        $this->pisplayName = $pisplayName;
+        $this->performance_name = $performance_name;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Sports>
+     * @return Collection<int, Sport>
      */
     public function getSportId(): Collection
     {
-        return $this->sportId;
+        return $this->sport_id;
     }
 
-    public function addSportId(Sports $sportId): static
+    public function addSportId(Sport $sport_id): static
     {
-        if (!$this->sportId->contains($sportId)) {
-            $this->sportId->add($sportId);
+        if (!$this->sport_id->contains($sport_id)) {
+            $this->sport_id->add($sport_id);
         }
 
         return $this;
     }
 
-    public function removeSportId(Sports $sportId): static
+    public function removeSportId(Sport $sport_id): static
     {
-        $this->sportId->removeElement($sportId);
+        $this->sport_id->removeElement($sport_id);
 
         return $this;
     }
@@ -118,26 +118,26 @@ class Prestations
         return $this;
     }
 
-    public function getNombreClientMax(): ?int
+    public function getNumberOfClientsMax(): ?int
     {
-        return $this->nombreClientMax;
+        return $this->number_of_clients_max;
     }
 
-    public function setNombreClientMax(int $nombreClientMax): static
+    public function setNumberOfClientsMax(int $number_of_clients_max): static
     {
-        $this->nombreClientMax = $nombreClientMax;
+        $this->number_of_clients_max = $number_of_clients_max;
 
         return $this;
     }
 
     public function getStripePriceId(): ?string
     {
-        return $this->stripePriceId;
+        return $this->stripe_price_id;
     }
 
-    public function setStripePriceId(?string $stripePriceId): static
+    public function setStripePriceId(?string $stripe_price_id): static
     {
-        $this->stripePriceId = $stripePriceId;
+        $this->stripe_price_id = $stripe_price_id;
 
         return $this;
     }

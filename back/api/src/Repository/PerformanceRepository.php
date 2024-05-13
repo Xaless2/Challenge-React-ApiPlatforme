@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Prestations;
+use App\Entity\Performance;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Prestations>
+ * @extends ServiceEntityRepository<Performance>
  *
- * @method Prestations|null find($id, $lockMode = null, $lockVersion = null)
- * @method Prestations|null findOneBy(array $criteria, array $orderBy = null)
- * @method Prestations[]    findAll()
- * @method Prestations[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Performance|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Performance|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Performance[]    findAll()
+ * @method Performance[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PrestationsRepository extends ServiceEntityRepository
+class PerformanceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Prestations::class);
+        parent::__construct($registry, Performance::class);
     }
 
 //    /**
-//     * @return Prestations[] Returns an array of Prestations objects
+//     * @return Performance[] Returns an array of Performance objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class PrestationsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Prestations
+//    public function findOneBySomeField($value): ?Performance
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')

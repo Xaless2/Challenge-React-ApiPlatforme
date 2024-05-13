@@ -3,12 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\UsersRepository;
+use App\Repository\EnseignesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: UsersRepository::class)]
-class Users
+#[ORM\Entity(repositoryClass: EnseignesRepository::class)]
+class Enseignes
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,6 +21,12 @@ class Users
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $display_name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $kbis_pdf = null;
 
     public function getId(): ?int
     {
@@ -53,6 +60,30 @@ class Users
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getDisplayName(): ?string
+    {
+        return $this->display_name;
+    }
+
+    public function setDisplayName(string $display_name): static
+    {
+        $this->display_name = $display_name;
+
+        return $this;
+    }
+
+    public function getKbisPdf(): ?string
+    {
+        return $this->kbis_pdf;
+    }
+
+    public function setKbisPdf(?string $kbis_pdf): static
+    {
+        $this->kbis_pdf = $kbis_pdf;
 
         return $this;
     }

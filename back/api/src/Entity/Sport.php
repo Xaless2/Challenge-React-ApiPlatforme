@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\SportsRepository;
+use App\Repository\SportRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 use ApiPlatform\Metadata\ApiResource;
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: SportsRepository::class)]
-class Sports
+#[ORM\Entity(repositoryClass: SportRepository::class)]
+class Sport
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,7 +16,7 @@ class Sports
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $sportName = null;
+    private ?string $sport_name = null;
 
     public function getId(): ?int
     {
@@ -32,12 +32,12 @@ class Sports
 
     public function getSportName(): ?string
     {
-        return $this->sportName;
+        return $this->sport_name;
     }
 
     public function setSportName(string $sportName): static
     {
-        $this->sportName = $sportName;
+        $this->sport_name = $sportName;
 
         return $this;
     }

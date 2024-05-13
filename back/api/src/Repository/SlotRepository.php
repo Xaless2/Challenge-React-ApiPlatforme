@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Creneaux;
+use App\Entity\Slot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Creneaux>
+ * @extends ServiceEntityRepository<Slot>
  *
- * @method Creneaux|null find($id, $lockMode = null, $lockVersion = null)
- * @method Creneaux|null findOneBy(array $criteria, array $orderBy = null)
- * @method Creneaux[]    findAll()
- * @method Creneaux[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Slot|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Slot|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Slot[]    findAll()
+ * @method Slot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CreneauxRepository extends ServiceEntityRepository
+class SlotRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Creneaux::class);
+        parent::__construct($registry, Slot::class);
     }
 
 //    /**
-//     * @return Creneaux[] Returns an array of Creneaux objects
+//     * @return Slot[] Returns an array of Slot objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -36,7 +36,7 @@ class CreneauxRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Creneaux
+//    public function findOneBySomeField($value): ?Slot
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

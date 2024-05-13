@@ -3,24 +3,30 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\ClientsRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: ClientsRepository::class)]
-class Clients
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Users $userId = null;
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $firstname = null;
+    private ?string $password = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\Choice(["client", "coach"])]
+    private ?string $role = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $fistname = null;
 
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
@@ -32,13 +38,10 @@ class Clients
     private ?string $address = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $zipcode = null;
+    private ?string $zip_code = null;
 
     #[ORM\Column(length: 255)]
     private ?string $city = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $photo = null;
 
     public function getId(): ?int
     {
@@ -52,14 +55,50 @@ class Clients
         return $this;
     }
 
-    public function getFirstname(): ?string
+    public function getEmail(): ?string
     {
-        return $this->firstname;
+        return $this->email;
     }
 
-    public function setFirstname(string $firstname): static
+    public function setEmail(string $email): static
     {
-        $this->firstname = $firstname;
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): static
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    public function getFistname(): ?string
+    {
+        return $this->fistname;
+    }
+
+    public function setFistname(string $fistname): static
+    {
+        $this->fistname = $fistname;
 
         return $this;
     }
@@ -100,14 +139,14 @@ class Clients
         return $this;
     }
 
-    public function getZipcode(): ?string
+    public function getZipCode(): ?string
     {
-        return $this->zipcode;
+        return $this->zip_code;
     }
 
-    public function setZipcode(string $zipcode): static
+    public function setZipCode(string $zip_code): static
     {
-        $this->zipcode = $zipcode;
+        $this->zip_code = $zip_code;
 
         return $this;
     }
@@ -120,18 +159,6 @@ class Clients
     public function setCity(string $city): static
     {
         $this->city = $city;
-
-        return $this;
-    }
-
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
-
-    public function setPhoto(?string $photo): static
-    {
-        $this->photo = $photo;
 
         return $this;
     }

@@ -3,13 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\AvisRepository;
+use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: AvisRepository::class)]
-class Avis
+#[ORM\Entity(repositoryClass: ReviewRepository::class)]
+class Review
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,17 +18,17 @@ class Avis
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Creneaux $creneauId = null;
+    private ?User $coach_id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Clients $clientId = null;
+    private ?User $client_id = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $nombreEtoiles = null;
+    private ?int $number_of_stars = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $avis = null;
+    private ?string $comment = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Choice(["validated", "suspended", "moderate"])]
@@ -46,50 +46,50 @@ class Avis
         return $this;
     }
 
-    public function getCreneauId(): ?Creneaux
+    public function getCoachId(): ?User
     {
-        return $this->creneauId;
+        return $this->coach_id;
     }
 
-    public function setCreneauId(?Creneaux $creneauId): static
+    public function setCoachId(?User $coach_id): static
     {
-        $this->creneauId = $creneauId;
+        $this->coach_id = $coach_id;
 
         return $this;
     }
 
-    public function getClientId(): ?Clients
+    public function getClientId(): ?User
     {
-        return $this->clientId;
+        return $this->client_id;
     }
 
-    public function setClientId(?Clients $clientId): static
+    public function setClientId(?User $client_id): static
     {
-        $this->clientId = $clientId;
+        $this->client_id = $client_id;
 
         return $this;
     }
 
-    public function getNombreEtoiles(): ?int
+    public function getNumberOfStars(): ?int
     {
-        return $this->nombreEtoiles;
+        return $this->number_of_stars;
     }
 
-    public function setNombreEtoiles(?int $nombreEtoiles): static
+    public function setNumberOfStars(?int $number_of_stars): static
     {
-        $this->nombreEtoiles = $nombreEtoiles;
+        $this->number_of_stars = $number_of_stars;
 
         return $this;
     }
 
-    public function getAvis(): ?string
+    public function getComment(): ?string
     {
-        return $this->avis;
+        return $this->comment;
     }
 
-    public function setAvis(string $avis): static
+    public function setComment(string $comment): static
     {
-        $this->avis = $avis;
+        $this->comment = $comment;
 
         return $this;
     }

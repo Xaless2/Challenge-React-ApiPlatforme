@@ -3,36 +3,33 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\CoachsRepository;
+use App\Repository\EstablishmentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: CoachsRepository::class)]
-class Coachs
+#[ORM\Entity(repositoryClass: EstablishmentRepository::class)]
+class Establishment
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Users $userId = null;
+    private ?Brand $brand_id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $fistname = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $lastname = null;
+    private ?string $display_name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $phone = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $address = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $zipcode = null;
+    private ?string $zip_code = null;
 
     #[ORM\Column(length: 255)]
     private ?string $city = null;
@@ -49,38 +46,26 @@ class Coachs
         return $this;
     }
 
-    public function getUserId(): ?Users
+    public function getBrandId(): ?Brand
     {
-        return $this->userId;
+        return $this->brand_id;
     }
 
-    public function setUserId(Users $userId): static
+    public function setBrandId(?Brand $brand_id): static
     {
-        $this->userId = $userId;
+        $this->brand_id = $brand_id;
 
         return $this;
     }
 
-    public function getFistname(): ?string
+    public function getDisplayName(): ?string
     {
-        return $this->fistname;
+        return $this->display_name;
     }
 
-    public function setFistname(string $fistname): static
+    public function setDisplayName(string $displayName): static
     {
-        $this->fistname = $fistname;
-
-        return $this;
-    }
-
-    public function getLastname(): ?string
-    {
-        return $this->lastname;
-    }
-
-    public function setLastname(string $lastname): static
-    {
-        $this->lastname = $lastname;
+        $this->display_name = $displayName;
 
         return $this;
     }
@@ -109,14 +94,14 @@ class Coachs
         return $this;
     }
 
-    public function getZipcode(): ?string
+    public function getZipCode(): ?string
     {
-        return $this->zipcode;
+        return $this->zip_code;
     }
 
-    public function setZipcode(string $zipcode): static
+    public function setZipCode(string $zipcode): static
     {
-        $this->zipcode = $zipcode;
+        $this->zip_code = $zipcode;
 
         return $this;
     }

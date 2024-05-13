@@ -3,13 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\ReservationsRepository;
+use App\Repository\ReservationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: ReservationsRepository::class)]
-class Reservations
+#[ORM\Entity(repositoryClass: ReservationRepository::class)]
+class Reservation
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,11 +18,11 @@ class Reservations
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Creneaux $creneauId = null;
+    private ?Slot $slot_id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Clients $clientId = null;
+    private ?User $client_id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Choice(["pending", "confirmed", "refused", "canceled"])]
@@ -40,26 +40,26 @@ class Reservations
         return $this;
     }
 
-    public function getCreneauId(): ?Creneaux
+    public function getSlotId(): ?Slot
     {
-        return $this->creneauId;
+        return $this->slot_id;
     }
 
-    public function setCreneauId(?Creneaux $creneauId): static
+    public function setSlotId(?Slot $slot_id): static
     {
-        $this->creneauId = $creneauId;
+        $this->slot_id = $slot_id;
 
         return $this;
     }
 
-    public function getClientId(): ?Clients
+    public function getClientId(): ?User
     {
-        return $this->clientId;
+        return $this->client_id;
     }
 
-    public function setClientId(?Clients $clientId): static
+    public function setClientId(?User $clientId): static
     {
-        $this->clientId = $clientId;
+        $this->clientId = $client_id;
 
         return $this;
     }

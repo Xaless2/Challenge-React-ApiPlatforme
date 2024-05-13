@@ -63,9 +63,9 @@ class Establishment
         return $this->display_name;
     }
 
-    public function setDisplayName(string $displayName): static
+    public function setDisplayName(string $display_name): static
     {
-        $this->display_name = $displayName;
+        $this->display_name = $display_name;
 
         return $this;
     }
@@ -99,9 +99,9 @@ class Establishment
         return $this->zip_code;
     }
 
-    public function setZipCode(string $zipcode): static
+    public function setZipCode(string $zip_code): static
     {
-        $this->zip_code = $zipcode;
+        $this->zip_code = $zip_code;
 
         return $this;
     }

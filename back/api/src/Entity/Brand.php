@@ -3,13 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\EnseignesRepository;
+use App\Repository\BrandRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: EnseignesRepository::class)]
-class Enseignes
+#[ORM\Entity(repositoryClass: BrandRepository::class)]
+class Brand
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

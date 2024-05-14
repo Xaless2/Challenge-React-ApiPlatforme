@@ -16,7 +16,9 @@ class Brand
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
@@ -59,7 +61,8 @@ class Brand
 
     public function setPassword(string $password): static
     {
-        $this->password = $password;
+        // Hasher le mot de passe avant de le stocker
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
 
         return $this;
     }

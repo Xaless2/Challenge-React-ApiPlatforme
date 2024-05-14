@@ -5,17 +5,21 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+class User implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
@@ -48,22 +52,14 @@ class User
         return $this->id;
     }
 
-    public function setId(int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -72,10 +68,9 @@ class User
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
-        $this->password = $password;
-
+        $this->password = password_hash($password, PASSWORD_ARGON2ID);
         return $this;
     }
 
@@ -84,10 +79,9 @@ class User
         return $this->role;
     }
 
-    public function setRole(string $role): static
+    public function setRole(string $role): self
     {
         $this->role = $role;
-
         return $this;
     }
 
@@ -96,10 +90,9 @@ class User
         return $this->fistname;
     }
 
-    public function setFistname(string $fistname): static
+    public function setFistname(string $fistname): self
     {
         $this->fistname = $fistname;
-
         return $this;
     }
 
@@ -108,10 +101,9 @@ class User
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): static
+    public function setLastname(string $lastname): self
     {
         $this->lastname = $lastname;
-
         return $this;
     }
 
@@ -120,10 +112,9 @@ class User
         return $this->phone;
     }
 
-    public function setPhone(?string $phone): static
+    public function setPhone(?string $phone): self
     {
         $this->phone = $phone;
-
         return $this;
     }
 
@@ -132,10 +123,9 @@ class User
         return $this->address;
     }
 
-    public function setAddress(?string $address): static
+    public function setAddress(?string $address): self
     {
         $this->address = $address;
-
         return $this;
     }
 
@@ -144,10 +134,9 @@ class User
         return $this->zip_code;
     }
 
-    public function setZipCode(string $zip_code): static
+    public function setZipCode(string $zip_code): self
     {
         $this->zip_code = $zip_code;
-
         return $this;
     }
 
@@ -156,10 +145,29 @@ class User
         return $this->city;
     }
 
-    public function setCity(string $city): static
+    public function setCity(string $city): self
     {
         $this->city = $city;
-
         return $this;
+    }
+
+    // Méthodes de l'interface UserInterface
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function getRoles()
+    {
+        return [$this->role];
+    }
+
+    public function eraseCredentials()
+    {
     }
 }

@@ -4,8 +4,8 @@ namespace App\Entity;
 
 use App\Repository\SportRepository;
 use Doctrine\ORM\Mapping as ORM;
-
 use ApiPlatform\Metadata\ApiResource;
+
 #[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: SportRepository::class)]
 class Sport
@@ -17,6 +17,9 @@ class Sport
 
     #[ORM\Column(length: 255)]
     private ?string $sport_name = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $image = null;
 
     public function getId(): ?int
     {
@@ -38,6 +41,18 @@ class Sport
     public function setSportName(string $sportName): static
     {
         $this->sport_name = $sportName;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }

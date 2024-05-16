@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - feature/CiCd
+    paths:
+      - 'back/**'
+      - 'client/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Determine directory to build
+        id: determine-directory
+        run: echo "::set-output name=directory::$(if [ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- client/)" ]; then echo 'client'; else echo 'back'; fi)"
+
+      - name: Start API Platform Docker containers
+        if: steps.determine-directory.outputs.directory == 'back'
+        run: docker-compose up -d
+        working-directory: ./back
+
+      - name: Install dependencies
+        run: |
+          if [ ${{ steps.determine-directory.outputs.directory }} == 'back' ]; then
+            docker-compose exec php composer install
+          else
+            npm install
+          fi
+        working-directory: ./${{ steps.determine-directory.outputs.directory }}
+
+      - name: Run linting
+        run: |
+          if [ ${{ steps.determine-directory.outputs.directory }} == 'back' ]; then
+            docker-compose exec php composer lint
+          else
+            npm run lint
+          fi
+        working-directory: ./${{ steps.determine-directory.outputs.directory }}
+
+      # Ajoutez d'autres étapes spécifiques à chaque partie, par exemple les tests unitaires ou fonctionnels, etc.
+
+      - name: Stop API Platform Docker containers
+        if: steps.determine-directory.outputs.directory == 'back'
+        run: docker-compose down
+        working-directory: ./back

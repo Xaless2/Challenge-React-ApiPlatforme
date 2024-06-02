@@ -20,18 +20,14 @@ jobs:
         working-directory: ./back
 
       - name: Install dependencies
-        run: docker-compose exec -T php composer install
+        run: docker compose exec -it php composer install
         working-directory: ./back
 
       - name: Run linting
-        run: docker-compose exec -T php composer run-script lint
+        run: docker-compose exec -it php composer run-script lint
         working-directory: ./back
 
       # Additional steps such as tests can be added here
       # - name: Run tests
       #   run: docker-compose exec -T php ./vendor/bin/phpunit
       #   working-directory: ./back
-
-      - name: Stop API Platform Docker containers
-        run: docker-compose down
-        working-directory: ./back

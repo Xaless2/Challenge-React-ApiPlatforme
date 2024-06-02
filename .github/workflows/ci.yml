@@ -28,22 +28,29 @@ jobs:
       - name: Install dependencies
         run: |
           if [ "${{ steps.determine-directory.outputs.directory }}" == 'client' ]; then
-            docker-compose exec -T php composer install
-          else
             npm install
+          else
+            docker-compose exec -T php composer install
           fi
         working-directory: ./${{ steps.determine-directory.outputs.directory }}
 
       - name: Run linting
         run: |
           if [ "${{ steps.determine-directory.outputs.directory }}" == 'client' ]; then
-            docker-compose exec -T php composer run-script lint
-          else
             npm run lint
+          else
+            docker-compose exec -T php composer run-script lint
           fi
         working-directory: ./${{ steps.determine-directory.outputs.directory }}
 
-      # Ajoutez d'autres étapes spécifiques à chaque partie, par exemple les tests unitaires ou fonctionnels, etc.
+      # Additional steps such as unit tests or functional tests can be added here
+      # - name: Run tests
+      #   run: |
+      #     if [ "${{ steps.determine-directory.outputs.directory }}" == 'client' ]; then
+      #       npm test
+      #     else
+      #       docker-compose exec -T php ./vendor/bin/phpunit
+      #   working-directory: ./${{ steps.determine-directory.outputs.directory }}
 
       - name: Stop API Platform Docker containers
         if: steps.determine-directory.outputs.directory == 'back'

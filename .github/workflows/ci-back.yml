@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./back
 
     steps:
       - name: Checkout repository
@@ -17,17 +20,12 @@ jobs:
 
       - name: Start API Platform Docker containers
         run: docker-compose up -d
-        working-directory: ./back
 
       - name: Install dependencies
         run: docker compose exec -it php composer install
-        working-directory: ./back
 
       - name: Run linting
         run: docker-compose exec -it php composer run-script lint
-        working-directory: ./back
 
-      # Additional steps such as tests can be added here
       - name: Run tests
-        run: docker-compose exec -it php ./vendor/bin/phpunit
-        working-directory: ./back
+        run: docker compose exec -it php bin/phpunit

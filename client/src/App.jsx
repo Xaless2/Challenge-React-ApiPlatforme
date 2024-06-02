@@ -8,7 +8,7 @@ function App() {
 
   return (
     <>
-        {/* This is a test comment to trigger CI */}
+        {/* This is an test comment to trigger CI */}
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />

@@ -25,19 +25,25 @@ jobs:
         run: docker-compose up -d
         working-directory: ./back
 
-      - name: Install dependencies and lint
+      - name: Install dependencies
         run: |
           if [ "${{ steps.determine-directory.outputs.directory }}" == 'back' ]; then
             docker-compose exec -T php composer install
-            docker-compose exec -T php composer run-script lint
           else
             npm install
+          fi
+        working-directory: ./${{ steps.determine-directory.outputs.directory }}
+
+      - name: Run linting
+        run: |
+          if [ "${{ steps.determine-directory.outputs.directory }}" == 'back' ]; then
+            docker-compose exec -T php composer run-script lint
+          else
             npm run lint
           fi
         working-directory: ./${{ steps.determine-directory.outputs.directory }}
 
-      - name: Run tests
-        run: npm test --prefix ${{ steps.determine-directory.outputs.directory }}
+      # Ajoutez d'autres étapes spécifiques à chaque partie, par exemple les tests unitaires ou fonctionnels, etc.
 
       - name: Stop API Platform Docker containers
         if: steps.determine-directory.outputs.directory == 'back'

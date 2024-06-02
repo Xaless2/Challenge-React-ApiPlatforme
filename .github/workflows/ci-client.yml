@@ -1,0 +1,29 @@
+name: Client CI
+
+on:
+  push:
+    branches:
+      - feature/CiCd
+    paths:
+      - 'client/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./client
+
+      - name: Run linting
+        run: npm run lint
+        working-directory: ./client
+
+      # Additional steps such as tests can be added here
+      # - name: Run tests
+      #   run: npm test
+      #   working-directory: ./client

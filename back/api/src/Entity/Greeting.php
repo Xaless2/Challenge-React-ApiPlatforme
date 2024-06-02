@@ -16,6 +16,9 @@ class Greeting
     /**
      * The entity ID
      */
+    /**
+     * Test CI
+     */
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]

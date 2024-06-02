@@ -1,4 +1,5 @@
-// example.test.js
+/* eslint-env jest */
+
 const sum = (a, b) => a + b;
 
 test('adds 1 + 2 to equal 3', () => {

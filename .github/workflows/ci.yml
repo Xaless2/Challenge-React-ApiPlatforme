@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout repository
@@ -31,31 +31,35 @@ jobs:
         run: docker-compose up -d
         working-directory: ./back
 
-      - name: Install dependencies
-        run: |
-          if [ "$directory" == 'client' ]; then
-            npm install
-          else
-            docker-compose exec -T php composer install
-          fi
+      - name: Install dependencies (Client)
+        if: env.directory == 'client'
+        run: npm install
+        working-directory: ./client
+
+      - name: Install dependencies (Back)
+        if: env.directory == 'back'
+        run: docker-compose exec -T php composer install
         working-directory: ./back
 
-      - name: Run linting
-        run: |
-          if [ "$directory" == 'client' ]; then
-            npm run lint
-          else
-            docker-compose exec -T php composer run-script lint
-          fi
+      - name: Run linting (Client)
+        if: env.directory == 'client'
+        run: npm run lint
+        working-directory: ./client
+
+      - name: Run linting (Back)
+        if: env.directory == 'back'
+        run: docker-compose exec -T php composer run-script lint
         working-directory: ./back
 
       # Additional steps such as unit tests or functional tests can be added here
-      # - name: Run tests
-      #   run: |
-      #     if [ "$directory" == 'client' ]; then
-      #       npm test
-      #     else
-      #       docker-compose exec -T php ./vendor/bin/phpunit
+      # - name: Run tests (Client)
+      #   if: env.directory == 'client'
+      #   run: npm test
+      #   working-directory: ./client
+
+      # - name: Run tests (Back)
+      #   if: env.directory == 'back'
+      #   run: docker-compose exec -T php ./vendor/bin/phpunit
       #   working-directory: ./back
 
       - name: Stop API Platform Docker containers

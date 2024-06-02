@@ -36,15 +36,6 @@ services:
         limits:
           memory: 512M # Set a memory limit for the php service
 
-  pwa:
-    image: ${IMAGES_PREFIX:-}app-pwa
-    environment:
-      NEXT_PUBLIC_ENTRYPOINT: http://php
-    deploy:
-      resources:
-        limits:
-          memory: 512M # Set a memory limit for the php service
-
 ###> doctrine/doctrine-bundle ###
   database:
     image: postgres:${POSTGRES_VERSION:-16}-alpine

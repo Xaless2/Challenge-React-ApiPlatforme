@@ -18,41 +18,47 @@ jobs:
 
       - name: Determine directory to build
         id: determine-directory
-        run: echo "::set-output name=directory::$(if [ -n \"$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- client/)\" ]; then echo 'client'; else echo 'back'; fi)"
+        run: |
+          PREV_COMMIT=${{ github.event.before }}
+          if [ -z "$PREV_COMMIT" ]; then
+            PREV_COMMIT=$(git rev-parse HEAD^)
+          fi
+          DIR=$(if [ -n "$(git diff --name-only $PREV_COMMIT ${{ github.sha }} -- client/)" ]; then echo 'client'; else echo 'back'; fi)
+          echo "directory=$DIR" >> $GITHUB_ENV
 
       - name: Start API Platform Docker containers
-        if: steps.determine-directory.outputs.directory == 'back'
+        if: env.directory == 'back'
         run: docker-compose up -d
         working-directory: ./back
 
       - name: Install dependencies
         run: |
-          if [ "${{ steps.determine-directory.outputs.directory }}" == 'client' ]; then
+          if [ "$directory" == 'client' ]; then
             npm install
           else
             docker-compose exec -T php composer install
           fi
-        working-directory: ./${{ steps.determine-directory.outputs.directory }}
+        working-directory: ./back
 
       - name: Run linting
         run: |
-          if [ "${{ steps.determine-directory.outputs.directory }}" == 'client' ]; then
+          if [ "$directory" == 'client' ]; then
             npm run lint
           else
             docker-compose exec -T php composer run-script lint
           fi
-        working-directory: ./${{ steps.determine-directory.outputs.directory }}
+        working-directory: ./back
 
       # Additional steps such as unit tests or functional tests can be added here
       # - name: Run tests
       #   run: |
-      #     if [ "${{ steps.determine-directory.outputs.directory }}" == 'client' ]; then
+      #     if [ "$directory" == 'client' ]; then
       #       npm test
       #     else
       #       docker-compose exec -T php ./vendor/bin/phpunit
-      #   working-directory: ./${{ steps.determine-directory.outputs.directory }}
+      #   working-directory: ./back
 
       - name: Stop API Platform Docker containers
-        if: steps.determine-directory.outputs.directory == 'back'
+        if: env.directory == 'back'
         run: docker-compose down
         working-directory: ./back

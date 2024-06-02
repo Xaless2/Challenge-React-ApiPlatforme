@@ -18,7 +18,7 @@ jobs:
 
       - name: Determine directory to build
         id: determine-directory
-        run: echo "::set-output name=directory::$(if [ -n "$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- client/)" ]; then echo 'client'; else echo 'back'; fi)"
+        run: echo "::set-output name=directory::$(if [ -n \"$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- client/)\" ]; then echo 'client'; else echo 'back'; fi)"
 
       - name: Start API Platform Docker containers
         if: steps.determine-directory.outputs.directory == 'back'
@@ -37,7 +37,7 @@ jobs:
       - name: Run linting
         run: |
           if [ "${{ steps.determine-directory.outputs.directory }}" == 'back' ]; then
-            docker-compose exec -T php composer lint
+            docker-compose exec -T php composer run-script lint
           else
             npm run lint
           fi

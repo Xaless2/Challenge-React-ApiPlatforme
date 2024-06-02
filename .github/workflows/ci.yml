@@ -36,14 +36,20 @@ jobs:
 
       - name: Run linting
         run: |
-          if [ "${{ steps.determine-directory.outputs.directory }}" == 'back' ]; then
+          if [ "${{ steps.determine-directory.outputs.directory }}" == 'client' ]; then
             docker-compose exec -T php composer run-script lint
           else
             npm run lint
           fi
         working-directory: ./${{ steps.determine-directory.outputs.directory }}
 
-      # Ajoutez d'autres étapes spécifiques à chaque partie, par exemple les tests unitaires ou fonctionnels, etc.
+      - name: Run front-end tests
+        if: steps.determine-directory.outputs.directory == 'client'
+        run: npm test --prefix client
+
+      - name: Run back-end tests
+        if: steps.determine-directory.outputs.directory == 'back'
+        run: npm test --prefix back
 
       - name: Stop API Platform Docker containers
         if: steps.determine-directory.outputs.directory == 'back'

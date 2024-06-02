@@ -23,7 +23,6 @@ jobs:
         run: npm run lint
         working-directory: ./client
 
-      # Additional steps such as tests can be added here
-      # - name: Run tests
-      #   run: npm test
-      #   working-directory: ./client
+      - name: Run tests
+        run: npm test
+        working-directory: ./client

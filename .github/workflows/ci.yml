@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           if [ "${{ steps.determine-directory.outputs.directory }}" == 'back' ]; then
-            docker-compose exec php composer install
+            docker-compose exec -T php composer install
           else
             npm install
           fi
@@ -37,7 +37,7 @@ jobs:
       - name: Run linting
         run: |
           if [ "${{ steps.determine-directory.outputs.directory }}" == 'back' ]; then
-            docker-compose exec php composer lint
+            docker-compose exec -T php composer lint
           else
             npm run lint
           fi

@@ -26,3 +26,6 @@ jobs:
 
       - name: Run linting
         run: docker-compose exec -it php composer run-script lint
+
+      - name: Run test
+        run: docker-compose exec -it php bin/phpunit

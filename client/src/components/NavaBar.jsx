@@ -20,7 +20,7 @@ export default function NavBar() {
         />
         <NavbarBrand>
     
-          <p className="font-bold text-inherit">Challenge</p>
+          <p className="font-bold text-inherit">PlaniFit💪</p>
         </NavbarBrand>
       </NavbarContent>
 

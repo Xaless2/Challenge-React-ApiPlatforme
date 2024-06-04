@@ -10,7 +10,7 @@ function WelcomePage() {
            <NavBar />
            <MiddleComponent />
         <RevealOnScroll>
-            <h2 className='text-center text-3xl mt-24'>
+            <h2 className='text-center text-3xl mt-24  underline decoration-sky-500'>
              Découvrez nos adresses via la carte
              </h2>
         </RevealOnScroll>

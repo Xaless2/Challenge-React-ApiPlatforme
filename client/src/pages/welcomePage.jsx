@@ -2,10 +2,7 @@
 import NavBar from '../components/NavaBar'
 import RevealOnScroll from '../components/RevealOnScroll'
 import MiddleComponent from '../components/MiddleComponent';
-import CartdInfo from '../components/CartdInfo';
 import MapChart from '../components/MapChart';
-import LoginPage from './LoginPage';
-import RegisterPage from './RegisterPage';
 
 function WelcomePage() {
     return (
@@ -25,8 +22,7 @@ function WelcomePage() {
                 </div>
                     
         </RevealOnScroll>
-     
-     <RegisterPage />
+    
         </>
        
     );

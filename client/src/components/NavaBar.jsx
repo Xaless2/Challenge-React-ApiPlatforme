@@ -42,9 +42,6 @@ export default function NavBar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Devenir membre</Link>
-        </NavbarItem>
         <NavbarItem>
           <Button as={Link} color="primary" href="#" variant="flat">
             créer un compte

@@ -5,12 +5,17 @@ const RevealOnScroll = ({ children }) => {
     const ref = useRef(null);
 
     useEffect(() => {
-        const scrollObserver = new IntersectionObserver(([entry]) => {
-            setIsVisible(entry.isIntersecting);
-        });
-
+        const scrollObserver = new IntersectionObserver(
+            ([entry]) => {
+                setIsVisible(entry.isIntersecting);
+            },
+            {
+                rootMargin: "-200px 0px",
+            }
+        );
+    
         scrollObserver.observe(ref.current);
-
+    
         return () => {
             if (ref.current) {
                 scrollObserver.unobserve(ref.current);
@@ -18,7 +23,7 @@ const RevealOnScroll = ({ children }) => {
         };
     }, []);
 
-    const classes = `transition-opacity duration-1000 
+        const classes = `transition-opacity duration-7000 
         ${isVisible ? "opacity-100" : "opacity-0"
         }`;
 

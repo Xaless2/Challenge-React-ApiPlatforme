@@ -10,7 +10,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Mori', 'sans-serif'],
+        'sans': ['Aeonik','Helvetica','Arial','sans-serif'],
       }
     }
   },

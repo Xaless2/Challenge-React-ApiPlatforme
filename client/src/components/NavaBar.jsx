@@ -1,6 +1,6 @@
 import React from "react";
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button} from "@nextui-org/react";
-
+import logo from "../assets/images/logo.png";
 
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -18,10 +18,9 @@ export default function NavBar() {
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden "
         />
-        <NavbarBrand>
-    
-          <p className="font-bold text-inherit">PlaniFit💪</p>
-        </NavbarBrand>
+      <NavbarBrand>
+         <img src={logo}  alt="PlaniFit" width="100" height="42" className="w-32 text-white" />
+      </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">

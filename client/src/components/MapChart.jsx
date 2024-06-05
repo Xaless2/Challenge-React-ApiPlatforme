@@ -21,7 +21,7 @@ const createMarkers = (count) =>
     <>
       <div style={{
         border: "1px solid #ccc",
-          backgroundColor: "black",
+          backgroundColor: "#111827",
           color: "white",
           borderRadius: "10px",
           width: '90%',
@@ -65,7 +65,7 @@ export default function MapChart() {
   return (
     <MapContainer>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: 'API_KEY_MAP_GOOGLE' }}
+        bootstrapURLKeys={{ key: '' }}
         defaultCenter={center}
         defaultZoom={5}
       >

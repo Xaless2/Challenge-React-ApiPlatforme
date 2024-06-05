@@ -59,7 +59,7 @@ class Reservation
 
     public function setClientId(?User $clientId): static
     {
-        $this->clientId = $client_id;
+        $this->client_id = $clientId;
 
         return $this;
     }

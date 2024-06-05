@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Entity;
-
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,7 +29,7 @@ class User implements UserInterface
     private ?string $role = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $fistname = null;
+    private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
@@ -74,10 +73,10 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
+    public function getRoles(): array
+{
+    return [$this->role ?? 'ROLE_USER'];
+}
 
     public function setRole(string $role): self
     {
@@ -85,14 +84,14 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getFistname(): ?string
+    public function getFisrtname(): ?string
     {
-        return $this->fistname;
+        return $this->firstname;
     }
 
-    public function setFistname(string $fistname): self
+    public function setFirstname(string $firstname): self
     {
-        $this->fistname = $fistname;
+        $this->firstname = $firstname;
         return $this;
     }
 
@@ -162,12 +161,14 @@ class User implements UserInterface
         return null;
     }
 
-    public function getRoles()
-    {
-        return [$this->role];
-    }
+  
 
     public function eraseCredentials()
     {
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 }

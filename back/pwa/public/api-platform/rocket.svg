@@ -37,14 +37,14 @@
 	.st35{fill:#38A9B4;}
 	.st36{opacity:0.2;fill:#1D1E1C;}
 	.st37{opacity:0.64;fill:#A6D9ED;}
-	.st38{fill-rule:evenodd;clip-rule:evenodd;fill:#F0F0F0;}
-	.st39{fill-rule:evenodd;clip-rule:evenodd;fill:#E1DDDD;}
-	.st40{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}
-	.st41{fill-rule:evenodd;clip-rule:evenodd;fill:#AF3737;}
-	.st42{fill-rule:evenodd;clip-rule:evenodd;fill:#990000;}
+	.st38{fillRule:evenodd;clipRule:evenodd;fill:#F0F0F0;}
+	.st39{fillRule:evenodd;clipRule:evenodd;fill:#E1DDDD;}
+	.st40{fillRule:evenodd;clipRule:evenodd;fill:#FFFFFF;}
+	.st41{fillRule:evenodd;clipRule:evenodd;fill:#AF3737;}
+	.st42{fillRule:evenodd;clipRule:evenodd;fill:#990000;}
 	.st43{fill:#990000;}
 	.st44{fill:#510000;}
-	.st45{opacity:0.5;fill-rule:evenodd;clip-rule:evenodd;fill:#8E2525;}
+	.st45{opacity:0.5;fillRule:evenodd;clipRule:evenodd;fill:#8E2525;}
 	.st46{fill:#2BA2B2;}
 	.st47{fill:#34AAC0;}
 	.st48{fill:#F69F00;}

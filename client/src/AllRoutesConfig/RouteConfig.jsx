@@ -16,6 +16,8 @@ const RoutesConfig = () => {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/recipe/:id" element={<RecipeDetails />} />
+                <Route path="/calendar" element={<CalendarPage />} />
+
                 <Route path="/recipe/:id" element={<App />} />
                 <Route path="/profile" element={<ProfilPage />} />
                 <Route path="/" element={

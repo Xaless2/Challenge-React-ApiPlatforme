@@ -3,8 +3,7 @@ import FormBuilder from '../components/FormBuilder'
 import '../App.css';
 
 
-function LoginPage() {
-
+function RegisterPage() {
     const styleEmail = {
         display: 'inline-block', 
         width: '50%', 
@@ -21,13 +20,6 @@ function LoginPage() {
       required: true,
       onChange: (e) => console.log(e.target.value),
       style: styleEmail,
-    },
-    {
-        type: 'label',
-        label: 'Vous voulez vous connecter en tant que :',
-       
-
-
     },
   
     {
@@ -51,4 +43,4 @@ function LoginPage() {
   )
 }
 
-export default LoginPage
+export default RegisterPage

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
-const ReservationForm = () => {
-    const { slotId } = useParams();
+const SubscriptionForm = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        plan: 'basic',
     });
 
     const handleChange = (e) => {
@@ -14,8 +13,8 @@ const ReservationForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Submit reservation to API
-        fetch(`/api/reserve/${slotId}`, {
+        // Submit subscription to API
+        fetch('/api/subscribe', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -31,7 +30,7 @@ const ReservationForm = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Reserve Slot</h2>
+            <h2>Subscribe</h2>
             <label>
                 Name:
                 <input type="text" name="name" value={formData.name} onChange={handleChange} />
@@ -42,9 +41,17 @@ const ReservationForm = () => {
                 <input type="email" name="email" value={formData.email} onChange={handleChange} />
             </label>
             <br />
-            <button type="submit">Reserve</button>
+            <label>
+                Plan:
+                <select name="plan" value={formData.plan} onChange={handleChange}>
+                    <option value="basic">Basic</option>
+                    <option value="premium">Premium</option>
+                </select>
+            </label>
+            <br />
+            <button type="submit">Subscribe</button>
         </form>
     );
 };
 
-export default ReservationForm;
+export default SubscriptionForm;

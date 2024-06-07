@@ -1,14 +1,12 @@
-// src/pages/HomePage.jsx
-
 import React from 'react';
 
-function HomePage() {
+const HomePage = () => {
     return (
         <div>
-            <h1>Welcome to the Home Page</h1>
-            {/* Add your home page content here */}
+            <h1>Welcome to the Fitness Booking App</h1>
+            <p>Book your fitness sessions and coaching easily!</p>
         </div>
     );
-}
+};
 
 export default HomePage;

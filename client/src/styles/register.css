@@ -1,0 +1,193 @@
+@keyframes move {
+    100% {
+        transform: translate3d(0, 0, 1px) rotate(360deg);
+    }
+}
+
+.background {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: #000000;
+    overflow: hidden;
+}
+
+.background span {
+    width: 50vmin;
+    height: 50vmin;
+    border-radius: 50vmin;
+    backface-visibility: hidden;
+    position: absolute;
+    animation: move;
+    animation-duration: 15;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+
+.background span:nth-child(0) {
+    color: #5a39a7;
+    top: 31%;
+    left: 38%;
+    animation-duration: 156s;
+    animation-delay: -301s;
+    transform-origin: 6vw -11vh;
+    box-shadow: 100vmin 0 12.707139840231525vmin currentColor;
+}
+.background span:nth-child(1) {
+    color: #5a39a7;
+    top: 31%;
+    left: 42%;
+    animation-duration: 345s;
+    animation-delay: -255s;
+    transform-origin: -5vw 15vh;
+    box-shadow: -100vmin 0 12.734604545482611vmin currentColor;
+}
+.background span:nth-child(2) {
+    color: #5a39a7;
+    top: 33%;
+    left: 14%;
+    animation-duration: 299s;
+    animation-delay: -184s;
+    transform-origin: -24vw 14vh;
+    box-shadow: -100vmin 0 13.009915862154815vmin currentColor;
+}
+.background span:nth-child(3) {
+    color: #5a39a7;
+    top: 54%;
+    left: 47%;
+    animation-duration: 337s;
+    animation-delay: -310s;
+    transform-origin: -12vw 9vh;
+    box-shadow: 100vmin 0 12.942364288702443vmin currentColor;
+}
+
+
+body {
+    display: grid;
+    place-items: center;
+    height: 100vh;
+    padding: 0 30px;
+    margin: 0;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  button,
+  input {
+    border: 0;
+    width: 100%;
+    height: 60px;
+    background: transparent;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  .signup {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 50%;
+    max-width: 460px;
+    padding: 200px 40px;
+    background: rgb(68 65 70 / 28%);
+    backdrop-filter: blur(50px);
+  }
+  
+  .signup > h2 {
+    font-size: 32px;
+    font-weight: 400;
+    margin: 0 0 6px;
+    color: rgb(255 255 255 / 96%);
+  }
+  
+  .signup > h3 {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0 0 30px;
+    color: rgb(255 255 255 / 40%);
+  }
+  
+  .form {
+    margin: 0;
+    display: grid;
+    gap: 16px;
+  }
+  
+  .textbox {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  
+  .textbox span {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    left: 0;
+    font-size: 22px;
+    pointer-events: none;
+    color: rgb(255 255 255 / 40%);
+  }
+  
+  .textbox input {
+    padding: 0 24px 0 36px;
+    border-bottom: 2px solid rgb(255 255 255 / 5%);
+    color: rgb(255 255 255 / 96%);
+    height: 72px;
+    transition: 0.3s;
+  }
+  
+  :is(input:focus, input:valid) ~ label {
+    translate: -40px -40px;
+    scale: 0.875;
+  }
+  
+  input:focus ~ label {
+    color: rgb(255 255 255 / 40%);
+  }
+  
+  input:focus {
+    border-color: rgb(255 255 255 / 76%);
+  }
+  
+  :is(input:focus, input:valid) ~ span {
+    color: rgb(255 255 255 / 76%);
+  }
+  
+  .textbox label {
+    position: absolute;
+    top: 50%;
+    left: 36px;
+    translate: 0 -50%;
+    color: rgb(255 255 255 / 40%);
+    pointer-events: none;
+    transition: 0.4s;
+  }
+  
+  .form button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0 24px;
+    border-radius: 6px;
+    background: rgb(255 255 255 / 12%);
+    color: #f9f9f9;
+    border: 0;
+    font-weight: 600;
+  }
+  
+  .signup p {
+    margin: 0 0 22px;
+    color: rgb(255 255 255 / 50%);
+  }
+  
+  .signup p > a {
+    color: rgb(255 255 255 / 96%);
+    text-decoration: none;
+  }

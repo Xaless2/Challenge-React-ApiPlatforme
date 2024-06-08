@@ -1,11 +1,11 @@
 
-import NavBar from '../components/NavaBar'
-import RevealOnScroll from '../components/RevealOnScroll'
-import MiddleComponent from '../components/MiddleComponent';
-import MapChart from '../components/MapChart';
+import NavBar from '../components/layout/NavaBar'
+import RevealOnScroll from '../components/common/RevealOnScroll'
+import MiddleComponent from '../components/layout/MiddleComponent';
+import MapChart from '../components/common/MapChart';
 
-import Footer from '../components/footer/Footer';
-import CartdInfo from '../components/CartdInfo';
+import Footer from '../components/layout/Footer';
+import CartdInfo from '../components/common/CartdInfo';
 
 
 

@@ -5,12 +5,16 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements UserInterface
+#[ORM\Table(name: 'member')]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,12 +29,11 @@ class User implements UserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\Choice(["client", "coach"])]
-    private ?string $role = null;
+    #[ORM\Column]
+    private array $roles = [];
 
     #[ORM\Column(length: 255)]
-    private ?string $fistname = null;
+    private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
@@ -47,6 +50,9 @@ class User implements UserInterface
     #[ORM\Column(length: 255)]
     private ?string $city = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $image_url = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +66,7 @@ class User implements UserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -70,29 +77,58 @@ class User implements UserInterface
 
     public function setPassword(string $password): self
     {
-        $this->password = password_hash($password, PASSWORD_ARGON2ID);
+        $this->password = $password;
+
         return $this;
     }
 
-    public function getRole(): ?string
+    public function getRoles(): array
     {
-        return $this->role;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function setRole(string $role): self
+    public function setRoles(array $roles): self
     {
-        $this->role = $role;
+        $this->roles = $roles;
+
         return $this;
     }
 
-    public function getFistname(): ?string
+    public function getSalt(): ?string
     {
-        return $this->fistname;
+        // not needed when using bcrypt or argon
+        return null;
     }
 
-    public function setFistname(string $fistname): self
+    public function eraseCredentials()
     {
-        $this->fistname = $fistname;
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function getUsername(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(string $firstname): self
+    {
+        $this->firstname = $firstname;
+
         return $this;
     }
 
@@ -104,6 +140,7 @@ class User implements UserInterface
     public function setLastname(string $lastname): self
     {
         $this->lastname = $lastname;
+
         return $this;
     }
 
@@ -115,6 +152,7 @@ class User implements UserInterface
     public function setPhone(?string $phone): self
     {
         $this->phone = $phone;
+
         return $this;
     }
 
@@ -126,6 +164,7 @@ class User implements UserInterface
     public function setAddress(?string $address): self
     {
         $this->address = $address;
+
         return $this;
     }
 
@@ -137,6 +176,7 @@ class User implements UserInterface
     public function setZipCode(string $zip_code): self
     {
         $this->zip_code = $zip_code;
+
         return $this;
     }
 
@@ -148,26 +188,19 @@ class User implements UserInterface
     public function setCity(string $city): self
     {
         $this->city = $city;
+
         return $this;
     }
 
-    // Méthodes de l'interface UserInterface
-    public function getUsername()
+    public function getImageUrl(): ?string
     {
-        return $this->email;
+        return $this->image_url;
     }
 
-    public function getSalt()
+    public function setImageUrl(string $image_url): static
     {
-        return null;
-    }
+        $this->image_url = $image_url;
 
-    public function getRoles()
-    {
-        return [$this->role];
-    }
-
-    public function eraseCredentials()
-    {
+        return $this;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\BrandRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BrandRepository;
+use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
@@ -16,19 +16,17 @@ class Brand
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank]
-    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $password = null;
+    #[ORM\Column]
+    private ?int $user_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $display_name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: 'blob', nullable: true)]
     private ?string $kbis_pdf = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $image_url = null;
 
     public function getId(): ?int
     {
@@ -38,32 +36,17 @@ class Brand
     public function setId(int $id): static
     {
         $this->id = $id;
-
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getUserId(): ?int
     {
-        return $this->email;
+        return $this->user_id;
     }
 
-    public function setEmail(string $email): static
+    public function setUserId(int $user_id): static
     {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): static
-    {
-        // Hasher le mot de passe avant de le stocker
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
-
+        $this->user_id = $user_id;
         return $this;
     }
 
@@ -75,7 +58,6 @@ class Brand
     public function setDisplayName(string $display_name): static
     {
         $this->display_name = $display_name;
-
         return $this;
     }
 
@@ -87,7 +69,17 @@ class Brand
     public function setKbisPdf(?string $kbis_pdf): static
     {
         $this->kbis_pdf = $kbis_pdf;
+        return $this;
+    }
 
+    public function getImageUrl(): ?string
+    {
+        return $this->image_url;
+    }
+
+    public function setImageUrl(?string $image_url): static
+    {
+        $this->image_url = $image_url;
         return $this;
     }
 }

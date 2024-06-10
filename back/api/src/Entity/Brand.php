@@ -2,38 +2,31 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\BrandRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BrandRepository;
+use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
-class Brand implements UserInterface, PasswordAuthenticatedUserInterface
+class Brand
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank]
-    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
-    private ?string $email = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $password = null;
-
     #[ORM\Column]
-    private array $roles = [];
+    private ?int $user_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $display_name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: 'blob', nullable: true)]
     private ?string $kbis_pdf = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $image_url = null;
 
     public function getId(): ?int
     {
@@ -46,58 +39,15 @@ class Brand implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getUserId(): ?int
     {
-        return $this->email;
+        return $this->user_id;
     }
 
-    public function setEmail(string $email): static
+    public function setUserId(int $user_id): static
     {
-        $this->email = $email;
+        $this->user_id = $user_id;
         return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): static
-    {
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
-        return $this;
-    }
-
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every brand at least has ROLE_BRAND
-        $roles[] = 'ROLE_BRAND';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): static
-    {
-        $this->roles = $roles;
-        return $this;
-    }
-
-    public function getSalt(): ?string
-    {
-        // not needed when using bcrypt or argon
-        return null;
-    }
-
-    public function eraseCredentials()
-    {
-        // If you store any temporary, sensitive data on the brand, clear it here
-        // $this->plainPassword = null;
-    }
-
-    public function getUsername(): string
-    {
-        return (string) $this->email;
     }
 
     public function getDisplayName(): ?string
@@ -122,8 +72,14 @@ class Brand implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUserIdentifier(): string
+    public function getImageUrl(): ?string
     {
-        return (string) $this->email;
+        return $this->image_url;
+    }
+
+    public function setImageUrl(?string $image_url): static
+    {
+        $this->image_url = $image_url;
+        return $this;
     }
 }

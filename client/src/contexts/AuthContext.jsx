@@ -1,38 +1,38 @@
-import React,{useCallback, useState, useEffect, createContext} from 'react';
-import { postRequest,baseUrl, updateRequest } from '../utils/service';
-import { useGeocoding } from '../hooks/useGeocoding';
+import React, { createContext, useState, useCallback, useEffect } from 'react';
+import { postRequest, baseUrl, updateRequest } from '../utils/service';
+// import { useGeocoding } from '../hooks/useGeocoding';
 
 export const AuthContext = createContext();
-
 
 export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const [token, setToken] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [register, setRegister] = useState({
         email: '',
         password: '',
-        role : [],
+        role: [],
         firstname: '',
         lastname: '',
-        phone:'',
+        phone: '',
         address: '',
-        zipcode:'',
-        city:'',
-        imageUrl:'',
+        zipcode: '',
+        city: '',
+        imageUrl: '',
     });
 
     const [updatedUser, setUpdatedUser] = useState({
         email: '',
         password: '',
-        role : [],
+        role: [],
         firstname: '',
         lastname: '',
-        phone:'',
+        phone: '',
         address: '',
-        zipcode:'',
-        city:'',
-        imageUrl:'',
+        zipcode: '',
+        city: '',
+        imageUrl: '',
     });
 
     const [login, setLogin] = useState({
@@ -40,26 +40,25 @@ export const AuthContextProvider = ({ children }) => {
         password: ''
     });
 
-    const { coordinates, error: geocodingError, geocode } = useGeocoding();
-
-    const registerUser = useCallback(async () => {  
+const registerUser = useCallback(async () => {
+        setIsLoading(true);
         try {
-            await geocode(register.address, register.zipcode);
-            const registerWithCoordinates = {
-                ...register,
-                lat: coordinates.lat,
-                lng: coordinates.lng,
-            };
             const response = await postRequest(
-                `${baseUrl}/users/register`,
-                registerWithCoordinates
+                `${baseUrl}/users`,
+                register
             );
-            setUser(response);
+            if (response && response.user) {
+                setUser(response.user);
+                setToken(response.token);
+                localStorage.setItem('token', response.token);
+                localStorage.setItem('currentUser', JSON.stringify(response.user));
+            }
         } catch (error) {
-            setError(error.message);
+            setError(error?.message || error);
         }
-
-    }, [register, geocode, coordinates]);
+        setIsLoading(false);
+    }
+    , [register]);
 
     const updateUsers = useCallback(async (userId) => {
         try {
@@ -67,25 +66,31 @@ export const AuthContextProvider = ({ children }) => {
                 `${baseUrl}/users/${userId}`,
                 updatedUser
             );
-            setUser(response);
+            if (response && response.user) {
+                setUser(response.user);
+            }
         } catch (error) {
-            setError(error.message);
+            setError(error?.message || error);
         }
     }, [updatedUser]);
 
     const loginUser = useCallback(async () => {
+        setIsLoading(true);
         try {
             const response = await postRequest(
                 `${baseUrl}/users/login`,
                 login
             );
-            setUser(response.user);
-            setToken(response.token);
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('currentUser', JSON.stringify(response.user));
+            if (response && response.user && response.token) {
+                setUser(response.user);
+                setToken(response.token);
+                localStorage.setItem('token', response.token);
+                localStorage.setItem('currentUser', JSON.stringify(response.user));
+            }
         } catch (error) {
-            setError(error.message);
+            setError(error?.message || error);
         }
+        setIsLoading(false);
     }, [login]);
 
     useEffect(() => {
@@ -93,9 +98,10 @@ export const AuthContextProvider = ({ children }) => {
         if (token) {
             setToken(token);
         }
+        setIsLoading(false);
     }, []);
 
-   const logout = () => {
+    const logout = () => {
         setUser(null);
         setToken(null);
         localStorage.removeItem('token');
@@ -103,7 +109,7 @@ export const AuthContextProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{registerUser, updateUsers, loginUser, token, logout, user, error, geocodingError }}>
+        <AuthContext.Provider value={{ registerUser, updateUsers, loginUser, token, logout, user, error, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

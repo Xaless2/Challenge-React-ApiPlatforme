@@ -25,7 +25,6 @@ const Field = ({ field }) => {
     case FIELD_TYPES.DATE:
     case FIELD_TYPES.TEXTAREA:
     case FIELD_TYPES.LABEL:
-    case FIELD_TYPES.FILE:
       return <TextInput field={field} />;
     case FIELD_TYPES.PASSWORD:
       return <PasswordInput field={field} />;

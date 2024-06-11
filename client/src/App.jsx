@@ -1,17 +1,29 @@
-import React from "react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import WelcomePage from "./pages/welcomePage";
-import DashboardPage from "./pages/dashboard/DashboardPage";
-import RegisterPage from "./pages/RegisterPage";
+import { routes } from './routes/routes.js';
+import React from "react";
+import ProtectedRoute from './routes/ProtectedRoutes.jsx';
+import NavBar from "./components/layout/NavaBar.jsx";
 
-export default function App() {
-  return (
-    <>
-    <div>
-    {/* <WelcomePage/> */}
-    {/* <DashboardPage/> */}
-    <RegisterPage/>
-    </div>
-    </>
-  );
+function App() {
+    return (
+        <Router>
+            <NavBar />
+            <Routes>
+                {routes.map((route, index) => (
+                    <Route
+                        key={index}
+                        path={route.path}
+                        element={
+                            route.protected ? 
+                            <ProtectedRoute>{React.createElement(route.component)}</ProtectedRoute> :
+                            React.createElement(route.component)
+                        }
+                    />
+                ))}
+            </Routes>
+        </Router>
+    );
 }
+
+export default App;

@@ -1,66 +1,63 @@
-import React from 'react'
-import { FcAdvance } from "react-icons/fc";
-import { AiOutlineLock, AiOutlineMail } from "react-icons/ai";
-import logo from "../assets/images/logo.png";
-import { VscAccount } from "react-icons/vsc";
-import "../styles/register.css"
+import React, { useContext, useState } from 'react';
+import FormBuilder from '../components/builder/FormBuilder';
+import {AuthContext} from '../contexts/AuthContext';
 
+const RegisterPage = () => {
+  const { registerUser, error } = useContext(AuthContext);
+  const [register, setRegister] = useState({
+    email: '',
+    password: '',
+    role: '',
+    firstname: '',
+    lastname: '',
+    phone: '',
+    address: '',
+    zipcode: '',
+    city: '',
+    imageUrl: '',
+  });
 
-function RegisterPage() {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRegister((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setRegister((prev) => ({
+      ...prev,
+      [name]: files[0],
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await registerUser(register);
+  };
+
+  const fields = [
+    { type: 'text', label: 'First Name', name: 'firstname', value: register.firstname, onChange: handleChange },
+    { type: 'text', label: 'Last Name', name: 'lastname', value: register.lastname, onChange: handleChange },
+    { type: 'email', label: 'Email', name: 'email', value: register.email, onChange: handleChange },
+    { type: 'password', label: 'Password', name: 'password', value: register.password, onChange: handleChange },
+    { type: 'text', label: 'Phone', name: 'phone', value: register.phone, onChange: handleChange },
+    { type: 'text', label: 'Address', name: 'address', value: register.address, onChange: handleChange },
+    { type: 'text', label: 'Zip Code', name: 'zipcode', value: register.zipcode, onChange: handleChange },
+    { type: 'text', label: 'City', name: 'city', value: register.city, onChange: handleChange },
+    { type: 'file', label: 'Profile Image', name: 'imageUrl', onChange: handleFileChange },
+    { type: 'button', label: 'Register', onClick: handleSubmit },
+  ];
+
   return (
-    <>
-    
-      <div class="background">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+      <h1 className="text-2xl font-bold mb-6 text-center">Register</h1>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <FormBuilder fields={fields} />
     </div>
-      <div class="signup -mt-24">
-      {/* <img src={logo}  alt="PlaniFit" className='-mt-96' /> */}
-      <h2>Créer un compte</h2>
-      <form class="form">
-        <div class="textbox">
-          <input type="text" required />
-          <label>firstName</label>
-          <span class="material-symbols-outlined"><VscAccount /></span>
-        </div>
-        <div class="textbox">
-          <input type="text" required />
-          <label>lastname</label>
-          <span class="material-symbols-outlined"><VscAccount /></span>
-        </div>
-        <div class="textbox">
-          <input type="text" required />
-          <label>Email</label>
-          <span class="material-symbols-outlined"><AiOutlineMail /> </span>
-        </div>
+  );
+};
 
-        <div class="textbox">
-          <input type="text" required />
-          <label>role</label>
-          <span class="material-symbols-outlined"><AiOutlineMail /> </span>
-        </div>
-        <div class="textbox">
-          <input type="password" required />
-          <label>Password</label>
-          <span class="material-symbols-outlined"><AiOutlineLock /></span>
-        </div>
-        <p>
-          Signed up already?
-          <a href="#">Login here</a>
-        </p>
-        <button type="submit">
-         créer un compte
-          <span class="material-symbols-outlined"><FcAdvance /></span>
-        </button>
-      </form>
-    </div>
-    
-    </>
-    
-    
-  )
-}
-
-export default RegisterPage
+export default RegisterPage;

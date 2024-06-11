@@ -1,5 +1,5 @@
 import React from 'react'
-import './components.css'
+import "../../styles/components.css"
 import RevealOnScroll from '../common/RevealOnScroll'
 
 function MiddleComponent() {

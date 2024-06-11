@@ -1,6 +1,9 @@
+
+
 import React, { useContext, useState } from 'react';
 import FormBuilder from '../components/builder/FormBuilder';
 import {AuthContext} from '../contexts/AuthContext';
+import "../styles/register.css"
 
 const RegisterPage = () => {
   const { registerUser, error } = useContext(AuthContext);
@@ -52,11 +55,20 @@ const RegisterPage = () => {
   ];
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+    <>
+    {/* <div class="background">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+   </div> */}
+   <div className="max-w-md mx-auto mt-10 p-6  rounded-md">
       <h1 className="text-2xl font-bold mb-6 text-center">Register</h1>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <FormBuilder fields={fields} />
     </div>
+    </>
+ 
   );
 };
 

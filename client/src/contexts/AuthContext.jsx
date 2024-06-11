@@ -44,7 +44,7 @@ const registerUser = useCallback(async () => {
         setIsLoading(true);
         try {
             const response = await postRequest(
-                `${baseUrl}/users`,
+                `${baseUrl}/users/register`,
                 register
             );
             if (response && response.user) {

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
-import { postRequest, baseUrl, updateRequest } from '../utils/service';
+import { postRequest, baseUrl, updateRequest, authUrl } from '../utils/service';
 // import { useGeocoding } from '../hooks/useGeocoding';
 
 export const AuthContext = createContext();
@@ -22,30 +22,19 @@ export const AuthContextProvider = ({ children }) => {
         imageUrl: '',
     });
 
-    const [updatedUser, setUpdatedUser] = useState({
-        email: '',
-        password: '',
-        role: [],
-        firstname: '',
-        lastname: '',
-        phone: '',
-        address: '',
-        zipcode: '',
-        city: '',
-        imageUrl: '',
-    });
+
 
     const [login, setLogin] = useState({
         email: '',
         password: ''
     });
 
-const registerUser = useCallback(async () => {
+const registerUser = useCallback(async (data) => {
         setIsLoading(true);
         try {
             const response = await postRequest(
-                `${baseUrl}/users/register`,
-                register
+                `${authUrl}/register`,
+                data
             );
             if (response && response.user) {
                 setUser(response.user);
@@ -60,19 +49,19 @@ const registerUser = useCallback(async () => {
     }
     , [register]);
 
-    const updateUsers = useCallback(async (userId) => {
-        try {
-            const response = await updateRequest(
-                `${baseUrl}/users/${userId}`,
-                updatedUser
-            );
-            if (response && response.user) {
-                setUser(response.user);
-            }
-        } catch (error) {
-            setError(error?.message || error);
-        }
-    }, [updatedUser]);
+    // const updateUsers = useCallback(async (userId) => {
+    //     try {
+    //         const response = await updateRequest(
+    //             `${baseUrl}/users/${userId}`,
+    //             updatedUser
+    //         );
+    //         if (response && response.user) {
+    //             setUser(response.user);
+    //         }
+    //     } catch (error) {
+    //         setError(error?.message || error);
+    //     }
+    // }, [updatedUser]);
 
     const loginUser = useCallback(async () => {
         setIsLoading(true);
@@ -109,7 +98,10 @@ const registerUser = useCallback(async () => {
     };
 
     return (
-        <AuthContext.Provider value={{ registerUser, updateUsers, loginUser, token, logout, user, error, isLoading }}>
+        <AuthContext.Provider value={{ 
+            registerUser, 
+            loginUser,
+             token, logout, user, error, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

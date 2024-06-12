@@ -1,6 +1,7 @@
 
 
 export const baseUrl = "http://localhost:8000/api"; 
+export const authUrl = "http://localhost:8000";
 
 
 export const postRequest = async (url, body) => {

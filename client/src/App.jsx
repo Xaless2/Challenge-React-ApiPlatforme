@@ -7,22 +7,26 @@ import NavBar from "./components/layout/NavaBar.jsx";
 
 function App() {
     return (
-        <Router>
-            <NavBar />
-            <Routes>
-                {routes.map((route, index) => (
-                    <Route
-                        key={index}
-                        path={route.path}
-                        element={
-                            route.protected ? 
-                            <ProtectedRoute>{React.createElement(route.component)}</ProtectedRoute> :
-                            React.createElement(route.component)
-                        }
-                    />
-                ))}
-            </Routes>
+        <>
+        <NavBar />
+            <Router>
+                <Routes>
+                    {routes.map((route, index) => (
+                        <Route
+                            key={index}
+                            path={route.path}
+                            element={
+                                route.protected ? 
+                                <ProtectedRoute>{React.createElement(route.component)}</ProtectedRoute> :
+                                React.createElement(route.component)
+                            }
+                        />
+                    ))}
+                </Routes>
         </Router>
+        
+        </>
+  
     );
 }
 

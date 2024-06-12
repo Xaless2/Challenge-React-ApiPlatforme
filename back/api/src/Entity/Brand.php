@@ -7,7 +7,7 @@ use App\Repository\BrandRepository;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(mercure: true)]
+#[ApiResource(security: "is_granted('ROLE_USER')")]
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
 class Brand
 {

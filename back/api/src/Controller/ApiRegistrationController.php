@@ -31,11 +31,11 @@ class ApiRegistrationController extends AbstractController
         $user->setRoles($data['roles'] ?? []);
         $user->setFirstname($data['firstname']);
         $user->setLastname($data['lastname']);
-        $user->setPhone($data['phone'] ?? null);
-        $user->setAddress($data['address'] ?? null);
-        $user->setZipCode($data['zip_code'] ?? null);
+        $user->setPhone($data['phone'] ?? "");
+        $user->setAddress($data['address'] ?? "");
+        $user->setZipCode($data['zip_code'] ?? "");
         $user->setCity($data['city'] ?? null);
-        $user->setImageUrl($data['image_url'] ?? null);
+        $user->setImageUrl($data['image_url'] ?? "");
 
         $errors = $validator->validate($user);
 

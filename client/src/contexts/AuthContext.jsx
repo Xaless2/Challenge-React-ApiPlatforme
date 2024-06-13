@@ -9,36 +9,19 @@ export const AuthContextProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [token, setToken] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [register, setRegister] = useState({
-        email: '',
-        password: '',
-        role: [],
-        firstname: '',
-        lastname: '',
-        phone: '',
-        address: '',
-        zipcode: '',
-        city: '',
-        imageUrl: '',
-    });
 
-
-
-    const [login, setLogin] = useState({
-        email: '',
-        password: ''
-    });
-
-const registerUser = useCallback(async (data) => {
+    console.log(token);
+    const registerUser = useCallback(async (data) => {
         setIsLoading(true);
         try {
             const response = await postRequest(
                 `${authUrl}/register`,
                 data
             );
-            if (response && response.user) {
+            if (response && (response.user || response.token)) {
                 setUser(response.user);
                 setToken(response.token);
+                console.log('Token set in registerUser: ', response.token); 
                 localStorage.setItem('token', response.token);
                 localStorage.setItem('currentUser', JSON.stringify(response.user));
             }
@@ -46,8 +29,7 @@ const registerUser = useCallback(async (data) => {
             setError(error?.message || error);
         }
         setIsLoading(false);
-    }
-    , [register]);
+    }, []);
 
     // const updateUsers = useCallback(async (userId) => {
     //     try {
@@ -63,24 +45,26 @@ const registerUser = useCallback(async (data) => {
     //     }
     // }, [updatedUser]);
 
-    const loginUser = useCallback(async () => {
+    const loginUser = useCallback(async (data) => {
         setIsLoading(true);
         try {
             const response = await postRequest(
-                `${baseUrl}/users/login`,
-                login
+                `${authUrl}/login`,
+                data
             );
-            if (response && response.user && response.token) {
-                setUser(response.user);
+            console.log('Response: ', response);
+            console.log('Token: ', response.token);
+            if (response && response.token) {
                 setToken(response.token);
-                localStorage.setItem('token', response.token);
-                localStorage.setItem('currentUser', JSON.stringify(response.user));
+                console.log('Token set in loginUser: ', response.token);
+                localStorage.setItem('token', response.token); 
             }
         } catch (error) {
+            console.log(error); 
             setError(error?.message || error);
         }
         setIsLoading(false);
-    }, [login]);
+    }, []);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -101,7 +85,11 @@ const registerUser = useCallback(async (data) => {
         <AuthContext.Provider value={{ 
             registerUser, 
             loginUser,
-             token, logout, user, error, isLoading }}>
+             token,
+              logout,
+               user, 
+               error,
+               isLoading }}>
             {children}
         </AuthContext.Provider>
     );

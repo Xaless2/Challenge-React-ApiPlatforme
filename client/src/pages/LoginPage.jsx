@@ -17,13 +17,7 @@ const LoginPage = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setLogin((prev) => ({
-      ...prev,
-      [name]: files[0],
-    }));
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,14 +25,14 @@ const LoginPage = () => {
   };
 
   const fields = [
-    { type: 'email', label: 'Email', name: 'email', value: register.email, onChange: handleChange },
-    { type: 'password', label: 'Password', name: 'password', value: register.password, onChange: handleChange },
-    { type: 'button', label: 'Register', onClick: handleSubmit },
+    { type: 'email', label: 'Email', name: 'email', value: login.email, onChange: handleChange },
+    { type: 'password', label: 'Password', name: 'password', value: login.password, onChange: handleChange },
+    { type: 'button', label: 'login', onClick: handleSubmit },
   ];
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <h1 className="text-2xl font-bold mb-6 text-center">Register</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">login</h1>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <FormBuilder fields={fields} />
     </div>

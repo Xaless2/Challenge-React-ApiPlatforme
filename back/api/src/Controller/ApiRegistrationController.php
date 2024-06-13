@@ -24,6 +24,10 @@ class ApiRegistrationController extends AbstractController
                 'path' => 'src/Controller/ApiRegistrationController.php',
             ], Response::HTTP_BAD_REQUEST);
         }
+   
+        if (!isset($data['roles']) || empty($data['roles'])) {
+            $data['roles'] = ['ROLE_USER'];
+        }
 
         $user = new User();
         $user->setEmail($data['email']);

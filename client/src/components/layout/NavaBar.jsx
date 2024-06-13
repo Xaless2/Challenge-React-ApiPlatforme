@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button} from "@nextui-org/react";
 import logo from "../../assets/images/logo.png";
+import { AuthContext } from "../../contexts/AuthContext";
+
+
+
+
 export default function NavBar() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {token} = useContext(AuthContext);
 
   const menuItems = [
     "Profile",

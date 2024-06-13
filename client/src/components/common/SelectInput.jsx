@@ -1,20 +1,18 @@
-import { Select } from "@nextui-org/react";
-
 const SelectInput = ({ field }) => (
   <div className={field.style}>
     {field.label && <p className="text-sm mb-1">{field.label}</p>}
-    <Select
-      placeholder={field.placeholder}
-      onChange={field.onChange}
+    <select
       value={field.value}
+      onChange={field.onChange}
       className="w-full p-2 border rounded"
     >
+      <option value="" disabled>{field.placeholder}</option>
       {field.options && field.options.map((option, index) => (
-        <Select.Option key={index} value={option}>
-          {option}
-        </Select.Option>
+        <option key={index} value={option.value}>
+          {option.label}
+        </option>
       ))}
-    </Select>
+    </select>
   </div>
 );
 

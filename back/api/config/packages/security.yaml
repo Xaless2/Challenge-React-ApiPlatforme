@@ -37,9 +37,11 @@ security:
             jwt: ~
 
     role_hierarchy:
-        ROLE_MEMBER: ROLE_USER
-        ROLE_ADMIN: ROLE_USER
-        ROLE_COACH: ROLE_USER
+       ROLE_CLIENT: ROLE_USER
+       ROLE_COACH: ROLE_CLIENT
+       ROLE_CREATOR: ROLE_COACH
+       ROLE_ADMIN: ROLE_CREATOR
+       
 
     access_control:
         - { path: ^/(login|register), roles: IS_AUTHENTICATED_ANONYMOUSLY }

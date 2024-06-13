@@ -7,7 +7,17 @@ use App\Repository\BrandRepository;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(security: "is_granted('ROLE_USER')")]
+#[ApiResource(
+    itemOperations: [
+        'get',
+        'put' => ['security' => "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"],
+        'delete' => ['security' => "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"]
+    ],
+    collectionOperations: [
+        'get',
+        'post' => ['security' => "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"]
+    ]
+)]
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
 class Brand
 {

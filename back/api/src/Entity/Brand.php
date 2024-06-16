@@ -1,21 +1,22 @@
 <?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\BrandRepository;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
-    itemOperations: [
-        'get',
-        'put' => ['security' => "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"],
-        'delete' => ['security' => "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"]
-    ],
-    collectionOperations: [
-        'get',
-        'post' => ['security' => "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"]
+    operations: [
+        new Get(),
+        new Put(security: "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"),
+        new Post(security: "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')")
     ]
 )]
 #[ORM\Entity(repositoryClass: BrandRepository::class)]

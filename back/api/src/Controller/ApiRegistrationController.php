@@ -38,7 +38,7 @@ class ApiRegistrationController extends AbstractController
         $user->setPhone($data['phone'] ?? "");
         $user->setAddress($data['address'] ?? "");
         $user->setZipCode($data['zip_code'] ?? "");
-        $user->setCity($data['city'] ?? null);
+        $user->setCity($data['city'] ?? "");
         $user->setImageUrl($data['image_url'] ?? "");
 
         $errors = $validator->validate($user);

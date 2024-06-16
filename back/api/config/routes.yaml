@@ -10,7 +10,9 @@ annotations:
     resource: ../src/Controller/
     type: annotation
 
-
+api_refresh_token:
+    path: /api/token/refresh
+  
 api_platform:
     resource: .
     type: api_platform

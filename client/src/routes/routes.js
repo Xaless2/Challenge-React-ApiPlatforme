@@ -20,7 +20,7 @@ export const routes = [
     {
         path: "/dashboard",
         component: DashboardPage,
-        protected: true,
+        protected: false,
     },
 ];
 

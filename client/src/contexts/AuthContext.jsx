@@ -1,6 +1,6 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
 import { postRequest, baseUrl, updateRequest, authUrl } from '../utils/service';
-// import { useGeocoding } from '../hooks/useGeocoding';
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -8,9 +8,19 @@ export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const [token, setToken] = useState(null);
+    const [userRole, setUserRole] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    console.log(token);
+
+    useEffect(() => {
+        if (token) {
+            const decodedToken = jwtDecode(token); 
+            console.log(decodedToken);
+            setUserRole(decodedToken.roles[0]); 
+        }
+    }, [token]);
+
+
     const registerUser = useCallback(async (data) => {
         setIsLoading(true);
         try {
@@ -21,7 +31,6 @@ export const AuthContextProvider = ({ children }) => {
             if (response && (response.user || response.token)) {
                 setUser(response.user);
                 setToken(response.token);
-                console.log('Token set in registerUser: ', response.token); 
                 localStorage.setItem('token', response.token);
                 localStorage.setItem('currentUser', JSON.stringify(response.user));
             }
@@ -31,40 +40,26 @@ export const AuthContextProvider = ({ children }) => {
         setIsLoading(false);
     }, []);
 
-    // const updateUsers = useCallback(async (userId) => {
-    //     try {
-    //         const response = await updateRequest(
-    //             `${baseUrl}/users/${userId}`,
-    //             updatedUser
-    //         );
-    //         if (response && response.user) {
-    //             setUser(response.user);
-    //         }
-    //     } catch (error) {
-    //         setError(error?.message || error);
-    //     }
-    // }, [updatedUser]);
-
     const loginUser = useCallback(async (data) => {
         setIsLoading(true);
         try {
-            const response = await postRequest(
-                `${authUrl}/login`,
-                data
-            );
+            const response = await postRequest(`${authUrl}/login`, data);
             console.log('Response: ', response);
             console.log('Token: ', response.token);
             if (response && response.token) {
                 setToken(response.token);
-                console.log('Token set in loginUser: ', response.token);
-                localStorage.setItem('token', response.token); 
+                localStorage.setItem('token', response.token);
+                setIsLoading(false);
+                return true;  
             }
         } catch (error) {
-            console.log(error); 
+            console.log(error);
             setError(error?.message || error);
         }
         setIsLoading(false);
+        return false; 
     }, []);
+    
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -85,11 +80,14 @@ export const AuthContextProvider = ({ children }) => {
         <AuthContext.Provider value={{ 
             registerUser, 
             loginUser,
-             token,
-              logout,
-               user, 
-               error,
-               isLoading }}>
+            token,
+            logout,
+            user, 
+            error,
+            isLoading,
+            userRole,
+            setUserRole
+        }}>
             {children}
         </AuthContext.Provider>
     );

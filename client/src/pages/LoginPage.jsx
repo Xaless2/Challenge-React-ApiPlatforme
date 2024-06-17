@@ -1,13 +1,12 @@
 import React, { useContext, useState } from 'react';
 import FormBuilder from '../components/builder/FormBuilder';
-import {AuthContext} from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const { loginUser, error } = useContext(AuthContext);
-  const [login, setLogin] = useState({
-    email: '',
-    password: '',
-  });
+  const [login, setLogin] = useState({ email: '', password: '' });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,19 +16,22 @@ const LoginPage = () => {
     }));
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await loginUser(login);
+    const success = await loginUser(login);
+    console.log("success data", success);
+    if (success) {
+      navigate('/');
+    } else {
+      console.error('Login failed');
+    }
   };
 
   const fields = [
     { type: 'email', label: 'Email', name: 'email', value: login.email, onChange: handleChange },
     { type: 'password', label: 'Password', name: 'password', value: login.password, onChange: handleChange },
-    { type: 'button', label: 'login', onClick: handleSubmit },
+    { type: 'button', label: 'Login', onClick: handleSubmit },
   ];
-
 
   return (
     <div className="flex justify-center items-center min-h-screen">

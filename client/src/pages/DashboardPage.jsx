@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Table from '../components/common/Table';
 import Toast from '../components/common/Toast';
 import { ImUser } from "react-icons/im";
@@ -6,11 +6,13 @@ import "../styles/components.css"
 import UserList from '../components/common/UserList';
 import Stats from '../components/common/Stats';
 import ModalPup from '../components/common/ModalPup';
+import { AuthContext } from '../contexts/AuthContext';
 
 
 function DashboardPage() {
   const [view, setView] = useState('dashboard');
   const [showToast, setShowToast] = useState(false);  
+  const { token, userRole, logout } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
   const [data, setData] = useState([
     { id: 1, image: 'https://via.placeholder.com/150', name: 'Basic Fit', date: '2024-06-15' },
@@ -25,6 +27,15 @@ function DashboardPage() {
     activeUsers: 1,
     inactiveUsers: 1,
   });
+
+
+  useEffect(() => {
+    if (token) {
+      console.log('Token: ', token);
+      console.log('User Role: ', userRole);
+    }
+  }, [token, userRole]);
+
 
   const handleEdit = (id) => {
     console.log(`Edit item with id ${id}`);

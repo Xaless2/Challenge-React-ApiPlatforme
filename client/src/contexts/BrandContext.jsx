@@ -1,39 +1,52 @@
-import React, { useCallback, useState, useContext, createContext } from 'react';
-import { postRequest, baseUrl } from '../utils/service';
+import React, { useCallback, useState, useContext, createContext, useEffect } from 'react';
+import { postRequest, getRequest, updateRequest, baseUrl } from '../utils/service';
 import { AuthContext } from './AuthContext';
+import { jwtDecode } from "jwt-decode";
 
 export const BrandContext = createContext();
 
 export const BrandContextProvider = ({ children }) => {
     const { user, token } = useContext(AuthContext);
-    const [brands, setBrands] = useState({
-        user_id: user ? user.id : '',
-        display_name: '',
-        kbis_pdf: '',
-        image_url: '',
-    });
+    const [brand, setBrand] = useState(null);
     const [error, setError] = useState(null);
+    const [userId, setUserId] = useState(null);
 
-    const addBrand = useCallback(async () => {
+    useEffect(() => {
+        if (token) {
+            const decodedToken = jwtDecode(token); 
+            setUserId(decodedToken.id);
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (user) {
+            setBrand({
+                user_id: user.id,
+            });
+        }
+    }, [user]);
+
+
+    const addBrand = useCallback(async (data) => {
         try {
             const response = await postRequest(
                 `${baseUrl}/brands`,
-                brands,
+               { ...data, user_id: brand.user_id},
                 { 'Authorization': `Bearer ${token}` }
             );
-            setBrands(response);
+            setBrand(response);
         } catch (error) {
             setError(error.message);
         }
-    }, [brands, token]);
+    }, [brand, token]);
 
     const getBrands = useCallback(async () => {
         try {
             const response = await getRequest(
                 `${baseUrl}/brands/${user.id}`,
-                { 'Authorization': `Bearer ${token}` 
-            });
-            setBrands(response);
+                { 'Authorization': `Bearer ${token}` }
+            );
+            setBrand(response);
         } catch (error) {
             setError(error.message);
         }
@@ -43,19 +56,18 @@ export const BrandContextProvider = ({ children }) => {
         try {
             const response = await updateRequest(
                 `${baseUrl}/brands/${brandId}`,
-                brands,
+                brand,
                 { 'Authorization': `Bearer ${token}` }
             );
-            setBrands(response);
+            setBrand(response);
         } catch (error) {
             setError(error.message);
         }
     }, [brands, token]);
 
     return (
-        <BrandContext.Provider value={{ addBrand, brands, error, getBrands, getBrands, updateBrands  }}>
+        <BrandContext.Provider value={{ addBrand, brand, error, getBrands, updateBrands, userId }}>
             {children}
         </BrandContext.Provider>
     );
 };
-

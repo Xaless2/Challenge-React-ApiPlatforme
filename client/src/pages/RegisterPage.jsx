@@ -1,13 +1,14 @@
 import React, { useContext, useState } from 'react';
 import FormBuilder from '../components/builder/FormBuilder';
 import { AuthContext } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
   const { registerUser, error } = useContext(AuthContext);
   const [register, setRegister] = useState({
     email: '',
     password: '',
-    role: 'ROLE_CLIENT',
+    roles: [],
     firstname: '',
     lastname: '',
     phone: '',
@@ -16,18 +17,35 @@ const RegisterPage = () => {
     city: '',
     imageUrl: '',
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(name, value); 
     setRegister((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
+  const handleChangeArray = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setRegister((prev) => ({
+      ...prev,
+      [name]:[value]
+    }));
+    console.log(register);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await registerUser(register);
+    const response = await registerUser(register);
+    if (response) {
+      navigate('/register');
+    } else {
+      console.error('register failed');
+    }
   };
 
   const fields = [
@@ -37,9 +55,9 @@ const RegisterPage = () => {
     { 
       type: 'select', 
       label: 'Vous vous inscrivez en tant que :', 
-      name: 'role', 
-      value: register.role, 
-      onChange: handleChange,
+      name: 'roles', 
+      value: register.roles, 
+      onChange: handleChangeArray,
       options: [
         { value: 'ROLE_CLIENT', label: 'Client' },
         { value: 'ROLE_COACH', label: 'Coach' },
@@ -48,7 +66,24 @@ const RegisterPage = () => {
       ],
     },
     { type: 'password', label: 'Password', name: 'password', value: register.password, onChange: handleChange },
-    { type: 'button', label: 'Register', onClick: handleSubmit },
+    { 
+      type: 'button', 
+      label: "S'inscrire",
+      onClick: handleSubmit,
+      style: {
+        hoverBackgroundColor: '#088f9c',
+        color: 'white',
+        fontWeight: 'bold',
+        width:'100%',
+        paddingY: '2',
+        paddingX: '4',
+        borderRadius: 'rounded',
+        focus: {
+          outline: 'none',
+          shadow: 'outline'
+        }
+      }
+   },
   ];
 
   return (

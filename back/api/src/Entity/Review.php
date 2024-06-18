@@ -2,72 +2,37 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\ReviewRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(mercure: true)]
-#[ORM\Entity(repositoryClass: ReviewRepository::class)]
+#[ORM\Entity(repositoryClass: App\Repository\ReviewRepository::class)]
 class Review
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $coach_id = null;
-
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $client_id = null;
-
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank]
+    #[Assert\Range(min: 1, max: 5)]
     private ?int $number_of_stars = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comment = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\Choice(["validated", "suspended", "moderate"])]
-    private ?string $status = null;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $coach = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $client = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function getCoachId(): ?User
-    {
-        return $this->coach_id;
-    }
-
-    public function setCoachId(?User $coach_id): static
-    {
-        $this->coach_id = $coach_id;
-
-        return $this;
-    }
-
-    public function getClientId(): ?User
-    {
-        return $this->client_id;
-    }
-
-    public function setClientId(?User $client_id): static
-    {
-        $this->client_id = $client_id;
-
-        return $this;
     }
 
     public function getNumberOfStars(): ?int
@@ -75,10 +40,9 @@ class Review
         return $this->number_of_stars;
     }
 
-    public function setNumberOfStars(?int $number_of_stars): static
+    public function setNumberOfStars(int $number_of_stars): self
     {
         $this->number_of_stars = $number_of_stars;
-
         return $this;
     }
 
@@ -87,22 +51,31 @@ class Review
         return $this->comment;
     }
 
-    public function setComment(string $comment): static
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getCoach(): ?User
     {
-        return $this->status;
+        return $this->coach;
     }
 
-    public function setStatus(string $status): static
+    public function setCoach(?User $coach): self
     {
-        $this->status = $status;
+        $this->coach = $coach;
+        return $this;
+    }
 
+    public function getClient(): ?User
+    {
+        return $this->client;
+    }
+
+    public function setClient(?User $client): self
+    {
+        $this->client = $client;
         return $this;
     }
 }

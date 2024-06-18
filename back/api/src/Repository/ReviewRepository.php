@@ -6,14 +6,6 @@ use App\Entity\Review;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Review>
- *
- * @method Review|null find($id, $lockMode = null, $lockVersion = null)
- * @method Review|null findOneBy(array $criteria, array $orderBy = null)
- * @method Review[]    findAll()
- * @method Review[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class ReviewRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -21,28 +13,27 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
-//    /**
-//     * @return Review[] Returns an array of Review objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findAverageStarsByCoach(int $coachId): ?float
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('AVG(r.number_of_stars) as avg_stars')
+            ->where('r.coach = :coachId')
+            ->setParameter('coachId', $coachId)
+            ->getQuery();
 
-//    public function findOneBySomeField($value): ?Review
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $qb->getSingleScalarResult();
+    }
+
+    public function hasUserReviewedCoach(int $clientId, int $coachId): bool
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('count(r.id)')
+            ->where('r.client = :clientId')
+            ->andWhere('r.coach = :coachId')
+            ->setParameter('clientId', $clientId)
+            ->setParameter('coachId', $coachId)
+            ->getQuery();
+
+        return $qb->getSingleScalarResult() > 0;
+    }
 }

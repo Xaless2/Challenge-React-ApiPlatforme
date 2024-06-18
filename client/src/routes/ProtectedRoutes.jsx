@@ -4,6 +4,7 @@ import { AuthContext } from '../contexts/AuthContext';
 
 function ProtectedRoute({ children }) {
     const { token, isLoading } = useContext(AuthContext);
+
     const isAuthenticated = !!token;
     const navigate = useNavigate();
 

@@ -32,6 +32,7 @@ const Field = ({ field }) => {
       return (
         <Button 
           text={field.label} 
+          style={field.style}
           onClick={field.onClick}
         />
       );

@@ -26,23 +26,21 @@ export const postRequest = async (url, body) => {
 
 
 
-export const getRequest = async (url) => {
-    const response = await fetch(url);
+export const getRequest = async (url, headers = {}) => {
+    const response = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            ...headers
+        },
+        method: 'GET'
+    });
 
-    let data;
-
-    if (response.ok) {
-        data = response.status === 204 ? null : await response.json();
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
     }
-    else {
-        data = await response.json();
-        throw new Error(data.error.message);
-    }
 
-
-
-    return data;
-}
+    return await response.json();
+};
 
 export const updateRequest = async (url, body) => {
     const response = await fetch(url, {

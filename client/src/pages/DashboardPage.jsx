@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import Table from '../components/common/Table';
 import Toast from '../components/common/Toast';
 import { ImUser } from "react-icons/im";
+import { Link } from 'react-router-dom';
 import "../styles/components.css"
 import UserList from '../components/common/UserList';
 import Stats from '../components/common/Stats';
@@ -165,13 +166,15 @@ function DashboardPage() {
               </a>
             </li>
             <li>
-              <a
-                href="#"
+
+              <Link
+                to="/profile"
                 className="group flex items-center space-x-4 rounded-md px-4 py-3 text-blacktext-black"
               >
                 <ImUser />
                 <span className="group-hover:text-black text-black">Mon profil</span>
-              </a>
+              
+              </Link>
             </li>
           </ul>
         </div>

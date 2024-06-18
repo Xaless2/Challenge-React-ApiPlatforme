@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240615132223 extends AbstractMigration
+final class Version20240618204837 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,7 +20,6 @@ final class Version20240615132223 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SEQUENCE refresh_tokens_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE brand (id INT NOT NULL, user_id INT NOT NULL, display_name VARCHAR(255) NOT NULL, kbis_pdf BYTEA DEFAULT NULL, image_url VARCHAR(20) DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE establishment (id INT NOT NULL, brand_id_id INT NOT NULL, display_name VARCHAR(255) NOT NULL, phone VARCHAR(255) DEFAULT NULL, address VARCHAR(255) NOT NULL, zip_code VARCHAR(255) NOT NULL, city VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_DBEFB1EE24BD5740 ON establishment (brand_id_id)');
@@ -62,7 +61,6 @@ final class Version20240615132223 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('DROP SEQUENCE refresh_tokens_id_seq CASCADE');
         $this->addSql('ALTER TABLE establishment DROP CONSTRAINT FK_DBEFB1EE24BD5740');
         $this->addSql('ALTER TABLE performance DROP CONSTRAINT FK_82D79681FB55A222');
         $this->addSql('ALTER TABLE performance_sport DROP CONSTRAINT FK_4225584DB91ADEEE');

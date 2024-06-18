@@ -4,12 +4,26 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
-
 const CalendarPage = () => {
     const handleDateClick = (arg) => {
         const title = prompt('Event Title:');
         if (title) {
-            // Handle event creation here
+            fetch('/api/reservations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    slot: '/api/slots/1',  // exemple de slot
+                    client: '/api/users/1', // exemple de client
+                    status: 'pending'
+                }),
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         }
     };
 

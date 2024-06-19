@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Establishment;
+use App\Entity\Institute;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Establishment>
+ * @extends ServiceEntityRepository<Institute>
  *
- * @method Establishment|null find($id, $lockMode = null, $lockVersion = null)
- * @method Establishment|null findOneBy(array $criteria, array $orderBy = null)
- * @method Establishment[]    findAll()
- * @method Establishment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Institute|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Institute|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Institute[]    findAll()
+ * @method Institute[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class EstablishmentRepository extends ServiceEntityRepository
+class InstituteRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Establishment::class);
+        parent::__construct($registry, Institute::class);
     }
 
 //    /**
-//     * @return Establishment[] Returns an array of Establishment objects
+//     * @return Institute[] Returns an array of Institute objects
 //     */
 //    public function findByExampleField($value): array
 //    {

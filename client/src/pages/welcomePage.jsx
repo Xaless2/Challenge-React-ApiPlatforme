@@ -3,7 +3,7 @@ import NavBar from '../components/NavaBar'
 import RevealOnScroll from '../components/RevealOnScroll'
 import MiddleComponent from '../components/MiddleComponent';
 import MapChart from '../components/MapChart';
-
+import React from 'react';
 import Footer from '../components/footer/Footer';
 import CartdInfo from '../components/CartdInfo';
 

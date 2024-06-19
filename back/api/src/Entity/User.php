@@ -9,6 +9,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: "app_user")]
+
+
+
 class User implements UserInterface
 {
     #[ORM\Id]

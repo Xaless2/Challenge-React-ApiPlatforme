@@ -3,7 +3,7 @@ name: Client CI
 on:
   push:
     branches:
-      - feature/CiCd
+      - main
     paths:
       - 'client/**'
 
@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm install

@@ -11,7 +11,6 @@ export const AuthContextProvider = ({ children }) => {
     const [userRole, setUserRole] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-
     useEffect(() => {
         if (token) {
             const decodedToken = jwtDecode(token); 
@@ -59,6 +58,13 @@ export const AuthContextProvider = ({ children }) => {
     }, []);
 
     const updateUser = useCallback(async (data) => {
+        const token = localStorage.getItem('token');
+        console.log(token)
+        if (!token) {
+            console.log('Token is not defined');
+            return;
+        }
+    
         try {
             const response = await updateRequest(
                 `${baseUrl}/users/${user.id}`,
@@ -71,8 +77,8 @@ export const AuthContextProvider = ({ children }) => {
         } catch (error) {
             setError(error?.message || error);
         }
-
-    }, [user, token]);
+    
+    }, [user]);
 
     const getUser = useCallback(async () => {
         const token = localStorage.getItem('token');

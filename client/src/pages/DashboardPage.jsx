@@ -8,17 +8,16 @@ import UserList from '../components/common/UserList';
 import Stats from '../components/common/Stats';
 import ModalPup from '../components/common/ModalPup';
 import { AuthContext } from '../contexts/AuthContext';
+import { BrandContext } from '../contexts/BrandContext';
 
 
 function DashboardPage() {
   const [view, setView] = useState('dashboard');
   const [showToast, setShowToast] = useState(false);  
-  const { token, userRole, logout } = useContext(AuthContext);
+  const { token, userRole, logout, user, getUser } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
-  const [data, setData] = useState([
-    { id: 1, image: 'https://via.placeholder.com/150', name: 'Basic Fit', date: '2024-06-15' },
-    { id: 2, image: 'https://via.placeholder.com/150', name: 'Fitness Parc', date: '2024-06-14' },
-  ]);
+  const { getBrands } = useContext(BrandContext);
+  const [data, setData] = useState([]);
   const [users, setUsers] = useState([
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
@@ -28,12 +27,36 @@ function DashboardPage() {
     activeUsers: 1,
     inactiveUsers: 1,
   });
+  const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const brands = await getBrands();
+      console.log(brands);
+      setData(brands);
+    };
+
+    fetchData();
+  }, [getBrands]);
+
+
+  useEffect(() => {
+    const fetchUser = async () => {
+        if (!isUserDataLoaded) {
+            await getUser();
+            if (user) {
+                setIsUserDataLoaded(true);
+            }
+        }
+    };
+    fetchUser();
+}, [getUser, user, isUserDataLoaded]);
 
 
   useEffect(() => {
     if (token) {
-      console.log('Token: ', token);
-      console.log('User Role: ', userRole);
+     const roles = ['ROLE_ADMIN', 'ROLE_COACH', 'ROLE_CLIENT'];
     }
   }, [token, userRole]);
 
@@ -80,23 +103,24 @@ function DashboardPage() {
               <img src="images/logo.svg" className="w-32" alt="tailus logo" />
             </a>
           </div>
-  
+          {user && (
           <div className="mt-8 text-center">
             <img
               src="images/second_user.webp"
               alt=""
               className="m-auto h-10 w-10 rounded-full object-cover lg:h-28 lg:w-28"
             />
-            <h5 className="mt-4 hidden text-xl font-semibold text-red-500 lg:blocktext-black">Cynthia J. Watts</h5>
-            <span className="hidden text-black lg:block">Admin</span>
+            <h5 className="mt-4 hidden text-xl font-semibold text-red-500 lg:block text-black">{user.firstname}</h5>
+            <span className="hidden text-black lg:block">{user.roles[0]}</span>
           </div>
+          )}
   
           <ul className="mt-8 space-y-2 tracking-wide">
             <li>
               <a
                 href="#"
                 aria-label="dashboard"
-                className={`relative flex items-center space-x-4 rounded-xl bg-gradient-to-r from-sky-600 to-cyan-400 px-4 py-3 text-black ${view === 'dashboard' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
+                className={`relative flex items-center space-x-4 rounded-xl px-4 py-3 text-black ${view === 'dashboard' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
                 onClick={() => handleNavItemClick('dashboard')}
               >
                 <svg className="-ml-1 h-6 w-6" viewBox="0 0 24 24" fill="none">
@@ -117,6 +141,7 @@ function DashboardPage() {
               </a>
             </li>
             <li>
+            {userRole !== 'ROLE_COACH' && userRole !== 'ROLE_CLIENT' && (
               <button
                 onClick={handleBrandClick}
                 className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === 'table' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
@@ -140,6 +165,7 @@ function DashboardPage() {
                 </svg>
                 <span className="group-hover:text-black">Marques</span>
               </button>
+            )}
             </li>
   
             <li>
@@ -195,7 +221,14 @@ function DashboardPage() {
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
               />
             </svg>
-            <span className="group-hover:text-black text-black">Logout</span>
+            <Link
+              to="/"
+              onClick={logout}
+              className="group-hover:text-black text-black"
+            >
+                <span className="group-hover:text-black text-black">Se déconnecter</span>
+            </Link>
+
           </button>
         </div>
       </aside>
@@ -204,54 +237,7 @@ function DashboardPage() {
         <div className="sticky top-0 h-16 border-b bg-white dark:border-gray-700 lg:py-2.5">
           <div className="flex items-center justify-between space-x-4 px-6 2xl:container">
             <h5 hidden className="text-2xl font-medium text-black text-black">Dashboard</h5>
-            <button className="-mr-2 h-16 w-12 border-r lg:hidden dark:border-gray-700text-black">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="my-auto h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-            <div className="flex space-x-4 ">
-              <div hidden className="md:block">
-                <div className="relative flex items-center text-cyan-500 focus-within:text-cyan-400">
-                  <span className="absolute left-4 flex h-6 items-center  pr-3 ">
-                    <svg
-                      xmlns="http://ww50w3.org/2000/svg"
-                      className="w-4 fill-current"
-                      viewBox="0 0 35.997 36.004"
-                    >
-                      <path
-                        id="Icon_awesome-search"
-                        data-name="search"
-                        d="M35.508,31.127l-7.l010-7a1.686,1.686,0,0,0-1.2-.492H26.156a14.618,14.618,0,1,0-2.531,2.531V27.3a1.686,1.686,0,0,0,.492,1.2l7.01,7.01a1.681,1.681,0,0,0,2.384,0l1.99-1.99a1.7,1.7,0,0,0,.007-2.391Zm-20.883-7.5a9,9,0,1,1,9-9A8.995,8.995,0,0,1,14.625,23.625Z"
-                        ></path>
-                      </svg>
-                    </span>
-                    <input
-                      type="search"
-                      name="leadingIcon"
-                      id="leadingIcon"
-                      placeholder="Search here"
-                      className="outline-none  rounded-xl border border-gray-300 py-2.5 pl-14 pr-4 text-sm text-white transition focus:border-cyan-300 dark:bg-gray-900 "
-                      style={{ width: '400px' }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center space-x-4 mt-14">
-                    
-                  </div>
-                </div>
-              </div>
+           
             </div>
           </div>
           <div className='mt-12'>

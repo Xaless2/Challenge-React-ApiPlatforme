@@ -16,7 +16,6 @@ import { AuthContext } from "../../contexts/AuthContext";
 export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { token, userRole, logout } = useContext(AuthContext);
-  console.log(userRole);
 
   let menuItems = [];
 
@@ -42,7 +41,10 @@ export default function NavBar() {
           className="sm:hidden "
         />
         <NavbarBrand>
+          <Link href="/" color="foreground" size="lg">
           <img src={logo} alt="PlaniFit" width="100" height="42" className="w-32 text-white" />
+          </Link>
+          
         </NavbarBrand>
       </NavbarContent>
 
@@ -64,11 +66,31 @@ export default function NavBar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
+        {token && userRole === 'ROLE_CLIENT' && (
+          <NavbarItem >
+            <div style={{
+              backgroundColor:"red",
+            }}>
+            <Link href="/profile" color="primary">
+              Profile
+            </Link>
+            </div>
+           
+          </NavbarItem>
+        )}
+        {token && (userRole === 'ROLE_ADMIN' || userRole === 'ROLE_COACH') && (
+          <NavbarItem>
+            <Link href="/dashboard" color="primary">
+              Dashboard
+            </Link>
+          </NavbarItem>
+        )}
         <NavbarItem>
           <Button
             color="primary"
             auto
             size="small"
+            className="btn btn-primary"
             variant="contained"
             onClick={() => {
               if (token) {
@@ -82,49 +104,7 @@ export default function NavBar() {
           </Button>
         </NavbarItem>
       </NavbarContent>
-      <NavbarMenu>
-        {token && menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item.name}-${index}`}>
-            <Link
-              color={item.name === "Log Out" ? "danger" : "foreground"}
-              className="w-full"
-              href={item.link}
-              size="lg"
-              onClick={() => {
-                if (item.name === "Log Out") {
-                  logout();
-                }
-              }}
-            >
-              {item.name}
-            </Link>
-          </NavbarMenuItem>
-        ))}
-        {!token && (
-          <>
-            <NavbarMenuItem key="register">
-              <Link
-                color="primary"
-                className="w-full"
-                href="/register"
-                size="lg"
-              >
-                Create Account
-              </Link>
-            </NavbarMenuItem>
-            <NavbarMenuItem key="login">
-              <Link
-                color="primary"
-                className="w-full"
-                href="/login"
-                size="lg"
-              >
-                Log In
-              </Link>
-            </NavbarMenuItem>
-          </>
-        )}
-      </NavbarMenu>
+      
     </Navbar>
   );
 }

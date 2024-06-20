@@ -19,7 +19,6 @@ function ProfilePage() {
     imageUrl: '',
   });
 
-  console.log(user)
 
   useEffect(() => {
     const fetchUser = async () => {

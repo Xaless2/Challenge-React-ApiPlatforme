@@ -42,11 +42,12 @@ export const getRequest = async (url, headers = {}) => {
     return await response.json();
 };
 
-export const updateRequest = async (url, body) => {
+export const updateRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...headers
         },
         body: JSON.stringify(body)
     });
@@ -55,8 +56,12 @@ export const updateRequest = async (url, body) => {
     if (response.ok) {
         data = response.status === 204 ? null : await response.json();
     } else {
-        data = await response.json();
-        throw new Error(data.error.message);
+        try {
+            data = await response.json();
+            throw new Error(data.error.message);
+        } catch (e) {
+            throw new Error('An error occurred while processing the request.');
+        }
     }
 
     return data;

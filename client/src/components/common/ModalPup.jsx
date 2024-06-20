@@ -4,7 +4,7 @@ import FormBuilder from "../builder/FormBuilder";
 import { BrandContext } from "../../contexts/BrandContext";
 
 export default function ModalPup() {
-  // const {addBrand, error} = React.useContext(BrandContext);
+  const {addBrand, error} = React.useContext(BrandContext);
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const [brand, setBrand] = useState({
     image_url: '',
@@ -21,7 +21,7 @@ export default function ModalPup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // addBrand(brand);
+    addBrand(brand);
   }
 
 

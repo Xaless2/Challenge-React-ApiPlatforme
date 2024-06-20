@@ -1,11 +1,29 @@
-import React from 'react';
+import React,{useContext, useEffect, useState} from 'react';
 import RevealOnScroll from '../components/common/RevealOnScroll';
 import MiddleComponent from '../components/layout/MiddleComponent';
 import MapChart from '../components/common/MapChart';
 import Footer from '../components/layout/Footer';
 import CartdInfo from '../components/common/CartdInfo';
+import { BrandContext } from '../contexts/BrandContext';
 
 export default function WelcomePage() {
+
+    const { getAllBrands } = useContext(BrandContext);
+    const [brands, setBrands] = useState(null);
+
+    console.log(brands);
+
+    useEffect(() => {
+        getAllBrands()
+        .then((response) => {
+            setBrands(response);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+    , [getAllBrands]);
+    
     return (
        <div>
             <MiddleComponent />

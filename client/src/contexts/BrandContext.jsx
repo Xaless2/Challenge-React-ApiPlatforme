@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useContext, createContext, useEffect } from 'react';
-import { postRequest, getRequest, updateRequest, baseUrl } from '../utils/service';
+import { postRequest, getRequest, updateRequest, baseUrl,authUrl } from '../utils/service';
 import { AuthContext } from './AuthContext';
 import { jwtDecode } from "jwt-decode";
 
@@ -10,6 +10,7 @@ export const BrandContextProvider = ({ children }) => {
     const [brand, setBrand] = useState(null);
     const [error, setError] = useState(null);
     const [userId, setUserId] = useState(null);
+    const [getAllBrand, setGetAllBrand] = useState(null);
 
     useEffect(() => {
         if (token) {
@@ -29,9 +30,12 @@ export const BrandContextProvider = ({ children }) => {
 
     const addBrand = useCallback(async (data) => {
         try {
+            if (!token) {
+                throw new Error('Token is not defined');
+            }
             const response = await postRequest(
                 `${baseUrl}/brands`,
-               { ...data, user_id: brand.user_id},
+                { ...data, user_id: brand.user_id},
                 { 'Authorization': `Bearer ${token}` }
             );
             setBrand(response);
@@ -40,17 +44,18 @@ export const BrandContextProvider = ({ children }) => {
         }
     }, [brand, token]);
 
-    const getBrands = useCallback(async () => {
+    const getBrands = useCallback(async (brandId) => {
         try {
             const response = await getRequest(
-                `${baseUrl}/brands/${user.id}`,
+                `${baseUrl}/brands/${brandId}`,
                 { 'Authorization': `Bearer ${token}` }
             );
-            setBrand(response);
+            console.log(response);
+            setBrand(response); 
         } catch (error) {
-            setError(error.message);
+            setError(error?.message || error);
         }
-    }, [user, token]);
+    }, []);  
 
     const updateBrands = useCallback(async (brandId) => {
         try {
@@ -63,10 +68,24 @@ export const BrandContextProvider = ({ children }) => {
         } catch (error) {
             setError(error.message);
         }
-    }, [brands, token]);
+    }, [brand, token]);
+
+    const getAllBrands = useCallback(async () => {
+        try {
+            const response = await getRequest(
+                `${authUrl}/brand`,
+            );
+            console.log(response)
+            setGetAllBrand(response);
+            
+        } catch (error) {
+            setError(error.message);
+        }
+    }, []);
+
 
     return (
-        <BrandContext.Provider value={{ addBrand, brand, error, getBrands, updateBrands, userId }}>
+        <BrandContext.Provider value={{ addBrand, brand, error, getBrands, updateBrands, userId, getAllBrands  }}>
             {children}
         </BrandContext.Provider>
     );

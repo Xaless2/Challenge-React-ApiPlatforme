@@ -26,29 +26,28 @@ export const postRequest = async (url, body) => {
 
 
 
-export const getRequest = async (url) => {
-    const response = await fetch(url);
+export const getRequest = async (url, headers = {}) => {
+    const response = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            ...headers
+        },
+        method: 'GET'
+    });
 
-    let data;
-
-    if (response.ok) {
-        data = response.status === 204 ? null : await response.json();
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
     }
-    else {
-        data = await response.json();
-        throw new Error(data.error.message);
-    }
 
+    return await response.json();
+};
 
-
-    return data;
-}
-
-export const updateRequest = async (url, body) => {
+export const updateRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...headers
         },
         body: JSON.stringify(body)
     });
@@ -57,8 +56,12 @@ export const updateRequest = async (url, body) => {
     if (response.ok) {
         data = response.status === 204 ? null : await response.json();
     } else {
-        data = await response.json();
-        throw new Error(data.error.message);
+        try {
+            data = await response.json();
+            throw new Error(data.error.message);
+        } catch (e) {
+            throw new Error('An error occurred while processing the request.');
+        }
     }
 
     return data;

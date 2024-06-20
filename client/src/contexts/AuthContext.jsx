@@ -1,5 +1,5 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
-import { postRequest, baseUrl, updateRequest, authUrl } from '../utils/service';
+import { postRequest, baseUrl, updateRequest, authUrl, getRequest } from '../utils/service';
 import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
@@ -11,11 +11,9 @@ export const AuthContextProvider = ({ children }) => {
     const [userRole, setUserRole] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-
     useEffect(() => {
         if (token) {
             const decodedToken = jwtDecode(token); 
-            console.log(decodedToken);
             setUserRole(decodedToken.roles[0]); 
         }
     }, [token]);
@@ -44,21 +42,65 @@ export const AuthContextProvider = ({ children }) => {
         setIsLoading(true);
         try {
             const response = await postRequest(`${authUrl}/login`, data);
-            console.log('Response: ', response);
-            console.log('Token: ', response.token);
             if (response && response.token) {
                 setToken(response.token);
                 localStorage.setItem('token', response.token);
+                const decodedToken = jwtDecode(response.token);
+                setUser(decodedToken.user); 
                 setIsLoading(false);
                 return true;  
             }
         } catch (error) {
-            console.log(error);
             setError(error?.message || error);
         }
         setIsLoading(false);
         return false; 
     }, []);
+
+    const updateUser = useCallback(async (data) => {
+        const token = localStorage.getItem('token');
+        console.log(token)
+        if (!token) {
+            console.log('Token is not defined');
+            return;
+        }
+    
+        try {
+            const response = await updateRequest(
+                `${baseUrl}/users/${user.id}`,
+                data,{
+                    "Authorization": `Bearer ${token}`,
+                }
+            );
+            setUser(response);
+            localStorage.setItem('currentUser', JSON.stringify(response));
+        } catch (error) {
+            setError(error?.message || error);
+        }
+    
+    }, [user]);
+
+    const getUser = useCallback(async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('Token is not defined');
+            return;
+        }
+    
+        try {
+            const response = await getRequest(
+                `${baseUrl}/me`,
+                {
+                    "Authorization": `Bearer ${token}`,
+                }
+            );
+            setUser(response);
+            return response; 
+        } catch (error) {
+            setError(error?.message || error);
+        }
+    }, []);
+      
     
 
     useEffect(() => {
@@ -82,11 +124,13 @@ export const AuthContextProvider = ({ children }) => {
             loginUser,
             token,
             logout,
-            user, 
             error,
             isLoading,
             userRole,
-            setUserRole
+            setUserRole,
+            updateUser,
+            getUser,
+            user,
         }}>
             {children}
         </AuthContext.Provider>

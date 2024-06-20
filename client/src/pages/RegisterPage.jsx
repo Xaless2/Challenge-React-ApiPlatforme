@@ -33,7 +33,7 @@ const RegisterPage = () => {
     console.log(name, value);
     setRegister((prev) => ({
       ...prev,
-      [name]:[value]
+      [name]: value
     }));
     console.log(register);
   };

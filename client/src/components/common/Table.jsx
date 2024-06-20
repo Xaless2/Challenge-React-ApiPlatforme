@@ -13,7 +13,7 @@ const Table = ({ data, onEdit, onDelete }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item, index) => (
+          {data && data.map((item, index) => ( // Ajoutez une vérification pour s'assurer que data est défini
             <tr key={index}>
               <td className="py-2 px-4 border-b border-gray-200">
                 <img src={item.image} alt={item.name} className="w-16 h-16 object-cover" />

@@ -21,7 +21,6 @@ const RegisterPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value); 
     setRegister((prev) => ({
       ...prev,
       [name]: value,
@@ -30,19 +29,17 @@ const RegisterPage = () => {
 
   const handleChangeArray = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setRegister((prev) => ({
       ...prev,
       [name]: value
     }));
-    console.log(register);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await registerUser(register);
     if (response) {
-      navigate('/register');
+      navigate('/login');
     } else {
       console.error('register failed');
     }
@@ -99,6 +96,9 @@ const RegisterPage = () => {
           <h1 className="text-3xl font-bold mb-8 text-center">Register</h1>
           {error && <p className="text-red-500 mb-6">{error}</p>}
           <FormBuilder fields={fields} />
+          <p className="text-center">Vous avez déjà un compte? <a href="/login" className="text-blue-500">
+            Se connecter
+            </a></p>
         </div>
       </div>
     </div>

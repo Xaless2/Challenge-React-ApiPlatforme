@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import Table from '../components/common/Table';
 import Toast from '../components/common/Toast';
-import { ImUser } from "react-icons/im";
+import { ImUser, ImBackward } from "react-icons/im";
+import { HiChevronLeft } from "react-icons/hi";
 import { Link } from 'react-router-dom';
 import "../styles/components.css"
 import UserList from '../components/common/UserList';
@@ -9,6 +10,8 @@ import Stats from '../components/common/Stats';
 import ModalPup from '../components/common/ModalPup';
 import { AuthContext } from '../contexts/AuthContext';
 import { BrandContext } from '../contexts/BrandContext';
+import { useLocation } from 'react-router-dom';
+
 
 
 function DashboardPage() {
@@ -29,11 +32,11 @@ function DashboardPage() {
   });
   const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
 
+  const history = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
       const brands = await getBrands();
-      console.log(brands);
       setData(brands);
     };
 
@@ -98,11 +101,12 @@ function DashboardPage() {
         className="fixed top-0 z-10 ml-[-100%] flex h-screen w-full flex-col justify-between shadow-md bg-white px-6 pb-3 transition duration-300 md:w-4/12 lg:ml-0 lg:w-[25%] xl:w-[20%] 2xl:w-[15%] dark:border-gray-700"
       >
         <div>
-          <div className="-mx-6 px-6 py-4">
-            <a href="#" title="home">
-              <img src="images/logo.svg" className="w-32" alt="tailus logo" />
-            </a>
-          </div>
+        <div className="-mx-6 px-6 py-4">
+        <Link to="/" onClick={() => history.goBack()} className="flex flex-row items-center justify-center">
+          <HiChevronLeft className='text-4xl'/>
+          <span className="ml-2 text-black">Retour</span>
+        </Link>
+        </div>
           {user && (
           <div className="mt-8 text-center">
             <img

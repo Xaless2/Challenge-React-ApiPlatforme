@@ -11,6 +11,7 @@ export const AuthContextProvider = ({ children }) => {
     const [userRole, setUserRole] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+
     useEffect(() => {
         if (token) {
             const decodedToken = jwtDecode(token); 
@@ -47,21 +48,18 @@ export const AuthContextProvider = ({ children }) => {
                 localStorage.setItem('token', response.token);
                 const decodedToken = jwtDecode(response.token);
                 setUser(decodedToken.user); 
-                setIsLoading(false);
                 return true;  
             }
         } catch (error) {
             setError(error?.message || error);
         }
-        setIsLoading(false);
+        setIsLoading(false); 
         return false; 
     }, []);
 
     const updateUser = useCallback(async (data) => {
         const token = localStorage.getItem('token');
-        console.log(token)
         if (!token) {
-            console.log('Token is not defined');
             return;
         }
     
@@ -83,7 +81,6 @@ export const AuthContextProvider = ({ children }) => {
     const getUser = useCallback(async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            console.log('Token is not defined');
             return;
         }
     
@@ -102,14 +99,13 @@ export const AuthContextProvider = ({ children }) => {
     }, []);
       
     
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            setToken(token);
-        }
-        setIsLoading(false);
-    }, []);
+   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        setToken(token);
+    }
+    setIsLoading(false);
+}, []);
 
     const logout = () => {
         setUser(null);

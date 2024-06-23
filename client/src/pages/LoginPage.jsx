@@ -1,12 +1,13 @@
 import React, { useContext, useState } from 'react';
 import FormBuilder from '../components/builder/FormBuilder';
 import { AuthContext } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LoginPage = () => {
   const { loginUser, error } = useContext(AuthContext);
   const [login, setLogin] = useState({ email: '', password: '' });
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,7 +22,8 @@ const LoginPage = () => {
     const success = await loginUser(login);
     console.log("success data", success);
     if (success) {
-      navigate('/');
+      const from = location.state?.from?.pathname || '/';
+      navigate(from);
     } else {
       console.error('Login failed');
     }
@@ -30,7 +32,21 @@ const LoginPage = () => {
   const fields = [
     { type: 'email', label: 'Email', name: 'email', value: login.email, onChange: handleChange },
     { type: 'password', label: 'Password', name: 'password', value: login.password, onChange: handleChange },
-    { type: 'button', label: 'Login', onClick: handleSubmit },
+    { type: 'button', label: 'Login', onClick: handleSubmit,
+      style: {
+        hoverBackgroundColor: '#088f9c',
+        color: 'white',
+        fontWeight: 'bold',
+        width: '100%',
+        paddingY: '2',
+        paddingX: '4',
+        borderRadius: 'rounded',
+        focus: {
+          outline: 'none',
+          shadow: 'outline',
+        },
+      },
+     },
   ];
 
   return (
@@ -46,7 +62,14 @@ const LoginPage = () => {
           <h1 className="text-3xl font-bold mb-8 text-center">Login</h1>
           {error && <p className="text-red-500 mb-6">{error}</p>}
           <FormBuilder fields={fields} />
+          <p className="text-center">
+            Vous n'avez pas de compte ?{' '}
+            
+           <a href="/register" className="text-blue-500">
+            Créer un compte
+            </a></p>
         </div>
+       
       </div>
     </div>
   );

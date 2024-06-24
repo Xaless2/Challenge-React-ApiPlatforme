@@ -91,7 +91,7 @@ class EstablishmentController extends AbstractController
 
         $establishments = $establishmentRepository->findBy(['brand_id' => $brandId]);
 
-        $clientArray = [];
+        $clients = [];
         foreach ($establishments as $es) {
             $performances = $performanceRepository->findBy(['establishment_id' => $es->getId()]);
             foreach ($performances as $performance) {
@@ -99,9 +99,9 @@ class EstablishmentController extends AbstractController
                 foreach ($slots as $slot) {
                     $reservations = $reservationRepository->findBy(['slot_id' => $slot->getId()]);
                     foreach ($reservations as $reservation) {
-                        $clients = $userRepository->findBy(['id' => $reservation->getClientId()]);
-                        foreach ($clients as $client) {
-                            $clientArray[] = [
+                        $client = $reservation->getClientId();
+                        if ($client && !isset($clients[$client->getId()])) {
+                            $clients[$client->getId()] = [
                                 'id' => $client->getId(),
                                 'firstname' => $client->getFirstname(),
                                 'lastname' => $client->getLastname(),
@@ -112,6 +112,6 @@ class EstablishmentController extends AbstractController
             }
         }
 
-        return new JsonResponse($clientArray);
+        return new JsonResponse(array_values($clients));
     }
 }

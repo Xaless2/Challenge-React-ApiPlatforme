@@ -67,7 +67,7 @@ class Slot
 
     public function getPerformanceId(): ?Performance
     {
-        return $this->performanceId;
+        return $this->performance_id;
     }
 
     public function setPerformanceId(?Performance $performanceId): static

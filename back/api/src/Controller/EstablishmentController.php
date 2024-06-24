@@ -105,6 +105,7 @@ class EstablishmentController extends AbstractController
                                 'id' => $client->getId(),
                                 'firstname' => $client->getFirstname(),
                                 'lastname' => $client->getLastname(),
+                                'email' => $client->getEmail()
                             ];
                         }
                     }

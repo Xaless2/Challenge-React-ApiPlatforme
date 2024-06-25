@@ -72,49 +72,53 @@ class EstablishmentController extends AbstractController
     }
 
     #[Route('/api/establishments/users', name: 'establishment_users', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function getUsersByEstablishment(
-        BrandRepository $brandRepository, 
-        EstablishmentRepository $establishmentRepository, 
-        PerformanceRepository $performanceRepository,
-        SlotRepository $slotRepository,
-        ReservationRepository $reservationRepository,
-        UserRepository $userRepository
-    ): JsonResponse {
-        $user = $this->getUser();
-        $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
-        $brandId = !empty($brands) ? end($brands)->getId() : null;
+#[IsGranted('ROLE_ADMIN')]
+public function getUsersByEstablishment(
+    BrandRepository $brandRepository, 
+    EstablishmentRepository $establishmentRepository, 
+    PerformanceRepository $performanceRepository,
+    SlotRepository $slotRepository,
+    ReservationRepository $reservationRepository,
+    UserRepository $userRepository
+): JsonResponse {
+    $user = $this->getUser();
+    $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
+    $brandId = !empty($brands) ? end($brands)->getId() : null;
 
-        if (!$brandId) {
-            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
-        }
+    if (!$brandId) {
+        return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+    }
 
-        $establishments = $establishmentRepository->findBy(['brand_id' => $brandId]);
+    $establishments = [];
+    foreach($brands as $b){
+        $establishments = array_merge($establishments, $establishmentRepository->findBy(['brand_id' => $b->getId()]));
+    }
 
-        $clients = [];
-        foreach ($establishments as $es) {
-            $performances = $performanceRepository->findBy(['establishment_id' => $es->getId()]);
-            foreach ($performances as $performance) {
-                $slots = $slotRepository->findBy(['performance_id' => $performance->getId()]);
-                foreach ($slots as $slot) {
-                    $reservations = $reservationRepository->findBy(['slot_id' => $slot->getId()]);
-                    foreach ($reservations as $reservation) {
-                        $client = $reservation->getClientId();
-                        if ($client && !isset($clients[$client->getId()])) {
-                            $clients[$client->getId()] = [
-                                'id' => $client->getId(),
-                                'firstname' => $client->getFirstname(),
-                                'lastname' => $client->getLastname(),
-                                'email' => $client->getEmail()
-                            ];
-                        }
+    $clients = [];
+    foreach ($establishments as $es) {
+        $performances = $performanceRepository->findBy(['establishment_id' => $es->getId()]);
+        foreach ($performances as $performance) {
+            $slots = $slotRepository->findBy(['performance_id' => $performance->getId()]);
+            foreach ($slots as $slot) {
+                $reservations = $reservationRepository->findBy(['slot_id' => $slot->getId()]);
+                foreach ($reservations as $reservation) {
+                    $client = $reservation->getClientId();
+                    if ($client && !isset($clients[$client->getId()])) {
+                        $clients[$client->getId()] = [
+                            'id' => $client->getId(),
+                            'firstname' => $client->getFirstname(),
+                            'lastname' => $client->getLastname(),
+                            'email' => $client->getEmail()
+                        ];
                     }
                 }
             }
         }
-
-        return new JsonResponse(array_values($clients));
     }
+
+    return new JsonResponse(array_values($clients));
+}
+
 
     #[Route('api/establishment/brand', name: 'api_establishment_brand', methods: ['GET'])]
     public function listEstablishmentByBrand(BrandRepository $brandRepository, EstablishmentRepository $establishmentRepository): Response

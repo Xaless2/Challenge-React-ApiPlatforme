@@ -71,34 +71,7 @@ class EstablishmentController extends AbstractController
         return new JsonResponse(['status' => 'Establishment deleted!'], Response::HTTP_NO_CONTENT);
     }
 
-    #[Route('/api/establishments/{id}', name: 'establishment_detail', methods: ['GET'])]
-    public function detail(Establishment $establishment, PerformanceRepository $performanceRepository): JsonResponse
-    {
-        $performances = $performanceRepository->findBy(['establishment_id' => $establishment]);
-
-        $data = [
-            'id' => $establishment->getId(),
-            'name' => $establishment->getDisplayName(),
-            'address' => $establishment->getAddress(),
-            'zipCode' => $establishment->getZipCode(),
-            'city' => $establishment->getCity(),
-            'phone' => $establishment->getPhone(),
-            'performances' => array_map(function ($performance) {
-                return [
-                    'id' => $performance->getId(),
-                    'name' => $performance->getPerformanceName(),
-                    'description' => $performance->getDescription(),
-                    'numberOfClientsMax' => $performance->getNumberOfClientsMax(),
-                    'stripePriceId' => $performance->getStripePriceId(),
-                    'status' => $performance->getStatus(),
-                ];
-            }, $performances)
-        ];
-
-        return new JsonResponse($data);
-    }
-
-    #[Route('/api/establishments/users1', name: 'establishment_users', methods: ['GET'])]
+    #[Route('/api/establishments/users', name: 'establishment_users', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function getUsersByEstablishment(
         BrandRepository $brandRepository, 
@@ -116,10 +89,7 @@ class EstablishmentController extends AbstractController
             return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
         }
 
-        $establishments = [];
-        foreach($brands as $b){
-            $establishments = array_merge($establishments, $establishmentRepository->findBy(['brand_id' => $b->getId()]));
-        }
+        $establishments = $establishmentRepository->findBy(['brand_id' => $brandId]);
 
         $clients = [];
         foreach ($establishments as $es) {
@@ -144,25 +114,5 @@ class EstablishmentController extends AbstractController
         }
 
         return new JsonResponse(array_values($clients));
-    }
-
-    #[Route('api/establishment/brand', name: 'api_establishment_brand', methods: ['GET'])]
-    public function listEstablishmentByBrand(BrandRepository $brandRepository, EstablishmentRepository $establishmentRepository): Response
-    {
-        $user = $this->getUser();
-        $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
-        $brandId = !empty($brands) ? end($brands)->getId() : null;
-
-        if (!$brandId) {
-            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
-        }
-
-        $establishments = [];
-        foreach($brands as $b){
-            $establishment = $establishmentRepository->findBy(['brand_id' => $b->getId()]);
-            $establishments[] = $establishment;
-        }
-        
-        return $this->json($establishments);
     }
 }

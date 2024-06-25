@@ -115,4 +115,24 @@ class EstablishmentController extends AbstractController
 
         return new JsonResponse(array_values($clients));
     }
+
+    #[Route('api/establishment/brand', name: 'api_establishment_brand', methods: ['GET'])]
+    public function listEstablishmentByBrand(BrandRepository $brandRepository, EstablishmentRepository $establishmentRepository): Response
+    {
+        $user = $this->getUser();
+        $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
+        $brandId = !empty($brands) ? end($brands)->getId() : null;
+
+        if (!$brandId) {
+            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+        }
+
+        $establishments = [];
+        foreach($brands as $b){
+            $establishment = $establishmentRepository->findBy(['brand_id' => $b->getId()]);
+            $establishments[] = $establishment;
+        }
+        
+        return $this->json($establishments);
+    }
 }

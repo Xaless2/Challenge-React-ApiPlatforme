@@ -14,11 +14,11 @@ class InstituteFixtures extends Fixture
       //ajouter 50 établissements
         for ($i = 2; $i <= 50; $i++) {
             $institute = new Institute();
-            $institute->setDisplayName("Salle de sport $i");
-            $institute->setAddress("$i rue de la Paix");
-            $institute->setZipCode("75000");
+            $institute->setName("Etablissement $i");
+            $institute->setPhoneNumber("0123456789");
+            $institute->setAddress("Adresse $i");
+            $institute->setZipcode("75000");
             $institute->setCity("Paris");
-            $institute->setBrandId($this->getReference('brand_1'));
             $manager->persist($institute);
         }
         $manager->flush();

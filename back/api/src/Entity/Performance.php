@@ -20,7 +20,6 @@ class Performance
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Establishment $establishment_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $performance_name = null;
@@ -58,17 +57,7 @@ class Performance
         return $this;
     }
 
-    public function getEstablishmentId(): ?Establishment
-    {
-        return $this->establishment_id;
-    }
-
-    public function setEstablishmentId(?Establishment $establishment_id): static
-    {
-        $this->establishment_id = $establishment_id;
-
-        return $this;
-    }
+  
 
     public function getPerformanceName(): ?string
     {

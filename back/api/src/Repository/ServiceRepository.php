@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Sport;
+use App\Entity\Service;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Sport>
+ * @extends ServiceEntityRepository<Service>
  *
- * @method Sport|null find($id, $lockMode = null, $lockVersion = null)
- * @method Sport|null findOneBy(array $criteria, array $orderBy = null)
- * @method Sport[]    findAll()
- * @method Sport[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Service|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Service|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Service[]    findAll()
+ * @method Service[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SportRepository extends ServiceEntityRepository
+class ServiceRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Sport::class);
+        parent::__construct($registry, Service::class);
     }
 
     //    /**
-    //     * @return Sport[] Returns an array of Sport objects
+    //     * @return Service[] Returns an array of Service objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -36,7 +36,7 @@ class SportRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Sport
+    //    public function findOneBySomeField($value): ?Service
     //    {
     //        return $this->createQueryBuilder('s')
     //            ->andWhere('s.exampleField = :val')

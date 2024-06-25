@@ -14,9 +14,10 @@ class BrandFixtures extends Fixture
         for ($i = 1; $i <= 50; $i++) {
             $brand = new Brand();
             $brand->setName("Marque $i");
-            $brand->setLogo("logo_marque_$i.png");
+            $brand->setKbis("kbis $i");
             $manager->persist($brand);
-            $this->addReference("brand_$i", $brand);
+                        
+
         }
 
         $manager->flush();

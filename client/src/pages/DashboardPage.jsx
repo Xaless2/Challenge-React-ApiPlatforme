@@ -5,7 +5,6 @@ import { ImUser, ImBackward } from "react-icons/im";
 import { HiChevronLeft } from "react-icons/hi";
 import { Link } from 'react-router-dom';
 import "../styles/components.css"
-import UserList from '../components/common/UserList';
 import Stats from '../components/common/Stats';
 import ModalPup from '../components/common/ModalPup';
 import { AuthContext } from '../contexts/AuthContext';
@@ -248,7 +247,6 @@ function DashboardPage() {
             {view === 'dashboard' ? (
               <>
                 <Stats stats={stats} />
-                <UserList users={users} />
               </>
             ) : view === 'table' ? (
               <>

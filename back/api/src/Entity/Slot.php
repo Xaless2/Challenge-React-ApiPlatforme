@@ -23,7 +23,10 @@ class Slot
     #[ORM\JoinColumn(nullable: false)]
     private ?Performance $performance_id = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: "slots")]
+    #[ORM\JoinTable(name: "slot_user")]
+    #[ORM\JoinColumn(name: "slot_id", referencedColumnName: "id")]
+    #[ORM\InverseJoinColumn(name: "coach_id", referencedColumnName: "id")]
     private Collection $coach_id;
 
     #[ORM\Column(nullable: true)]
@@ -67,7 +70,7 @@ class Slot
 
     public function getPerformanceId(): ?Performance
     {
-        return $this->performanceId;
+        return $this->performance_id;
     }
 
     public function setPerformanceId(?Performance $performanceId): static

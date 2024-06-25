@@ -14,7 +14,7 @@ export const AuthContextProvider = ({ children }) => {
     useEffect(() => {
         if (token) {
             const decodedToken = jwtDecode(token); 
-            setUserRole(decodedToken.roles[0]); 
+            setUserRole(decodedToken.roles); 
         }
     }, [token]);
 

@@ -98,6 +98,8 @@ class EstablishmentController extends AbstractController
                 $slots = $slotRepository->findBy(['performance_id' => $performance->getId()]);
                 foreach ($slots as $slot) {
                     $reservations = $reservationRepository->findBy(['slot_id' => $slot->getId()]);
+                    $slotUsers = $slotUserRepository->findBy(['slot_id' => $slot->getId()]);
+                    //next
                     foreach ($reservations as $reservation) {
                         $client = $reservation->getClientId();
                         if ($client && !isset($clients[$client->getId()])) {

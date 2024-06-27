@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import FormBuilder from '../components/builder/FormBuilder';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { user } from '@nextui-org/react';
 
 const RegisterPage = () => {
   const { registerUser, error } = useContext(AuthContext);
@@ -11,6 +12,7 @@ const RegisterPage = () => {
     roles: [],
     firstname: '',
     lastname: '',
+    username: '',
     phone: '',
     address: '',
     zipcode: '',

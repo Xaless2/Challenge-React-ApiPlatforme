@@ -20,6 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]
 )]
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
+#[ApiResource]
 class Brand
 {
     #[ORM\Id]
@@ -44,7 +45,7 @@ class Brand
         return $this->id;
     }
 
-    public function setId(int $id): static
+    public function getName(): ?string
     {
         $this->id = $id;
         return $this;

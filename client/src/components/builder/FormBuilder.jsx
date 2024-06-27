@@ -3,6 +3,7 @@ import SelectInput from '../common/SelectInput';
 import  PasswordInput from '../common/PasswordInput'; 
 import Button from '../common/Button';
 import FileInput from '../common/FileInput';
+import React from 'react';
 
 const FIELD_TYPES = {
   TEXT: 'text',

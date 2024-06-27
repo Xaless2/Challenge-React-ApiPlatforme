@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Entity\Establishment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -35,5 +37,22 @@ class UserRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    public function findUsersWithReservationsForEstablishment(Establishment $establishment, User $user)
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->innerJoin('u.reservation', 'r')
+            ->innerJoin('r.slot', 's')
+            ->innerJoin('s.performance', 'p')
+            ->innerJoin('p.establishment', 'e')
+            ->innerJoin('e.brand', 'b')
+            ->where('e = :establishment')
+            ->andWhere('b.user_id = :user_id')
+            ->setParameter('establishment', $establishment)
+            ->setParameter('user_id', $user)
+            ->getQuery();
+
+        return $qb->getResult();
     }
 }

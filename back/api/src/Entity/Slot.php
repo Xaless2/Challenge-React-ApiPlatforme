@@ -23,9 +23,6 @@ class Slot
     #[ORM\JoinColumn(nullable: false)]
     private ?Performance $performance_id = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class)]
-    private Collection $coach_id;
-
     #[ORM\Column(nullable: true)]
     private ?int $number_of_clients = null;
 
@@ -67,7 +64,7 @@ class Slot
 
     public function getPerformanceId(): ?Performance
     {
-        return $this->performanceId;
+        return $this->performance_id;
     }
 
     public function setPerformanceId(?Performance $performanceId): static

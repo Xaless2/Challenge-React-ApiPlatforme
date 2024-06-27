@@ -1,21 +1,29 @@
 api_platform:
+<<<<<<< HEAD
     title: Hello API Platform
     version: 1.0.0
     # Mercure integration, remove if unwanted
+=======
+    title: 'Challenge - API Platform'
+    version: '1.0.0'
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity']
+    patch_formats:
+        json:
+            - 'application/merge-patch+json'
+    swagger:
+        versions: [3]
+    http_cache:
+        invalidation:
+            enabled: true
+        public: true
+    mercure:
+        enabled: false  
+>>>>>>> refs/remotes/origin/feat/dashboard
     formats:
-        jsonld: ['application/ld+json']
-        json: ['application/json']
-    docs_formats:
-        jsonld: ['application/ld+json']
-        jsonopenapi: ['application/vnd.openapi+json']
-        html: ['text/html']
-    # Good defaults for REST APIs
-    defaults:
-        stateless: true
-        cache_headers:
-            vary: ['Content-Type', 'Authorization', 'Origin']
-        extra_properties:
-            standard_put: true
-            rfc_7807_compliant_errors: true
-    event_listeners_backward_compatibility_layer: false
-    keep_legacy_inflector: false
+        jsonld:  ['application/ld+json']
+        json:    ['application/json']
+        html:    ['text/html']
+        jsonhal: ['application/hal+json']
+    exception_to_status:
+        Symfony\Component\Serializer\Exception\ExceptionInterface: 400 # Bad request on deserialization errors

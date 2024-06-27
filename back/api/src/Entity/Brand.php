@@ -8,15 +8,35 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use App\Repository\BrandRepository;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\BrandImageEndPdfController;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
-        new Get(),
-        new Put(security: "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"),
-        new Delete(security: "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')"),
-        new Post(security: "is_granted('ROLE_CREATOR') or is_granted('ROLE_ADMIN')")
+    new Get(
+        uriTemplate:
+        'brands/{id}',
+        // requirements:[
+        //     'id' => 'd/'
+        // ]
+    ),
+    new GetCollection(),
+    new Post(
+        controller:BrandImageEndPdfController::class,
+        read:true,
+        write:true,
+        uriTemplate: 'brands/{id}/image_url',
+        // requirements:[
+        //     'image_url' => 'image_url/'
+        // ] 
+        ),
+        
+    new Put(),
+    new Delete()
+       
+    
     ]
 )]
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
@@ -36,7 +56,7 @@ class Brand
     #[ORM\Column(type: 'blob', nullable: true)]
     private ?string $kbis_pdf = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image_url = null;
 
     public function getId(): ?int

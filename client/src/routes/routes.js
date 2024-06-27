@@ -3,6 +3,7 @@ import LoginPage from "../pages/LoginPage.jsx";
 import DashboardPage from "../pages/DashboardPage.jsx";
 import WelcomePage from "../pages/WelcomePage.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
+import EstablishmentPage from "../pages/EstablishmentPage.jsx"; // Importer la nouvelle page
 
 export const routes = [
     {
@@ -16,17 +17,18 @@ export const routes = [
     {
         path: "/",
         component: WelcomePage,
-
     },
     {
         path: "/dashboard",
-        component: DashboardPage,
-        protected: false,
+        component: DashboardPage
     },
     {
         path: "/profile",
-        component: ProfilePage,
-        protected: false,
+        component: ProfilePage
+    },
+    {
+        path: "/establishments/:id", 
+        component: EstablishmentPage
     },
 ];
 

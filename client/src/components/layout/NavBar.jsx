@@ -48,7 +48,7 @@ export default function NavBar() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem isActive>
-          <Link href="#" aria-current="page" className="hover:underline  transition duration-200" style={{
+          <Link href="/etablishment" aria-current="page" className="hover:underline  transition duration-200" style={{
             color: 'black',
             fontWeight:'lighter'
           }}>

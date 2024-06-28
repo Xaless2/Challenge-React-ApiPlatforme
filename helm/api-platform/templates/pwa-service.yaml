@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "back.fullname" . }}-pwa
+  labels:
+    {{- include "back.labelsPWA" . | nindent 4 }}
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "back.selectorLabelsPWA" . | nindent 4 }}

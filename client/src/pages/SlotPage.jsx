@@ -2,10 +2,11 @@ import React from 'react';
 import AdminFormBuilder from '../components/builder/AdminFormBuilder';
 import createSlotFormFields from '../components/form/createSlotFormFields';
 
+export const baseUrl = "http://localhost:8000/api";
 const SlotPage = () => {
     const handleSubmit = async (formData) => {
         try {
-            const response = await fetch('/api/slots', {
+            const response = await fetch('${baseUrl}/slots', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

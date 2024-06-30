@@ -5,7 +5,7 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "api-platform/core": "^3.2",
+        "api-platform/core": "*",
         "doctrine/annotations": "*",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
@@ -30,7 +30,8 @@
         "symfony/serializer": "6.4.*",
         "symfony/twig-bundle": "6.4.*",
         "symfony/validator": "6.4.*",
-        "symfony/yaml": "6.4.*"
+        "symfony/yaml": "6.4.*",
+        "vich/uploader-bundle": "*"
     },
     "require-dev": {
         "api-platform/schema-generator": "^5.0",

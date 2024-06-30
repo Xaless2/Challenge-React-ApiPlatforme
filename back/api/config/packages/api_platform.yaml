@@ -1,9 +1,5 @@
 api_platform:
-<<<<<<< HEAD
-    title: Hello API Platform
-    version: 1.0.0
-    # Mercure integration, remove if unwanted
-=======
+
     title: 'Challenge - API Platform'
     version: '1.0.0'
     mapping:
@@ -19,11 +15,11 @@ api_platform:
         public: true
     mercure:
         enabled: false  
->>>>>>> refs/remotes/origin/feat/dashboard
     formats:
         jsonld:  ['application/ld+json']
         json:    ['application/json']
         html:    ['text/html']
         jsonhal: ['application/hal+json']
+        multipart: ['multipart/form-data']
     exception_to_status:
         Symfony\Component\Serializer\Exception\ExceptionInterface: 400 # Bad request on deserialization errors

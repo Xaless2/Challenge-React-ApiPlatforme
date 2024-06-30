@@ -140,16 +140,12 @@
             "branch": "main",
             "version": "1.0",
             "ref": "2390b4ed5c195e0b3f6dea45221f3b7c0af523a0"
-<<<<<<< HEAD
-        }
-=======
         },
         "files": [
             "config/packages/gesdinet_jwt_refresh_token.yaml",
             "config/routes/gesdinet_jwt_refresh_token.yaml",
             "src/Entity/RefreshToken.php"
         ]
->>>>>>> refs/remotes/origin/feat/dashboard
     },
     "laminas/laminas-code": {
         "version": "4.5.1"
@@ -506,6 +502,18 @@
     },
     "twig/twig": {
         "version": "v3.3.7"
+    },
+    "vich/uploader-bundle": {
+        "version": "2.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.13",
+            "ref": "1b3064c2f6b255c2bc2f56461aaeb76b11e07e36"
+        },
+        "files": [
+            "config/packages/vich_uploader.yaml"
+        ]
     },
     "willdurand/negotiation": {
         "version": "3.0.0"

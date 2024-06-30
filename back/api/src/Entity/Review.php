@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ReviewRepository;
+use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(mercure: false)]
-#[ORM\Entity(repositoryClass: App\Repository\ReviewRepository::class)]
+
+#[ORM\Entity(repositoryClass: ReviewRepository::class)]
+#[ApiResource]
 class Review
 {
     #[ORM\Id]

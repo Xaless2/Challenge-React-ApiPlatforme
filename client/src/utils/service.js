@@ -82,3 +82,13 @@ export const deleteRequest = async (url) => {
 
     return data;
 }
+
+export const createPerformance = async (performanceData) => {
+    const url = `${baseUrl}/performances`;
+    return await postRequest(url, performanceData);
+};
+
+export const createSlot = async (slotData) => {
+    const url = `${baseUrl}/slots`;
+    return await postRequest(url, slotData);
+};

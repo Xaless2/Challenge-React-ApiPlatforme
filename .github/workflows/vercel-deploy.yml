@@ -41,13 +41,13 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --legacy-peer-deps
+        run: pnpm install --shamefully-hoist
 
       - name: Remove .env file
         run: rm -f .env
 
       - name: Install Vercel CLI
-        run: npm i -g vercel@latest
+        run: pnpm install -g vercel@latest
 
       - name: Get vercel environment
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_GITHUB_TOKEN }}

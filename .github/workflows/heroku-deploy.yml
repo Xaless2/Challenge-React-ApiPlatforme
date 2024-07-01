@@ -3,7 +3,7 @@ name: Deploy Back-End To Heroku
 on:
   push:
     branches:
-      - main
+      - prod
     paths:
       - 'api/**'
       - '.github/workflows/heroku-deploy.yml'

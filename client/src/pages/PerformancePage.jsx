@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AdminFormBuilder from '../components/builder/AdminFormBuilder';
 import createPerformanceFormFields from '../components/form/createPerformanceFormFields';
 
@@ -6,6 +7,7 @@ export const baseUrl = "http://localhost:8000/api";
 
 const PerformancePage = () => {
     const [formFields, setFormFields] = useState(createPerformanceFormFields);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchEstablishments = async () => {
@@ -50,7 +52,7 @@ const PerformancePage = () => {
         fetchEstablishments();
     }, []);
 
-    const handleSubmit = async (formData) => {
+    const handlePerformanceSubmit = async (formData) => {
         try {
             const token = localStorage.getItem('token'); 
 
@@ -72,6 +74,7 @@ const PerformancePage = () => {
 
             const data = await response.json();
             console.log('Performance created successfully:', data);
+            navigate('/create-slot', { state: { performanceId: data.id, numberOfClients: formData.number_of_clients_max } });
         } catch (error) {
             console.error('Error creating performance:', error);
         }
@@ -80,7 +83,7 @@ const PerformancePage = () => {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Créer une Performance</h1>
-            <AdminFormBuilder fields={formFields} onSubmit={handleSubmit} />
+            <AdminFormBuilder fields={formFields} onSubmit={handlePerformanceSubmit} />
         </div>
     );
 };

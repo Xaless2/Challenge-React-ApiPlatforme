@@ -16,10 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up Git for Heroku
+        run: |
+          git remote add heroku https://git.heroku.com/planifit.git
+          git fetch heroku
+
       - uses: akhileshns/heroku-deploy@v3.12.14
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "planifit"
           heroku_email: "khsuwang@myges.fr"
-          appdir: "api"
+          appdir: "."
 
+      - name: Push to Heroku
+        run: |
+          git push --force heroku `git subtree split --prefix=api HEAD`:refs/heads/main

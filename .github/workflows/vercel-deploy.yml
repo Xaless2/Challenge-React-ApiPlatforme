@@ -3,6 +3,7 @@ name: Deploy Front-End To Vercel
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
 on:
   push:
@@ -49,11 +50,11 @@ jobs:
       - name: Install Vercel CLI
         run: pnpm install -g vercel@latest
 
-      - name: Get vercel environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_GITHUB_TOKEN }}
+      - name: Get Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
-        run: vercel build --token=${{ secrets.VERCEL_GITHUB_TOKEN }} --prod
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} --prod
 
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_GITHUB_TOKEN }} --prod
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --prod

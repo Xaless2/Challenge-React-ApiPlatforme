@@ -1,8 +1,9 @@
 const createPerformanceFormFields = [
     {
-        type: 'number',
+        type: 'select',
         name: 'establishment_id',
         label: "ID de l'établissement",
+        options: [], 
         required: true,
     },
     {

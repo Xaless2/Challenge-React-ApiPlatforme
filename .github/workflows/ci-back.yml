@@ -21,13 +21,6 @@ jobs:
       - name: Start API Platform Docker containers
         run: docker-compose up -d
 
-      - name: Wait for PHP container to be ready
-        run: |
-          echo "Waiting for PHP container to be ready..."
-          until docker-compose exec php ls /var/www; do
-            sleep 5
-          done
-
       - name: Install dependencies
         run: docker-compose exec php composer install
 

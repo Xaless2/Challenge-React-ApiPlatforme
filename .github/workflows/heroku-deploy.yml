@@ -3,32 +3,25 @@ name: Deploy Back-End To Heroku
 on:
   push:
     branches:
-      - prod
+      - main
     paths:
-      - 'back/api/**'
+      - 'api/**'
       - '.github/workflows/heroku-deploy.yml'
 
 jobs:
+  
   build:
-    defaults:
-        run:
-          working-directory: ./back/api
+    needs:
+      - tests
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./back/api
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Git for Heroku
-        run: |
-          git remote add heroku https://git.heroku.com/planifit.git
-          git fetch heroku
-
       - uses: akhileshns/heroku-deploy@v3.12.14
         with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "planifit"
           heroku_email: "khsuwang@myges.fr"
-          appdir: "."
-
-      - name: Push to Heroku
-        run: |
-          git push --force heroku `git subtree split --prefix=api HEAD`:refs/heads/main
+          appdir: "api"

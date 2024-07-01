@@ -18,7 +18,7 @@ function DashboardPage() {
   const [showToast, setShowToast] = useState(false);  
   const { token, userRole, logout, user, getUser } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
-  const { getBrandById } = useContext(BrandContext);
+  const { getAllBrands, allBrands } = useContext(BrandContext);
   const [brandId, setBrandId] = useState(null); 
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([
@@ -34,14 +34,10 @@ function DashboardPage() {
 
   const history = useLocation();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const brands = await getBrandById(brandId);
-      setData(brands);
-    };
-
-    fetchData();
-  }, [getBrandById]);
+  const allBrandsWithDate = allBrands.map(brand => ({
+    ...brand,
+    date: 'N/A', 
+  }));
 
 
   useEffect(() => {
@@ -252,7 +248,7 @@ function DashboardPage() {
             ) : view === 'table' ? (
               <>
                 <ModalPup />
-                <Table data={data} onEdit={handleEdit} onDelete={handleDelete} />
+                <Table data={allBrands} onEdit={handleEdit} onDelete={handleDelete} />
               </>
             ) : (
               <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>

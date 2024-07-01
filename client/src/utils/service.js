@@ -1,8 +1,5 @@
-
-
 export const baseUrl = "http://localhost:8000/api"; 
 export const authUrl = "http://localhost:8000";
-
 
 export const postRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {
@@ -14,18 +11,13 @@ export const postRequest = async (url, body, headers = {}) => {
         body: JSON.stringify(body)
     });
 
-    let data;
-    if (response.ok) {
-        data = response.status === 204 ? null : await response.json();
-    } else {
-        data = await response.json();
-        throw new Error(data.error.message);
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error.message || 'Network response was not ok');
     }
 
-    return data;
+    return await response.json();
 };
-
-
 
 export const getRequest = async (url, headers = {}) => {
     const response = await fetch(url, {
@@ -43,7 +35,6 @@ export const getRequest = async (url, headers = {}) => {
     return await response.json();
 };
 
-
 export const updateRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {
         method: 'PUT',
@@ -54,19 +45,12 @@ export const updateRequest = async (url, body, headers = {}) => {
         body: JSON.stringify(body)
     });
 
-    let data;
-    if (response.ok) {
-        data = response.status === 204 ? null : await response.json();
-    } else {
-        try {
-            data = await response.json();
-            throw new Error(data.error.message);
-        } catch (e) {
-            throw new Error('An error occurred while processing the request.');
-        }
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error.message || 'Network response was not ok');
     }
 
-    return data;
+    return await response.json();
 }
 
 export const getRequestById = async (url, headers = {}) => {
@@ -85,20 +69,19 @@ export const getRequestById = async (url, headers = {}) => {
     return await response.json();
 }
 
-
-export const deleteRequest = async (url) => {
+export const deleteRequest = async (url, headers = {}) => {
     const response = await fetch(url, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            ...headers
+        }
     });
 
-    let data;
-    if (response.ok) {
-        data = response.status === 204 ? null : await response.json();
-    } else {
-        data = await response.json();
-        throw new Error(data.error.message);
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error.message || 'Network response was not ok');
     }
 
-    return data;
+    return await response.json();
 }
-

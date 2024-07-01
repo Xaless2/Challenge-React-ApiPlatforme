@@ -3,7 +3,7 @@ name: Back CI
 on:
   push:
     branches:
-      - main
+      - prod
     paths:
       - 'back/**'
 

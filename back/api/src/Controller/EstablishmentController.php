@@ -9,6 +9,7 @@ use App\Repository\BrandRepository;
 use App\Repository\SlotRepository;
 use App\Repository\PerformanceRepository;
 use App\Repository\ReservationRepository;
+use App\Repository\SlotCoachRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,40 +80,63 @@ class EstablishmentController extends AbstractController
         PerformanceRepository $performanceRepository,
         SlotRepository $slotRepository,
         ReservationRepository $reservationRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        SlotCoachRepository $slotCoachRepository
     ): JsonResponse {
         $user = $this->getUser();
         $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
-        $brandId = !empty($brands) ? end($brands)->getId() : null;
 
-        if (!$brandId) {
+        if (!$brands) {
             return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
         }
 
-        $establishments = $establishmentRepository->findBy(['brand_id' => $brandId]);
-
         $clients = [];
-        foreach ($establishments as $es) {
-            $performances = $performanceRepository->findBy(['establishment_id' => $es->getId()]);
-            foreach ($performances as $performance) {
-                $slots = $slotRepository->findBy(['performance_id' => $performance->getId()]);
-                foreach ($slots as $slot) {
-                    $reservations = $reservationRepository->findBy(['slot_id' => $slot->getId()]);
-                    foreach ($reservations as $reservation) {
-                        $client = $reservation->getClientId();
-                        if ($client && !isset($clients[$client->getId()])) {
-                            $clients[$client->getId()] = [
-                                'id' => $client->getId(),
-                                'firstname' => $client->getFirstname(),
-                                'lastname' => $client->getLastname(),
-                                'email' => $client->getEmail()
-                            ];
+        $coachs = [];
+
+        foreach ($brands as $brand ) {
+            $establishments = $establishmentRepository->findBy(['brand_id' => $brand->getId()]);
+
+            foreach ($establishments as $es) {
+                $performances = $performanceRepository->findBy(['establishment_id' => $es->getId()]);
+                foreach ($performances as $performance) {
+                    $slots = $slotRepository->findBy(['performance_id' => $performance->getId()]);
+                    foreach ($slots as $slot) {
+                        $reservations = $reservationRepository->findBy(['slot_id' => $slot->getId()]);
+                        $slotCoachs = $slotCoachRepository->findBy(['slot_id' => $slot->getId()]);
+
+                        foreach ($reservations as $reservation) {
+                            $client = $reservation->getClientId();
+                            if ($client && !isset($clients[$client->getId()])) {
+                                $clients[$client->getId()] = [
+                                    'id' => $client->getId(),
+                                    'firstname' => $client->getFirstname(),
+                                    'lastname' => $client->getLastname(),
+                                    'email' => $client->getEmail()
+                                ];
+                            } 
+                        }
+
+                        foreach ($slotCoachs as $slotCoach) {
+                            $coach = $slotCoach->getCoachId();
+                            if ($coach && !isset($coachs[$coach->getId()])) {
+                                $coachs[$coach->getId()] = [
+                                    'id' => $coach->getId(),
+                                    'firstname' => $coach->getFirstname(),
+                                    'lastname' => $coach->getLastname(),
+                                    'email' => $coach->getEmail()
+                                ];
+                            } 
                         }
                     }
                 }
             }
         }
 
-        return new JsonResponse(array_values($clients));
+        $responseData = [
+            'clients' => array_values($clients),
+            'coachs' => array_values($coachs)
+        ];
+
+        return new JsonResponse($responseData);
     }
 }

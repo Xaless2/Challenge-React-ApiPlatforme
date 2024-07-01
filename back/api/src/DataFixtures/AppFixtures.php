@@ -11,8 +11,9 @@ use App\Entity\Reservation;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 
-class AppFixtures extends Fixture
+class AppFixtures extends Fixture implements FixtureGroupInterface
 {
     private $passwordHasher;
 
@@ -38,6 +39,7 @@ class AppFixtures extends Fixture
         $admin->setCity("text");
         $admin->setImageUrl("text");
         $manager->persist($admin);
+        $this->addReference('user_admin', $admin);
 
         $admin2 = new User();
         $admin2->setFirstname('PrenomAdmin2');
@@ -54,6 +56,7 @@ class AppFixtures extends Fixture
         $admin2->setCity("text");
         $admin2->setImageUrl("text");
         $manager->persist($admin2);
+        $this->addReference('user_admin2', $admin2);
 
         $brand1 = new Brand();
         $brand1->setUserId($admin->getId());
@@ -129,7 +132,7 @@ class AppFixtures extends Fixture
             $coach->setCity("text");
             $coach->setImageUrl("text");
             $manager->persist($coach);
-
+            $this->addReference('coach_' . $i, $coach);
             $coachs[] = $coach;
         }
 
@@ -163,7 +166,7 @@ class AppFixtures extends Fixture
                 $slot->addCoachId($randomCoach);
 
                 $manager->persist($slot);
-                $slots[] = $slot;
+                $this->setReference('slot_' . $i, $slot);
             }
         }
 
@@ -180,5 +183,10 @@ class AppFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    public static function getGroups(): array
+    {
+        return ['app_group'];
     }
 }

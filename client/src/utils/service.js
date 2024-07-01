@@ -86,8 +86,7 @@ export const getRequestById = async (url, headers = {}) => {
 }
 
 
-export const deleteRequest = async (url) => {
-    const response = await fetch(url, {
+export const deleteRequest = async (url) => { const response = await fetch(url, {
         method: 'DELETE'
     });
 

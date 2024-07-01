@@ -16,7 +16,8 @@ jobs:
         with:
           submodules: true 
       - name: Set up Heroku remote
-        run: git remote add heroku https://git.heroku.com/planifit.git
+        run: |
+          git remote add heroku https://heroku:${{secrets.HEROKU_API_KEY}}@git.heroku.com/planifit.git
       - run: git subtree split --prefix=back/api HEAD
       - run: git push --force heroku `git subtree split --prefix=back/api HEAD`:refs/heads/main
       - uses: akhileshns/heroku-deploy@v3.12.14

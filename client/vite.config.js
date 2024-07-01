@@ -6,6 +6,8 @@ import react from '@vitejs/plugin-react';
 //   plugins: [react()],
 //   base: process.env.NODE_ENV === 'production' ? '/Challenge-React-ApiPlatforme/' : '/'
 // });
+import reactRefresh from '@vitejs/plugin-react-refresh';
+
 
 // vite.config.js
 export default {
@@ -17,5 +19,10 @@ export default {
         secure: false,
       }
     }
-  }
+  },
+  plugins: [
+    reactRefresh(),
+ 
+  ],
 }
+

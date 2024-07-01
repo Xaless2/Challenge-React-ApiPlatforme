@@ -16,6 +16,16 @@ class ApiRegistrationController extends AbstractController
     #[Route('/register', name: 'api_registration', methods: ['POST'])]
     public function index(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
     {
+       
+        if ($request->getMethod() === 'POST') {
+            return new Response('', Response::HTTP_OK, [
+                'Access-Control-Allow-Origin' => 'http://localhost:5173',
+                'Access-Control-Allow-Methods' => 'POST, OPTIONS',
+                'Access-Control-Allow-Headers' => 'Content-Type, Authorization',
+                'Access-Control-Max-Age' => '3600',
+            ]);
+        }
+
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['firstname']) || !isset($data['lastname'])) {

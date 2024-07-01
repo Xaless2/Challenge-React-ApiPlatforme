@@ -8,28 +8,38 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+use App\Repository\SlotRepository;
+use App\Repository\UserRepository;
 
 class ReservationController extends AbstractController
 {
     #[Route('/reservations', name: 'create_reservation', methods: ['POST'])]
     public function createReservation(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        // Récupérer les données de la requête et créer une nouvelle réservation
-        $reservation = new Reservation();
-        // Par exemple :
-        // $reservation->setSlotId($data['slot_id']);
-        // $reservation->setClientId($data['client_id']);
-        // $reservation->setStatus($data['status']);
-
-        // Enregistrer la réservation dans la base de données
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($reservation);
-        $entityManager->flush();
-
-        // Retourner une réponse JSON avec l'ID de la nouvelle réservation
-        return new JsonResponse(['id' => $reservation->getId()], JsonResponse::HTTP_CREATED);
+        #[Route('/api/reservations', name: 'create_reservation', methods: ['POST'])]
+     function createReservation(Request $request, SlotRepository $slotRepository, UserRepository $userRepository, EntityManagerInterface $em, SerializerInterface $serializer): JsonResponse
+        {
+            $data = json_decode($request->getContent(), true);
+    
+            $slot = $slotRepository->find($data['slot']);
+            $client = $userRepository->find($data['client']);
+    
+            if (!$slot || !$client) {
+                return new JsonResponse(['error' => 'Slot or client not found'], JsonResponse::HTTP_NOT_FOUND);
+            }
+    
+            $reservation = new Reservation();
+            $reservation->setSlotId($slot);
+            $reservation->setClientId($client);
+            $reservation->setStatus($data['status']);
+    
+            $em->persist($reservation);
+            $em->flush();
+    
+            return new JsonResponse($serializer->normalize($reservation), JsonResponse::HTTP_CREATED);
+        }
     }
 
     #[Route('/reservations/{id}', name: 'get_reservation', methods: ['GET'])]

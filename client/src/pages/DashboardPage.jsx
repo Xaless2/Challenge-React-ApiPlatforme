@@ -10,7 +10,9 @@ import ModalPup from '../components/common/ModalPup';
 import { AuthContext } from '../contexts/AuthContext';
 import { BrandContext } from '../contexts/BrandContext';
 import { useLocation } from 'react-router-dom';
-import  Reservations  from './CalendarPage';
+import  CalendarPage  from './CalendarPage';
+import Navbar from '../components/layout/NavBar';
+
 
 
 
@@ -89,7 +91,7 @@ function DashboardPage() {
   };
 
   const handleReservationClick = () => {
-    setView('Reservations');
+    setView('calendar');
   };
   
   const handleNavItemClick = (selectedView) => {
@@ -101,6 +103,7 @@ function DashboardPage() {
 
   return (
     <>
+      <Navbar />
       <aside
         className="fixed top-0 z-10 ml-[-100%] flex h-screen w-full flex-col justify-between shadow-md bg-white px-6 pb-3 transition duration-300 md:w-4/12 lg:ml-0 lg:w-[25%] xl:w-[20%] 2xl:w-[15%] dark:border-gray-700"
       >
@@ -145,7 +148,7 @@ function DashboardPage() {
                     className="fill-current "
                   ></path>
                 </svg>
-                <span className="-mr-1 font-medium">Dashboard</span>
+                <span className="-mr-1 font-medium">Tableau de bord</span>
               </a>
             </li>
             <li>
@@ -180,7 +183,7 @@ function DashboardPage() {
             {userRole !== 'ROLE_COACH' && userRole !== 'ROLE_CLIENT' && (
               <button
                 onClick={handleReservationClick}
-                className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === 'Reservations' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
+                className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === '' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -199,34 +202,11 @@ function DashboardPage() {
                     d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"
                   />
                 </svg>
-                <span className="group-hover:text-black">Calendrier</span>
+                <span className="group-hover:text-black">Réservations</span>
               </button>
             )}
             </li>
-
-            <li>
-              <a
-                href="#"
-                className="group flex items-center space-x-4 rounded-md px-4 py-3 text-blacktext-black"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    className="fill-current text-black group-hover:text-cyan-600 dark:group-hover:text-cyan-400"
-                    d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"
-                  />
-                  <path
-                    className="fill-current text-gray-300 "
-                    d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"
-                  />
-                </svg>
-                <span className="group-hover:text-black">Other data</span>
-              </a>
-            </li>
+          
             <li>
 
               <Link
@@ -277,19 +257,24 @@ function DashboardPage() {
             </div>
           </div>
           <div className='mt-12'>
-            {view === 'dashboard' ? (
-              <>
-                <Stats stats={stats} />
-              </>
-            ) : view === 'table' ? (
-              <>
-                <ModalPup />
-                <Table data={data} onEdit={handleEdit} onDelete={handleDelete} />
-              </>
-            ) : (
-              <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>
-            )}
-          </div>
+  {view === 'dashboard' ? (
+    <>
+    
+      <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>
+
+    </>
+  ) : view === 'table' ? (
+    <>
+      <ModalPup />
+      <Table data={data} onEdit={handleEdit} onDelete={handleDelete} />
+    </>
+  ) : view === 'calendar' ? (
+    <CalendarPage />
+  ) : (
+    <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>
+  )}
+</div>
+
           {showToast && (
             <Toast
               message="Êtes-vous sûr de vouloir supprimer cet élément ?"

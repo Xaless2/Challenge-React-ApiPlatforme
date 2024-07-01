@@ -21,6 +21,15 @@ class EstablishmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Establishment::class);
     }
 
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->orderBy('e.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Establishment[] Returns an array of Establishment objects
 //     */

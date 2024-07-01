@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { API_URL } from '../configUrl';
+import jwtDecode from "jwt-decode";
+
 
 
 export const HookContext = createContext();
@@ -25,7 +27,7 @@ export const HookProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await fetch(`${API_URL}/api/users/login`, {
+            const response = await fetch(`${API_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -44,7 +46,7 @@ export const HookProvider = ({ children }) => {
 
     const register = async (fullName, email, password) => {
         try {
-            const response = await fetch(`${API_URL}/api/users/register`, {
+            const response = await fetch(`${API_URL}/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fullName, email, password })

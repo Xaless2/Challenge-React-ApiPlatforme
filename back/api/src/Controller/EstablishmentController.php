@@ -18,7 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EstablishmentController extends AbstractController
 {
-    #[Route('/api/establishments', name: 'establishment_list', methods: ['GET'])]
+    #[Route('/establishments', name: 'establishment_list', methods: ['GET'])]
     public function list(EstablishmentRepository $establishmentRepository): JsonResponse
     {
         return new JsonResponse($establishmentRepository->findAll());

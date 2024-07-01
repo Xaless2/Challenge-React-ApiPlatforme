@@ -1,58 +1,91 @@
-// 
+import React, { useState, useEffect } from 'react';
+import { baseUrl } from '../utils/service';
 
-import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+const ReservationForm = ({ selectedDate }) => {
+    const [formData, setFormData] = useState({
+        slot: '',
+        client: '',
+        status: 'pending',
+    });
+    const [slots, setSlots] = useState([]);
+    const [clients, setClients] = useState([]);
 
-const ReservationForm = () => {
-    const [clientId, setClientId] = useState('');
-    const [slotId, setSlotId] = useState('');
-    const [date, setDate] = useState(new Date());
-    const [status, setStatus] = useState('');
+    useEffect(() => {
+        // Fetch slots data
+        fetch(`${baseUrl}/slots`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then(response => response.json())
+            .then(data => setSlots(data))
+            .catch(error => console.error('Error fetching slots:', error));
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const reservation = {
-            client_id: clientId,
-            slot_id: slotId,
-            date: date.toISOString().split('T')[0], // format date as YYYY-MM-DD
-            status,
-        };
+        // Fetch clients data
+        fetch(`${baseUrl}/users`)
+            .then(response => response.json())
+            .then(data => setClients(data))
+            .catch(error => console.error('Error fetching clients:', error));
+    }, []);
 
-        try {
-            const response = await fetch('http://localhost:8000/reservations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(reservation),
-            });
-            const data = await response.json();
-            console.log('Reservation created:', data);
-        } catch (error) {
-            console.error('Error creating reservation:', error);
-        }
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
     };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        fetch(`${baseUrl}/reservations`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // Handle form submission success
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    };
+
+    if (slots.length === 0 || clients.length === 0) {
+        return <div>Loading...</div>;  // Show loading state if slots or clients data is not yet fetched
+    }
 
     return (
         <form onSubmit={handleSubmit}>
-            <div>
-                <label>Client ID:</label>
-                <input type="text" value={clientId} onChange={(e) => setClientId(e.target.value)} />
-            </div>
-            <div>
-                <label>Slot ID:</label>
-                <input type="text" value={slotId} onChange={(e) => setSlotId(e.target.value)} />
-            </div>
-            <div>
-                <label>Date:</label>
-                <DatePicker selected={date} onChange={(date) => setDate(date)} />
-            </div>
-            <div>
-                <label>Status:</label>
-                <input type="text" value={status} onChange={(e) => setStatus(e.target.value)} />
-            </div>
-            <button type="submit">Réserver</button>
+            <label>
+                Slot:
+                <select name="slot" value={formData.slot} onChange={handleChange}>
+                    {slots.map(slot => (
+                        <option key={slot.id} value={slot.id}>{slot.name}</option>
+                    ))}
+                </select>
+            </label>
+            <br />
+            <label>
+                Client:
+                <select name="client" value={formData.client} onChange={handleChange}>
+                    {clients.map(client => (
+                        <option key={client.id} value={client.id}>{client.name}</option>
+                    ))}
+                </select>
+            </label>
+            <br />
+            <label>
+                Status:
+                <input type="text" name="status" value={formData.status} onChange={handleChange} />
+            </label>
+            <br />
+            <button type="submit">Create Reservation</button>
         </form>
     );
 };

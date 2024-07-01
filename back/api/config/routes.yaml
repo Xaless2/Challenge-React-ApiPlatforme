@@ -17,3 +17,9 @@ api_platform:
     resource: .
     type: api_platform
     prefix: /api
+
+api_reservations:
+    path: /api/reservations
+    controller: App\Controller\ReservationController::createReservation
+    methods: POST
+

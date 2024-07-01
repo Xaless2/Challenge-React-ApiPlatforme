@@ -5,18 +5,15 @@ on:
     branches:
       - prod
     paths:
-      - 'api/**'
+      - 'back/api/**'
       - '.github/workflows/heroku-deploy.yml'
 
 jobs:
-  
   build:
-    needs:
-      - tests
-    runs-on: ubuntu-latest
     defaults:
-      run:
-        working-directory: ./back/api
+        run:
+          working-directory: ./back/api
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: akhileshns/heroku-deploy@v3.12.14
@@ -25,3 +22,4 @@ jobs:
           heroku_app_name: "planifit"
           heroku_email: "khsuwang@myges.fr"
           appdir: "api"
+

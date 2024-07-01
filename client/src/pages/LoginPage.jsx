@@ -4,7 +4,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const LoginPage = () => {
-  const { loginUser, error } = useContext(AuthContext);
+  const { loginUser, error, setError } = useContext(AuthContext);
   const [login, setLogin] = useState({ email: '', password: '' });
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,15 +19,21 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await loginUser(login);
-    console.log("success data", success);
-    if (success) {
-      const from = location.state?.from?.pathname || '/';
-      navigate(from);
-    } else {
-      console.error('Login failed');
+    try {
+      const success = await loginUser(login);
+      if (success) {
+        const from = location.state?.from?.pathname || '/';
+        navigate(from);
+      } else {
+        console.error('Login failed: Invalid credentials or server error');
+        setError('Invalid email or password. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login failed:', error.message);
+      setError('Server error. Please try again later.');
     }
   };
+  
 
   const fields = [
     { type: 'email', label: 'Email', name: 'email', value: login.email, onChange: handleChange },

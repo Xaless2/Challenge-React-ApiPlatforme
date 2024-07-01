@@ -5,7 +5,7 @@ import { BrandContext } from "../../contexts/BrandContext";
 import { AuthContext } from "../../contexts/AuthContext";
 
 export default function ModalPup() {
-  const { addBrand, error } = useContext(BrandContext);
+  const { addBrand, error, setError } = useContext(BrandContext);
   const { user, token } = useContext(AuthContext);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [brand, setBrand] = useState({
@@ -16,12 +16,12 @@ export default function ModalPup() {
 
   useEffect(() => {
     if (user) {
-      setBrand({
-        ...brand,
+      setBrand((prevBrand) => ({
+        ...prevBrand,
         user_id: user.id,
-      });
+      }));
     }
-  }, [user, token]);
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -38,34 +38,34 @@ export default function ModalPup() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, onClose) => {
     e.preventDefault();
+    setError(null); 
     if (user && token) {
-      await addBrand(brand);
-      if (error) {
+      try {
+        await addBrand(brand);
+        onClose();
+      } catch (error) {
         console.error('Error adding brand:', error);
-      } else {
-        console.log('Brand added successfully');
-        onOpenChange();
       }
     } else {
       console.error('User or token is not available');
     }
   };
 
-  const fields = [
+  const fields = (onClose) => [
     { type: 'text', label: 'Le nom de votre marque', name: 'display_name', value: brand.display_name, onChange: handleChange },
     { type: 'file', label: 'Image', name: 'image_url', onChange: handleChange },
     { type: 'file', label: 'Kbis', name: 'kbis_pdf', onChange: handleChange },
-    { 
-      type: 'button', 
-      label: 'Enregistrer', 
-      onClick: handleSubmit,
+    {
+      type: 'button',
+      label: 'Enregistrer',
+      onClick: (e) => handleSubmit(e, onClose),
       style: {
         hoverBackgroundColor: '#088f9c',
         color: 'white',
         fontWeight: 'bold',
-        width:'100%',
+        width: '100%',
         paddingY: '2',
         paddingX: '4',
         borderRadius: 'rounded',
@@ -86,7 +86,7 @@ export default function ModalPup() {
             <>
               <ModalHeader className="flex flex-col gap-1">Ajouter une marque</ModalHeader>
               <ModalBody>
-                <FormBuilder fields={fields} />
+                <FormBuilder fields={fields(onClose)} />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

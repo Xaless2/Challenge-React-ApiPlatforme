@@ -15,7 +15,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true 
-      - run: git subtree add --prefix=back/api origin prod
       - run: git subtree split --prefix=back/api HEAD
       - run: git push --force heroku `git subtree split --prefix=back/api HEAD`:refs/heads/main
       - uses: akhileshns/heroku-deploy@v3.12.14

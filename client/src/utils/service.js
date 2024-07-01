@@ -43,21 +43,6 @@ export const getRequest = async (url, headers = {}) => {
     return await response.json();
 };
 
-export const getRequestById = async (url, id, headers = {}) => {
-    const response = await fetch(`${url}/${id}`, {
-        headers: {
-            'Content-Type': 'application/json',
-            ...headers
-        },
-        method: 'GET'
-    });
-
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-
-    return await response.json();
-}
 
 export const updateRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {

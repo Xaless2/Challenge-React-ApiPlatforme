@@ -33,7 +33,7 @@ export const routes = [
     },
     {
         path: "/establishments/:id", 
-        component: EstablishmentPage
+        component: EtablishmentPage
     },
 ];
 

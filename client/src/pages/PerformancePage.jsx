@@ -2,10 +2,13 @@ import React from 'react';
 import AdminFormBuilder from '../components/builder/AdminFormBuilder';
 import createPerformanceFormFields from '../components/form/createPerformanceFormFields';
 
+
+export const baseUrl = "http://localhost:8000/api";
+
 const PerformancePage = () => {
     const handleSubmit = async (formData) => {
         try {
-            const response = await fetch('/api/performances', {
+            const response = await fetch('${baseUrl}/performances', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

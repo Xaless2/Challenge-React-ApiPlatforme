@@ -1,4 +1,5 @@
 api_platform:
+
     title: 'Challenge - API Platform'
     version: '1.0.0'
     mapping:
@@ -19,5 +20,6 @@ api_platform:
         json:    ['application/json']
         html:    ['text/html']
         jsonhal: ['application/hal+json']
+        multipart: ['multipart/form-data']
     exception_to_status:
         Symfony\Component\Serializer\Exception\ExceptionInterface: 400 # Bad request on deserialization errors

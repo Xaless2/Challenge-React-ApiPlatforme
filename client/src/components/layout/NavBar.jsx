@@ -16,6 +16,7 @@ export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { token, userRole, logout } = useContext(AuthContext);
 
+
   let menuItems = [];
 
   if (token) {
@@ -48,7 +49,7 @@ export default function NavBar() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem isActive>
-          <Link href="#" aria-current="page" className="hover:underline  transition duration-200" style={{
+          <Link href="/etablishment" aria-current="page" className="hover:underline  transition duration-200" style={{
             color: 'black',
             fontWeight:'lighter'
           }}>
@@ -67,7 +68,7 @@ export default function NavBar() {
             </Link>
           </NavbarItem>
         )}
-        {token && (userRole === 'ROLE_ADMIN' || userRole === 'ROLE_COACH') && (
+        {token && userRole && (userRole[0] === 'ROLE_ADMIN' || userRole[0] === 'ROLE_COACH') && (
          <NavbarItem>
           <Button
             color="primary"

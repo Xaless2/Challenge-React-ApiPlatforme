@@ -207,15 +207,6 @@
     "php-cs-fixer/diff": {
         "version": "v2.0.2"
     },
-    "phpdocumentor/reflection-common": {
-        "version": "2.2.0"
-    },
-    "phpdocumentor/reflection-docblock": {
-        "version": "5.3.0"
-    },
-    "phpdocumentor/type-resolver": {
-        "version": "1.6.0"
-    },
     "psr/cache": {
         "version": "3.0.0"
     },
@@ -512,8 +503,17 @@
     "twig/twig": {
         "version": "v3.3.7"
     },
-    "webmozart/assert": {
-        "version": "1.10.0"
+    "vich/uploader-bundle": {
+        "version": "2.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.13",
+            "ref": "1b3064c2f6b255c2bc2f56461aaeb76b11e07e36"
+        },
+        "files": [
+            "config/packages/vich_uploader.yaml"
+        ]
     },
     "willdurand/negotiation": {
         "version": "3.0.0"

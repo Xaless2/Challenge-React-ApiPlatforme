@@ -10,18 +10,17 @@ on:
 
 jobs:
   build:
-    defaults:
-        run:
-          working-directory: ./back/api
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true 
-      - run: git subtree add --prefix=api origin prod
+      - run: git subtree add --prefix=back/api origin prod
+      - run: git subtree split --prefix=back/api HEAD
+      - run: git push --force heroku `git subtree split --prefix=back/api HEAD`:refs/heads/main
       - uses: akhileshns/heroku-deploy@v3.12.14
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "planifit"
           heroku_email: "khsuwang@myges.fr"
-          appdir: "api"
+          appdir: "back/api"

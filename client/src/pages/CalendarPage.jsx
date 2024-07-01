@@ -5,7 +5,8 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FormBuilder, { FIELD_TYPES } from '../components/builder/FormBuilder';
 import '../styles/calendar.css';
-import frLocale from '@fullcalendar/core/locales/fr'; // Importer le module de localisation française
+import frLocale from '@fullcalendar/core/locales/fr'; 
+import Button from '../components/common/Button';
 
 const CalendarPage = () => {
     const [showModal, setShowModal] = useState(false);
@@ -64,6 +65,28 @@ const CalendarPage = () => {
         setShowModal(false);
     };
 
+ 
+      const getEstablishment = useCallback(async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return;
+        }
+    
+        try {
+            const response = await getRequest(
+                `${baseUrl}/establishments`,
+                {
+                    "Authorization": `Bearer ${token}`,
+                }
+            );
+            setUser(response);
+    
+            return response; 
+        } catch (error) {
+            setError(error?.message || error);
+        }
+    }, []);
+
     const reservationFields = [
         { type: FIELD_TYPES.TEXT, label: 'Nom', name: 'name' },
         { type: FIELD_TYPES.EMAIL, label: 'Email', name: 'email' },
@@ -87,6 +110,8 @@ const CalendarPage = () => {
 
     return (
         <div style={ {paddingLeft : "5%" , paddingRight:"5%"} }>
+       <Button text="Ajouter un rendez-vous" onClick={getEstablishment} />
+
             <div id="calendar">
                 <FullCalendar
                     ref={calendarRef}

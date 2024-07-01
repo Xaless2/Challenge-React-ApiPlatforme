@@ -9,7 +9,7 @@ export const postRequest = async (url, body) => {
     const token = getToken();
     const headers = {
         'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
+         ...headers,
     };
 
     const response = await fetch(url, {

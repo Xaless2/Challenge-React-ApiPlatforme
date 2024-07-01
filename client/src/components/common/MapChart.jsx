@@ -66,7 +66,7 @@ export default function MapChart() {
   return (
     <MapContainer>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: '' }}
+        bootstrapURLKeys={{ key: 'AIzaSyCJSMrBuEV5AeQFGC_4lCI24Ewyj9Axq54' }}
         defaultCenter={center}
         defaultZoom={5}
       >

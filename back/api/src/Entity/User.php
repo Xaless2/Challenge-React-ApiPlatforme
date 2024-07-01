@@ -21,9 +21,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-
-    #[ORM\Column(length: 255)]
-
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
@@ -38,46 +38,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $lastname = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $username = null;
-
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $address = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $zip_code = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
-    private ?string $zipcode = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
     private ?string $image_url = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $text = null;
-
-   
-
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): static
-    {
-        $this->username = $username;
-
-        return $this;
     }
 
     public function getEmail(): ?string
@@ -85,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
@@ -97,8 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -133,6 +110,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    // public function getUsername(): string
+    // {
+    //     return (string) $this->email;
+    // }
+
+    // public function setUserName(string $email): self
+    // {
+    //     $this->email = $email;
+
+    //     return $this;
+    // }
+
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -155,8 +144,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastname;
     }
 
-
-    public function setLastname(string $lastname): static
+    public function setLastname(string $lastname): self
     {
         $this->lastname = $lastname;
 
@@ -168,7 +156,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->phone;
     }
 
-    public function setPhone(string $phone): static
+    public function setPhone(?string $phone): self
     {
         $this->phone = $phone;
 
@@ -180,22 +168,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->address;
     }
 
-
-    public function setAddress(string $address): static
+    public function setAddress(?string $address): self
     {
         $this->address = $address;
 
         return $this;
     }
 
-    public function getZipcode(): ?string
+    public function getZipCode(): ?string
     {
-        return $this->zipcode;
+        return $this->zip_code;
     }
 
-    public function setZipcode(string $zipcode): static
+    public function setZipCode(string $zip_code): self
     {
-        $this-> $zipcode;
+        $this->zip_code = $zip_code;
 
         return $this;
     }
@@ -205,7 +192,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->city;
     }
 
-    public function setCity(string $city): static
+    public function setCity(string $city): self
     {
         $this->city = $city;
 
@@ -221,17 +208,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->image_url = $image_url;
 
-        return $this;
-    }
-
-    public function getText(): ?string
-    {
-        return $this->text;
-    }
-
-    public function setText(?string $text): self
-    {
-        $this->text = $text;
         return $this;
     }
 }

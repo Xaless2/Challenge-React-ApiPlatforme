@@ -37,7 +37,6 @@ class AppFixtures extends Fixture
         $admin->setZipCode("text");
         $admin->setCity("text");
         $admin->setImageUrl("text");
-        $admin->setUsername('test1');
         $manager->persist($admin);
 
         $admin2 = new User();
@@ -54,7 +53,6 @@ class AppFixtures extends Fixture
         $admin2->setZipCode("text");
         $admin2->setCity("text");
         $admin2->setImageUrl("text");
-        $admin2->setUsername('test2'); 
         $manager->persist($admin2);
 
         $brand1 = new Brand();
@@ -109,7 +107,6 @@ class AppFixtures extends Fixture
             $client->setZipCode("text");
             $client->setCity("text");
             $client->setImageUrl("text");
-            $client->setUsername('test'.($i+2));
             $manager->persist($client);
 
             $clients[] = $client;
@@ -131,7 +128,6 @@ class AppFixtures extends Fixture
             $coach->setZipCode("text");
             $coach->setCity("text");
             $coach->setImageUrl("text");
-            $coach->setUsername('test'.($i+2));
             $manager->persist($coach);
 
             $coachs[] = $coach;

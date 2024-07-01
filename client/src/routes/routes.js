@@ -4,7 +4,7 @@ import DashboardPage from "../pages/DashboardPage.jsx";
 import WelcomePage from "../pages/welcomePage.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
 import CalendarPage from "../pages/CalendarPage.jsx";
-
+import EtablishmentPage from "../pages/EtablishmentPage.jsx";
 
 export const routes = [
     {
@@ -22,6 +22,11 @@ export const routes = [
     {
         path: "/dashboard",
         component: DashboardPage,
+        protected: false,
+    },
+    {
+        path: "/etablishment",
+        component: EtablishmentPage,
         protected: false,
     },
     {

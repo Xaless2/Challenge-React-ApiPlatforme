@@ -93,6 +93,7 @@ export const AuthContextProvider = ({ children }) => {
                 }
             );
             setUser(response);
+    
             return response; 
         } catch (error) {
             setError(error?.message || error);

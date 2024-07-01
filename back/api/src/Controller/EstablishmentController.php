@@ -29,14 +29,11 @@ class EstablishmentController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $establishment = new Establishment();
-        $establishment->setName($data['name']);
+        $establishment->setDisplayName($data['name']);
         $establishment->setAddress($data['address']);
-        $establishment->setPostalCode($data['postal_code']);
         $establishment->setCity($data['city']);
-        $establishment->setCountry($data['country']);
-        $establishment->setDescription($data['description']);
-        $establishment->setEmail($data['email']);
         $establishment->setPhone($data['phone']);
+        $establishment->setZipCode($data['zip_code ']);
 
         $em->persist($establishment);
         $em->flush();
@@ -48,14 +45,11 @@ class EstablishmentController extends AbstractController
     public function update(Request $request, Establishment $establishment, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $establishment->setName($data['name']);
+        $establishment->setDisplayName($data['name']);
         $establishment->setAddress($data['address']);
-        $establishment->setPostalCode($data['postal_code']);
         $establishment->setCity($data['city']);
-        $establishment->setCountry($data['country']);
-        $establishment->setDescription($data['description']);
-        $establishment->setEmail($data['email']);
         $establishment->setPhone($data['phone']);
+        $establishment->setZipCode($data['zip_code ']);
 
         $em->flush();
 

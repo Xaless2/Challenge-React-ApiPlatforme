@@ -9,17 +9,15 @@ on:
     branches:
       - prod
     paths:
-      - 'front/**'
+      - 'client/**'
       - '.github/workflows/vercel-deploy.yml'
 
 jobs:
-  tests:
-    uses: ./.github/workflows/front-test.yml
   deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./front
+        working-directory: ./client
     needs:
       - tests
     steps:

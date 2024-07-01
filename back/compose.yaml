@@ -26,11 +26,6 @@ services:
         published: ${HTTP3_PORT:-443}
         protocol: udp
 
-  pwa:
-    image: ${IMAGES_PREFIX:-}app-pwa
-    environment:
-      NEXT_PUBLIC_ENTRYPOINT: http://php
-
   database:
     image: postgres:${POSTGRES_VERSION:-16}-alpine
     environment:

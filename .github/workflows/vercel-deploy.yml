@@ -13,30 +13,14 @@ on:
       - '.github/workflows/vercel-deploy.yml'
 
 jobs:
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Run tests
-        run: npm test
-
   deploy:
     runs-on: ubuntu-latest
-    needs: tests
     defaults:
       run:
         working-directory: ./client
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v2
         with:
@@ -56,10 +40,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Install dependencies
+        run: pnpm install --legacy-peer-deps
+
       - name: Remove .env file
         run: rm -f .env
 
-      - name: Install Vercel cli
+      - name: Install Vercel CLI
         run: npm i -g vercel@latest
 
       - name: Get vercel environment

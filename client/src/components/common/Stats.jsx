@@ -4,6 +4,7 @@ import UserList from './UserList';
 const Stats = () => {
   const [clients, setClients] = useState([]);
   const [coachs, setCoachs] = useState([]);
+  const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -11,27 +12,40 @@ const Stats = () => {
     const fetchClientsAndCoachs = async () => {
       try {
         const token = localStorage.getItem('token'); 
-        const response = await fetch('http://localhost:8000/api/establishments/users', {
+        const response_establishments_users = await fetch('http://localhost:8000/api/establishments/users', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        const response_reservations_count_by_admin = await fetch('http://localhost:8000/api/reservations/count-by-admin', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response_establishments_users.ok) {
+          throw new Error(`HTTP error establishments' users ! Status: ${response_establishments_users.status}`);
         }
 
-        const data = await response.json();
-
-        if (!data.clients || !data.coachs) {
-          throw new Error('Invalid data format');
+        if (!response_reservations_count_by_admin.ok) {
+          throw new Error(`HTTP error reservation by admin ! Status: ${response_reservations_count_by_admin.status}`);
         }
 
-        setClients(data.clients);
-        setCoachs(data.coachs);
+        const data_establishments_users = await response_establishments_users.json();
+        const data_reservations_count_by_admin = await response_reservations_count_by_admin.json();
+
+        if (!data_establishments_users.clients || !data_establishments_users.coachs) {
+          throw new Error('Invalid data_establishments_users format');
+        }
+
+        setClients(data_establishments_users.clients);
+        setCoachs(data_establishments_users.coachs);
+        setReservations(data_reservations_count_by_admin);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data_establishments_users:', error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -59,7 +73,7 @@ const Stats = () => {
         </div>
         <div className="p-4 bg-green-100 rounded-lg">
           <h3 className="text-xl font-semibold">Nombre de reservations</h3>
-          <p className="text-2xl">120</p>
+          <p className="text-2xl">{reservations.length}</p>
         </div>
         <div className="p-4 bg-yellow-100 rounded-lg">
           <h3 className="text-xl font-semibold">Nombre de coachs</h3>

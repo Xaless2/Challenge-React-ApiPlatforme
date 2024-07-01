@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import UserList from './UserList';
+import { baseUrl } from '../../utils/service';
 
 const Stats = () => {
   const [clients, setClients] = useState([]);
@@ -12,14 +13,14 @@ const Stats = () => {
     const fetchClientsAndCoachs = async () => {
       try {
         const token = localStorage.getItem('token'); 
-        const response_establishments_users = await fetch('http://localhost:8000/api/establishments/users', {
+        const response_establishments_users = await fetch(`${baseUrl}/establishments/users`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
         });
 
-        const response_reservations_count_by_admin = await fetch('http://localhost:8000/api/reservations/count-by-admin', {
+        const response_reservations_count_by_admin = await fetch(`${baseUrl}/reservations/count-by-admin`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,

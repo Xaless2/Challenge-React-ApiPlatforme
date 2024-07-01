@@ -22,5 +22,4 @@ jobs:
           heroku_app_name: "planifit"
           heroku_email: "khsuwang@myges.fr"
           appdir: "api"
-        env:
-          HD_FRONT_URL: "https://planifit-git-planning-dashboardmerge-xaless2s-projects.vercel.app/"
+

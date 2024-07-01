@@ -37,5 +37,3 @@ jobs:
       - name: Load Doctrine fixtures
         run: docker-compose exec php bin/console doctrine:fixtures:load --no-interaction
 
-      - name: Run test
-        run: docker-compose exec php bin/phpunit

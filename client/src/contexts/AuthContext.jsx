@@ -21,24 +21,42 @@ export const AuthContextProvider = ({ children }) => {
     }, [token]);
 
 
-    const registerUser = useCallback(async (data) => {
-        setIsLoading(true);
+    // const registerUser = useCallback(async (data) => {
+    //     setIsLoading(true);
+    //     try {
+    //         const response = await postRequest(
+    //             `${authUrl}/register`,
+    //             data
+    //         );
+    //         if (response && (response.user || response.token)) {
+    //             setUser(response.user);
+    //             setToken(response.token);
+    //             localStorage.setItem('token', response.token);
+    //             localStorage.setItem('currentUser', JSON.stringify(response.user));
+    //         }
+    //     } catch (error) {
+    //         setError(error?.message || error);
+    //     }
+    //     setIsLoading(false);
+    // }, []);
+
+    const registerUser = async (data) => {
         try {
-            const response = await postRequest(
-                `${authUrl}/register`,
-                data
-            );
-            if (response && (response.user || response.token)) {
-                setUser(response.user);
-                setToken(response.token);
-                localStorage.setItem('token', response.token);
-                localStorage.setItem('currentUser', JSON.stringify(response.user));
-            }
+          const response = await postRequest(`${authUrl}/register`, data);
+          if (response && response.token) {
+            setToken(response.token);
+            localStorage.setItem('token', response.token);
+            const decodedToken = jwtDecode(response.token);
+            setUser(decodedToken.user);
+            return true; // Indicate success
+          } else {
+            throw new Error('Registration failed'); // Or handle specific failure cases
+          }
         } catch (error) {
-            setError(error?.message || error);
+          setError(error?.message || error);
+          return false; // Indicate failure
         }
-        setIsLoading(false);
-    }, []);
+      };
 
     const loginUser = useCallback(async (data) => {
         setIsLoading(true);

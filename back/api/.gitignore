@@ -8,6 +8,7 @@
 /public/bundles/
 /var/
 /vendor/
+/migrations/
 ###< symfony/framework-bundle ###
 
 ###> friendsofphp/php-cs-fixer ###
@@ -23,3 +24,4 @@
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+/.idea

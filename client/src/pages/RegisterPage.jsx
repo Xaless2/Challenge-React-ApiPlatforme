@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import FormBuilder from '../components/builder/FormBuilder';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { user } from '@nextui-org/react';
 
 const RegisterPage = () => {
   const { registerUser, error } = useContext(AuthContext);
@@ -12,7 +11,6 @@ const RegisterPage = () => {
     roles: [],
     firstname: '',
     lastname: '',
-    username: '',
     phone: '',
     address: '',
     zipcode: '',
@@ -37,15 +35,31 @@ const RegisterPage = () => {
     }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const response = await registerUser(register);
+  //   console.log("response data", response);
+  //   if (response) {
+  //     navigate('/login');
+  //   } else {
+  //     console.error('register failed');
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await registerUser(register);
-    if (response) {
-      navigate('/login');
-    } else {
-      console.error('register failed');
+    try {
+      const success = await registerUser(register);
+      if (success) {
+        navigate('/login');
+      } else {
+        console.error('Registration failed');
+      }
+    } catch (error) {
+      console.error('Error registering:', error);
     }
   };
+  
 
   const fields = [
     { type: 'text', label: 'First Name', name: 'firstname', value: register.firstname, onChange: handleChange },

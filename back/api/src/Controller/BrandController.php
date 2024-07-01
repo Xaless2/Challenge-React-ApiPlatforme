@@ -4,83 +4,55 @@ namespace App\Controller;
 
 use App\Entity\Brand;
 use App\Repository\BrandRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use App\Repository\EstablishmentRepository;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+
 
 /**
  * @Route("/api/brands")
  */
 class BrandController extends AbstractController
 {
-    /**
-     * @Route("/", name="brand_index", methods={"GET"})
-     */
-    public function index(BrandRepository $brandRepository): Response
-    {
-        $brands = $brandRepository->findAll();
-
-        return $this->json($brands);
-    }
-
-    /**
-     * @Route("/{id}", name="brand_show", methods={"GET"})
-     */
-    public function show(Brand $brand): Response
+    #[Route('api/brands', name: 'api_brand', methods: ['GET'])]
+    public function brand(BrandRepository $brandRepository): Response
     {
         return $this->json($brand);
     }
 
-    /**
-     * @Route("/", name="brand_create", methods={"POST"})
-     */
-    public function create(Request $request): Response
-    {
-        $data = json_decode($request->getContent(), true);
+    #[Route('/api/brands/establishments', name: 'brand_establishment', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function getUsersByEstablishment(
+        BrandRepository $brandRepository, 
+        EstablishmentRepository $establishmentRepository, 
+    ): JsonResponse {
 
-        $brand = new Brand();
-        $brand->setUserId($data['user_id']);
-        $brand->setDisplayName($data['display_name']);
-        // Handle file uploads if needed
-        // $brand->setKbisPdf($data['kbis_pdf']);
-        // $brand->setImageUrl($data['image_url']);
+        $user = $this->getUser();
+        $brands = $brandRepository->findBy(['user_id' => $user->getUserIdentifier()]);
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($brand);
-        $entityManager->flush();
+        if (!$brands) {
+            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+        }
 
-        return $this->json($brand, Response::HTTP_CREATED);
+        $result = [];
+
+        foreach ($brands as $brand) {
+            $establishments = $establishmentRepository->findBy(['brand_id' => $brand->getId()]); 
+
+            foreach ($establishments as $establishment) {
+                $result[] = [
+                    'id' => $establishment->getId(),
+                    'brand' => $establishment->getBrandId(),
+                    'display_name' => $establishment->getDisplayName()
+                ];
+            };
+        }
+
+        return new JsonResponse($result);
     }
-
-    /**
-     * @Route("/{id}", name="brand_update", methods={"PUT"})
-     */
-    public function update(Request $request, Brand $brand): Response
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $brand->setUserId($data['user_id']);
-        $brand->setDisplayName($data['display_name']);
-        // Handle file uploads if needed
-        // $brand->setKbisPdf($data['kbis_pdf']);
-        // $brand->setImageUrl($data['image_url']);
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->flush();
-
-        return $this->json($brand);
-    }
-
-    /**
-     * @Route("/{id}", name="brand_delete", methods={"DELETE"})
-     */
-    public function delete(Brand $brand): Response
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($brand);
-        $entityManager->flush();
-
-        return $this->json(null, Response::HTTP_NO_CONTENT);
-    }
+   
 }

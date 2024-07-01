@@ -17,12 +17,10 @@ export const routes = [
     {
         path: "/",
         component: WelcomePage,
-
     },
     {
         path: "/dashboard",
-        component: DashboardPage,
-        protected: false,
+        component: DashboardPage
     },
     {
         path: "/etablishment",
@@ -31,8 +29,11 @@ export const routes = [
     },
     {
         path: "/profile",
-        component: ProfilePage,
-        protected: false,
+        component: ProfilePage
+    },
+    {
+        path: "/establishments/:id", 
+        component: EstablishmentPage
     },
 ];
 

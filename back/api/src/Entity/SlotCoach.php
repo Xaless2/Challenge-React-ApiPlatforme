@@ -23,8 +23,8 @@ class SlotCoach
     #[ORM\JoinColumn(nullable: false)]
     private ?User $coach_id = null;
 
-    #[ORM\Column(type: 'string', enumType: 'App\Enum\SlotStatus')]
-    private SlotStatus $status;
+    #[ORM\Column(type: 'string', length: 50)]
+    private string $status;
 
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $created_at;
@@ -75,7 +75,7 @@ class SlotCoach
         return $this->status;
     }
 
-    public function setStatus(SlotStatus $status): static
+    public function setStatus(string $status): static
     {
         $this->status = $status;
 

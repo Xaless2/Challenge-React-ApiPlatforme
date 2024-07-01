@@ -12,7 +12,7 @@ export const BrandContextProvider = ({ children }) => {
     const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
     const [brandId, setBrandId] = useState(null);
   
-    
+  
     useEffect(() => {
       const fetchUser = async () => {
         if (!isUserDataLoaded) {
@@ -60,13 +60,15 @@ export const BrandContextProvider = ({ children }) => {
 
   const getBrandById = useCallback(async (brandId) => {
   try {
-    if (!brandId) {
-      console.error('Brand ID is not defined');
-      return;
-    }
+    // if (!brandId) {
+    //   console.error('Brand ID is not defined');
+    //   return;
+    // }
+
+    console.log(token)
 
     const response = await getRequestById(
-      `${baseUrl}/brands/${brandId}`,
+      `${baseUrl}/brands/60`,
       
       { 'Authorization': `Bearer ${token}` }
     );
@@ -121,15 +123,15 @@ export const BrandContextProvider = ({ children }) => {
     const getAllBrands = useCallback(async () => {
       try {
         const response = await getRequest(
-          `${authUrl}/brand`,
+          `${baseUrl}/brands/brands_by_admin`,
           { 'Authorization': `Bearer ${token}` }
         );
-  
+       console.log(response.data);
         if (!response.ok) {
           throw new Error(response.statusText || 'Network response was not ok');
         }
   
-        const responseData = await response.json();
+        const responseData = await response.data;
         setGetAllBrand(responseData);
       } catch (error) {
         console.error('Error getting all brands:', error);

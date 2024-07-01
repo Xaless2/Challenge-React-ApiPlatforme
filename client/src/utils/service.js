@@ -69,6 +69,23 @@ export const updateRequest = async (url, body, headers = {}) => {
     return data;
 }
 
+export const getRequestById = async (url, headers = {}) => {
+    const response = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            ...headers
+        },
+        method: 'GET'
+    });
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+
+    return await response.json();
+}
+
+
 export const deleteRequest = async (url) => {
     const response = await fetch(url, {
         method: 'DELETE'

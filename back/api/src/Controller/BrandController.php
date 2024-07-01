@@ -7,8 +7,9 @@ use App\Repository\BrandRepository;
 use App\Repository\EstablishmentRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BrandController extends AbstractController
 {
@@ -19,8 +20,8 @@ class BrandController extends AbstractController
         return $this->json($brand);
     }
 
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/api/brands/establishments', name: 'brands_establishment', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function getEstablishmentsByBrand(
         BrandRepository $brandRepository, 
         EstablishmentRepository $establishmentRepository, 
@@ -49,9 +50,8 @@ class BrandController extends AbstractController
 
         return new JsonResponse($result);
     }
-
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/api/brands/brands_by_admin', name: 'brand_by_admin', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function getBrandsByAdmin(
         BrandRepository $brandRepository
     ): JsonResponse {

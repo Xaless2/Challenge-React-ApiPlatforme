@@ -8,10 +8,16 @@ export const baseUrl = "http://localhost:8000/api";
 const PerformancePage = () => {
     const handleSubmit = async (formData) => {
         try {
-            const response = await fetch('${baseUrl}/performances', {
+            const token = localStorage.getItem('token'); 
+
+            formData.number_of_clients_max = parseInt(formData.number_of_clients_max, 10);
+            formData.establishment_id = `/api/establishments/${formData.establishment_id}`;
+
+            const response = await fetch(`${baseUrl}/performances`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(formData),
             });

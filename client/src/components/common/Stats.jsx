@@ -3,13 +3,14 @@ import UserList from './UserList';
 
 const Stats = () => {
   const [clients, setClients] = useState([]);
+  const [coachs, setCoachs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchClients = async () => {
+    const fetchClientsAndCoachs = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assurez-vous que le token est stocké dans localStorage
+        const token = localStorage.getItem('token'); 
         const response = await fetch('http://localhost:8000/api/establishments/users', {
           headers: {
             'Content-Type': 'application/json',
@@ -23,20 +24,21 @@ const Stats = () => {
 
         const data = await response.json();
 
-        if (!Array.isArray(data)) {
-          throw new Error('Data is not an array');
+        if (!data.clients || !data.coachs) {
+          throw new Error('Invalid data format');
         }
 
-        setClients(data);
+        setClients(data.clients);
+        setCoachs(data.coachs);
       } catch (error) {
-        console.error('Error fetching clients:', error);
+        console.error('Error fetching data:', error);
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchClients();
+    fetchClientsAndCoachs();
   }, []);
 
   if (loading) {
@@ -61,7 +63,7 @@ const Stats = () => {
         </div>
         <div className="p-4 bg-yellow-100 rounded-lg">
           <h3 className="text-xl font-semibold">Nombre de coachs</h3>
-          <p className="text-2xl">30</p>
+          <p className="text-2xl">{coachs.length}</p>
         </div>
         <div className="p-4 bg-red-100 rounded-lg">
           <h3 className="text-xl font-semibold">Revenus</h3>

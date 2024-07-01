@@ -136,6 +136,6 @@ class EstablishmentController extends AbstractController
             'coachs' => array_values($coachs)
         ];
 
-        return new JsonResponse($responseData, Response::HTTP_OK);
+        return new JsonResponse($responseData);
     }
 }

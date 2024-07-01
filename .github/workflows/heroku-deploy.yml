@@ -1,0 +1,27 @@
+name: Deploy Back-End To Heroku
+
+on:
+  push:
+    branches:
+      - prod
+    paths:
+      - 'back/api/**'
+      - '.github/workflows/heroku-deploy.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "planifit"
+          heroku_email: "khsuwang@myges.fr"
+          appdir: "api"
+        env:
+          HD_APP_ENV: "prod"
+          HD_JWT_PASSPHRASE: ${{secrets.JWT_PASSPHRASE}}
+          HD_JWT_SECRET_KEY: "%kernel.project_dir%/config/jwt/private.pem"
+          HD_JWT_PUBLIC_KEY: "%kernel.project_dir%/config/jwt/public.pem"
+          HD_FRONT_URL: "https://planifit-git-planning-dashboardmerge-xaless2s-projects.vercel.app/"

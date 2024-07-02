@@ -26,21 +26,24 @@ export const AuthContextProvider = ({ children }) => {
     const registerUser = useCallback(async (data) => {
         setIsLoading(true);
         try {
-            const response = await postRequest(
-                `${authUrl}/register`,
-                data
-            );
+            const response = await postRequest(`${authUrl}/register`, data);
             if (response && (response.user || response.token)) {
                 setUser(response.user);
                 setToken(response.token);
                 localStorage.setItem('token', response.token);
                 localStorage.setItem('currentUser', JSON.stringify(response.user));
+                setIsLoading(false);
+                return true; 
             }
+            throw new Error('Registration failed'); 
         } catch (error) {
             setError(error?.message || error);
+            setIsLoading(false);
+            return false; 
         }
-        setIsLoading(false);
     }, []);
+    
+    
 
     const loginUser = useCallback(async (data) => {
         setIsLoading(true);

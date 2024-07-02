@@ -5,13 +5,14 @@ import React, { useContext } from 'react';
 function ProtectedRoutes({ roles = [], children }) {
   const isAuthenticated = localStorage.getItem('token');
   const { userRole } = useContext(AuthContext);
-  console.log(userRole);
+  const primaryRole = userRole ? userRole[0] : null;
+  console.log(primaryRole);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  if (roles.length > 0 && !roles.includes(userRole)) {
+  if (roles && roles.length > 0 && !roles.includes(primaryRole)) {
     return <Navigate to="/unauthorized" />;
   }
 

@@ -37,14 +37,21 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await registerUser(register);
-
-    if (response) {
-      navigate('/login');
-    } else {
-      console.error('register failed');
+    try {
+        const response = await registerUser(register);
+        console.log('Response from registerUser:', response);
+        if (response) {
+            navigate('/login');
+        } else {
+            console.error('Registration failed');
+        }
+    } catch (error) {
+        console.error('Error during registration:', error);
     }
-  };
+};
+
+
+
 
   const fields = [
     { type: 'text', label: 'First Name', name: 'firstname', value: register.firstname, onChange: handleChange },

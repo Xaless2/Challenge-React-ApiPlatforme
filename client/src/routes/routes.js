@@ -25,12 +25,13 @@ export const routes = [
         path: "/dashboard",
         component: DashboardPage,
         protected: true,
+        roles: [],
     },
     {
         path: "/etablishment",
         component: EtablishmentPage,
         protected: true,
-        // roles: ['ROLE_ADMIN'],
+        roles: [],
     },
     {
         path: "/profile",

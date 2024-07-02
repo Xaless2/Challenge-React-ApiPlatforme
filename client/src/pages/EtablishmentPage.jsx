@@ -35,6 +35,8 @@ function EtablishmentPage() {
     fetchEstablishments();
   }, [token]);
 
+  
+
   useEffect(() => {
     if (activeEstablishmentAddress && establishmentContainerRef.current) {
       establishmentContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });

@@ -10,15 +10,17 @@ import ModalPup from '../components/common/ModalPup';
 import { AuthContext } from '../contexts/AuthContext';
 import { BrandContext } from '../contexts/BrandContext';
 import { useLocation } from 'react-router-dom';
-
-
+import PerformancePage from './PerformancePage';
+import { Button } from '@nextui-org/react';
+import SlotPage from './SlotPage'; 
 
 function DashboardPage() {
   const [view, setView] = useState('dashboard');
   const [showToast, setShowToast] = useState(false);  
   const { token, userRole, logout, user, getUser } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
-  const { getBrands } = useContext(BrandContext);
+  const { getBrandById } = useContext(BrandContext);
+  const [brandId, setBrandId] = useState(null); 
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([
     { id: 1, name: 'John Doe' },
@@ -35,13 +37,12 @@ function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const brands = await getBrands();
+      const brands = await getBrandById(brandId);
       setData(brands);
     };
 
     fetchData();
-  }, [getBrands]);
-
+  }, [getBrandById]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -53,15 +54,13 @@ function DashboardPage() {
         }
     };
     fetchUser();
-}, [getUser, user, isUserDataLoaded]);
-
+  }, [getUser, user, isUserDataLoaded]);
 
   useEffect(() => {
     if (token) {
      const roles = ['ROLE_ADMIN', 'ROLE_COACH', 'ROLE_CLIENT'];
     }
   }, [token, userRole]);
-
 
   const handleEdit = (id) => {
     console.log(`Edit item with id ${id}`);
@@ -92,6 +91,14 @@ function DashboardPage() {
       return; 
     }
     setView(selectedView);
+  };
+
+  const handleperformanceClick = () => {
+    setView('performance'); 
+  };
+
+  const handleSlotClick = () => {
+    setView('slot'); 
   };
 
   return (
@@ -146,6 +153,65 @@ function DashboardPage() {
             <li>
             {userRole !== 'ROLE_COACH' && userRole !== 'ROLE_CLIENT' && (
               <button
+                onClick={handleperformanceClick}
+                className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === 'performance' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    className="fill-current text-gray-300 "
+                    fillRule="evenodd"
+                    d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z"
+                    clipRule="evenodd"
+                  />
+                  <path
+                    className="fill-current text-black group-hover:text-cyan-600 dark:group-hover:text-sky-400"
+                    d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"
+                  />
+                </svg>
+                <span className="group-hover:text-black">Performance</span>
+              </button>
+
+              
+            )}
+            </li>
+            <li>
+            {userRole !== 'ROLE_COACH' && userRole !== 'ROLE_CLIENT' && (
+              <button
+                onClick={handleSlotClick}
+                className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === 'slot' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    className="fill-current text-gray-300 "
+                    fillRule="evenodd"
+                    d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z"
+                    clipRule="evenodd"
+                  />
+                  <path
+                    className="fill-current text-black group-hover:text-cyan-600 dark:group-hover:text-sky-400"
+                    d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"
+                  />
+                </svg>
+                <span className="group-hover:text-black">Créneaux</span>
+              </button>
+
+              
+            )}
+            </li>
+
+            <li>
+            {userRole !== 'ROLE_COACH' && userRole !== 'ROLE_CLIENT' && (
+              <button
                 onClick={handleBrandClick}
                 className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === 'table' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
               >
@@ -168,34 +234,65 @@ function DashboardPage() {
                 </svg>
                 <span className="group-hover:text-black">Marques</span>
               </button>
+
+              
             )}
             </li>
+
+            {userRole === 'ROLE_ADMIN' && (
+              <li>
+                <button
+                  onClick={handleperformanceClick}
+                  className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === 'performance' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      className="fill-current text-gray-300 "
+                      d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+                    />
+                    <path
+                      className="fill-current text-black group-hover:text-cyan-600 dark:group-hover:text-sky-400"
+                      d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"
+                    />
+                  </svg>
+                  <span className="group-hover:text-black">Performance</span>
+                </button>
+              </li>
+            )}
+
+            {userRole === 'ROLE_ADMIN' && (
+              <li>
+                <button
+                  onClick={handleSlotClick}
+                  className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === 'slot' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      className="fill-current text-gray-300 "
+                      d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+                    />
+                    <path
+                      className="fill-current text-black group-hover:text-cyan-600 dark:group-hover:text-sky-400"
+                      d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"
+                    />
+                  </svg>
+                  <span className="group-hover:text-black">Slot</span>
+                </button>
+              </li>
+            )}
+  
   
             <li>
-              <a
-                href="#"
-                className="group flex items-center space-x-4 rounded-md px-4 py-3 text-blacktext-black"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    className="fill-current text-black group-hover:text-cyan-600 dark:group-hover:text-cyan-400"
-                    d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"
-                  />
-                  <path
-                    className="fill-current text-gray-300 "
-                    d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"
-                  />
-                </svg>
-                <span className="group-hover:text-black">Other data</span>
-              </a>
-            </li>
-            <li>
-
               <Link
                 to="/profile"
                 className="group flex items-center space-x-4 rounded-md px-4 py-3 text-blacktext-black"
@@ -236,7 +333,7 @@ function DashboardPage() {
         </div>
       </aside>
   
-      <div className="ml-auto mb-6 lg:w-[75%] xl:w-[80%] 2xl:w-[85%]">
+      <div className="ml-auto mb-6 lg:w-[75%] xl:w/[80%] 2xl:w-[85%]">
         <div className="sticky top-0 h-16 border-b bg-white dark:border-gray-700 lg:py-2.5">
           <div className="flex items-center justify-between space-x-4 px-6 2xl:container">
             <h5 hidden className="text-2xl font-medium text-black text-black">Dashboard</h5>
@@ -253,6 +350,16 @@ function DashboardPage() {
                 <ModalPup />
                 <Table data={data} onEdit={handleEdit} onDelete={handleDelete} />
               </>
+            ) : view === 'performance' ? (
+              <div>
+                <h1 className="text-3xl text-center mt-10">Performance</h1>
+                 <PerformancePage/>
+              </div>
+            ) : view === 'slot' ? (
+              <div>
+                <h1 className="text-3xl text-center mt-10">Slot</h1>
+                 <SlotPage/>
+              </div>
             ) : (
               <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>
             )}
@@ -271,5 +378,3 @@ function DashboardPage() {
   }
   
   export default DashboardPage;
-  
-  

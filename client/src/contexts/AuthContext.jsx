@@ -122,6 +122,7 @@ export const AuthContextProvider = ({ children }) => {
             token,
             logout,
             error,
+            setError,
             isLoading,
             userRole,
             setUserRole,

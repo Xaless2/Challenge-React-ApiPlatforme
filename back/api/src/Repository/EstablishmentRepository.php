@@ -21,6 +21,17 @@ class EstablishmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Establishment::class);
     }
 
+    public function findByName(string $name)
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('LOWER(TRIM(e.display_name)) LIKE LOWER(TRIM(:name))')
+            ->setParameter('name', '%' . $name . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
 //    /**
 //     * @return Establishment[] Returns an array of Establishment objects
 //     */

@@ -2,24 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Map, Marker, GoogleApiWrapper, InfoWindow } from 'google-maps-react';
 import CardCutomEtablishement from '../common/CardCutomEtablishement';
 
-const GoogleMap = ({ google, image, name, addresses, rating, price, description }) => {
+const GoogleMap = ({ google, establishments, onMarkerClickHandler }) => {
   const [infoWindow, setInfoWindow] = useState(false);
-  const [activeMarker, setActiveMarker] = useState({});
+  const [activeMarker, setActiveMarker] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState({});
   const [coordinates, setCoordinates] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
 
   useEffect(() => {
-    if (!addresses) {
+    if (!establishments) {
       return;
     }
-  
+
     const geocoder = new google.maps.Geocoder();
-  
-    addresses.forEach(address => {
+
+    establishments.forEach((establishment) => {
+      const address = `${establishment.address}, ${establishment.zip_code}, ${establishment.city}`;
       geocoder.geocode({ address: address }, (results, status) => {
         if (status === 'OK') {
-          setCoordinates(prevCoordinates => [
+          setCoordinates((prevCoordinates) => [
             ...prevCoordinates,
             {
               lat: results[0].geometry.location.lat(),
@@ -31,9 +32,9 @@ const GoogleMap = ({ google, image, name, addresses, rating, price, description 
         }
       });
     });
-  }, [addresses, google.maps.Geocoder]);
+  }, [establishments, google.maps.Geocoder]);
 
-  const onMarkerClick = (props, marker, e, index) => {
+  const handleMarkerClick = (props, marker, e, index) => {
     if (infoWindow) {
       setInfoWindow(false);
     }
@@ -41,6 +42,10 @@ const GoogleMap = ({ google, image, name, addresses, rating, price, description 
     setActiveMarker(marker);
     setActiveMarkerIndex(index);
     setTimeout(() => setInfoWindow(true), 0);
+
+    if (onMarkerClickHandler) {
+      onMarkerClickHandler(props.address);
+    }
   };
 
   const onMapClick = (props) => {
@@ -51,50 +56,42 @@ const GoogleMap = ({ google, image, name, addresses, rating, price, description 
   };
 
   const style = {
-    height: "100%",
-    width: "100%",
+    height: '100%',
+    width: '100%',
   };
 
   return (
     <div>
-      {coordinates.length > 0 ? (
+      {establishments && establishments.length > 0 ? (
         <Map
           onClick={onMapClick}
           google={google}
-          zoom={8}
+          zoom={10}
           style={style}
-          initialCenter={coordinates[0]}
+          initialCenter={{ lat: 48.8566, lng: 2.3522 }}
         >
           {coordinates.map((coordinate, index) => (
-          <Marker
-            key={index}
-            onClick={(props, marker, e) => onMarkerClick(props, marker, e, index)}
-            title={"The marker's title will appear as a tooltip."}
-            name={name}
-            position={coordinate}
-          />
-        ))}
-          <InfoWindow
-            marker={activeMarker}
-            visible={infoWindow}
-          >
-            <CardCutomEtablishement 
-              image={image}
-              name={name}
-              address={addresses[activeMarkerIndex]}
-              rating={rating}
-              price={price}
-              description={description}
+            <Marker
+              key={index}
+              onClick={(props, marker, e) => handleMarkerClick(props, marker, e, index)}
+              position={coordinate}
             />
+          ))}
+          <InfoWindow marker={activeMarker} visible={infoWindow}>
+            <div>
+              <CardCutomEtablishement
+                
+              />
+            </div>
           </InfoWindow>
         </Map>
       ) : (
-        <div>Loading...</div>
+        <div>Pas encore d'établissements disponibles</div>
       )}
     </div>
   );
 };
 
 export default GoogleApiWrapper({
-  apiKey:"AIzaSyCJSMrBuEV5AeQFGC_4lCI24Ewyj9Axq54",
+  apiKey: import.meta.env.VITE_API_KEY_GOOGLE,
 })(GoogleMap);

@@ -1,7 +1,7 @@
 
 
-export const baseUrl = "http://localhost:8000/api"; 
-export const authUrl = "http://localhost:8000";
+export const baseUrl = "https://planifit-198642ff98b0.herokuapp.com/api"; 
+export const authUrl = "https://planifit-198642ff98b0.herokuapp.com";
 
 
 export const postRequest = async (url, body) => {

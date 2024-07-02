@@ -53,10 +53,10 @@ export default function ModalPup() {
     }
   };
 
+  
+
   const fields = (onClose) => [
     { type: 'text', label: 'Le nom de votre marque', name: 'display_name', value: brand.display_name, onChange: handleChange },
-    { type: 'file', label: 'Image', name: 'image_url', onChange: handleChange },
-    { type: 'file', label: 'Kbis', name: 'kbis_pdf', onChange: handleChange },
     {
       type: 'button',
       label: 'Enregistrer',

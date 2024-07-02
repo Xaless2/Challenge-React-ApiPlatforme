@@ -6,6 +6,7 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import EtablishmentPage from "../pages/EtablishmentPage.jsx";
 import SlotPage from "../pages/SlotPage.jsx";
 import PerformancePage from "../pages/PerformancePage.jsx";
+import DetailPage from "../pages/DetailPage.jsx";
 
 export const routes = [
     {
@@ -22,7 +23,7 @@ export const routes = [
     },
     {
         path: "/dashboard",
-        component: DashboardPage
+        component: DashboardPage,
     },
     {
         path: "/etablishment",
@@ -31,15 +32,16 @@ export const routes = [
     },
     {
         path: "/profile",
-        component: ProfilePage
-    },
-    {
-        path: "/establishments/:id", 
-        component: EtablishmentPage
+        component: ProfilePage,
     },
     {
         path: "/create-performance",
         component: PerformancePage,
+        protected: false,
+    },
+    {
+        path: "/establishmentDetails/:id", 
+        component: DetailPage,
         protected: false,
     },
     {

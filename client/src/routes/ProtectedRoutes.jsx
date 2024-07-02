@@ -4,21 +4,21 @@ import { AuthContext } from '../contexts/AuthContext';
 
 function ProtectedRoute({ children }) {
     const { token, isLoading } = useContext(AuthContext);
-    console.log(token, isLoading)
     const isAuthenticated = !!token;
- 
     const navigate = useNavigate();
 
     useEffect(() => {
+    
         if (!isLoading && !isAuthenticated) {
-            navigate('/login');
+            navigate('/login'); 
         }
-    }, [isAuthenticated, isLoading, navigate]);
+    }, [isLoading, isAuthenticated, navigate]);
 
     if (isLoading) {
         return <div>Loading...</div>;
     }
 
+   
     return isAuthenticated ? children : null;
 }
 

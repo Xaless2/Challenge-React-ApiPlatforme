@@ -12,7 +12,14 @@ export const BrandContextProvider = ({ children }) => {
     const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
     const [brandId, setBrandId] = useState(null);
 
-    console.log(token);
+    useEffect(() => {
+      if (allBrands.length > 0) {
+          const brandIds = allBrands.map(brand => brand.id);
+          console.log(brandIds)
+          setBrandId(brandIds);
+      }
+  }, [allBrands]);
+
     useEffect(() => {
         const fetchUser = async () => {
             if (!isUserDataLoaded) {
@@ -33,44 +40,54 @@ export const BrandContextProvider = ({ children }) => {
     }, [user]);
 
     const addBrand = useCallback(async (data) => {
-        try {
-            setError(null);
-            const response = await postRequest(
-                `${baseUrl}/brands`,
-                { ...data, user_id: user.id },
-                { 'Authorization': `Bearer ${token}` }
-            );
-
-            setBrand(response);
-            setBrandId(response.id);
-            console.log('Brand added:', response.id);
-        } catch (error) {
-            console.error('Error adding brand:', error);
-            setError(error.message || 'Error adding brand');
+      try {
+        setError(null);
+        console.log(data); 
+        const response = await postRequest(
+          `${baseUrl}/brands`,
+          { ...data, user_id: user.id },
+          { 'Authorization': `Bearer ${token}` }
+        );
+    
+        if (!response) {
+          throw new Error('No response from the API');
         }
+    
+        setBrand(response);
+        setBrandId(response.id);
+        console.log('Brand added:', response.id);
+    
+        return response.id;  
+      } catch (error) {
+        console.error('Error adding brand:', error);
+        setError(error?.message || 'Error adding brand'); 
+      }
     }, [user, token]);
 
-    // const getBrandById = useCallback(async (brandId) => {
-    //     try {
-    //         console.log(token);
+    const getBrandsByIds = useCallback(async (brandIds) => {
+      try {
+          console.log(token);
+  
+          const responses = await Promise.all(brandIds.map(brandId => 
+              getRequestById(
+                  `${baseUrl}/brands/${brandId}`,
+                  { 'Authorization': `Bearer ${token}` }
+              )
+          ));
+  
+          setBrand(responses);
+      } catch (error) {
+          console.error('Error getting brands:', error);
+          setError(error.message || 'Error fetching brands');
+      }
+  }, [token]);
+  
+  useEffect(() => {
+      if (brandId && brandId.length > 0) {
+          getBrandsByIds(brandId);
+      }
+  }, [brandId, getBrandsByIds]);
 
-    //         const response = await getRequestById(
-    //             `${baseUrl}/brands/${brandId}`,
-    //             { 'Authorization': `Bearer ${token}` }
-    //         );
-
-    //         setBrand(response);
-    //     } catch (error) {
-    //         console.error('Error getting brands:', error);
-    //         setError(error.message || 'Error fetching brands');
-    //     }
-    // }, [token]);
-
-    // useEffect(() => {
-    //     if (brandId) {
-    //         getBrandById(brandId);
-    //     }
-    // }, [brandId, getBrandById]);
 
     const updateBrands = useCallback(async (brandId) => {
         try {
@@ -106,7 +123,6 @@ export const BrandContextProvider = ({ children }) => {
           `${baseUrl}/brands/brands_by_admin`,
           { 'Authorization': `Bearer ${token}` }
         );
-        console.log("la response de brands ",response);
         if (!response) {
           throw new Error('No response from server');
         }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { baseUrl } from '../../utils/service';
 
 const EstablishmentDetail = () => {
   const { id } = useParams();
@@ -8,7 +9,7 @@ const EstablishmentDetail = () => {
 
   useEffect(() => {
     const fetchEstablishment = async () => {
-      const response = await fetch(`/api/establishments/${id}`);
+      const response = await fetch(`${baseUrl}/establishments/${id}`);
       const data = await response.json();
       setEstablishment(data);
       setLoading(false);

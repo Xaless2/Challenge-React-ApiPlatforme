@@ -69,6 +69,7 @@ export const getRequestById = async (url, headers = {}) => {
     return await response.json();
 }
 
+
 export const deleteRequest = async (url, headers = {}) => {
     const response = await fetch(url, {
         method: 'DELETE',

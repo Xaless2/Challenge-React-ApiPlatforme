@@ -3,6 +3,7 @@ import NavBar from '../components/layout/NavBar';
 import GoogleApiWrapper from '../components/builder/GoogleApiWrapper';
 import CardCutomEtablishement from '../components/common/CardCutomEtablishement';
 import Footer from '../components/layout/Footer';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 function EtablishmentPage() {
   const addresses = [
@@ -33,14 +34,16 @@ function EtablishmentPage() {
           ))}
         </div>
         <div className="flex-1">
-          <GoogleApiWrapper
-            image="url-to-image"
-            name="Nom de l'établissement"
-            addresses={addresses.map(address => address.address)}
-            rating="4.5"
-            price="50€"
-            description="Musculation, Cardio, Fitness, Yoga, Pilates, Crossfit, etc."
-          />
+          <Router>
+            <GoogleApiWrapper
+              image="url-to-image"
+              name="Nom de l'établissement"
+              addresses={addresses.map(address => address.address)}
+              rating="4.5"
+              price="50€"
+              description="Musculation, Cardio, Fitness, Yoga, Pilates, Crossfit, etc."
+            />
+          </Router>
         </div>
       </div>
       <Footer/>

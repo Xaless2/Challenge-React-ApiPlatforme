@@ -10,6 +10,7 @@ import ModalPup from '../components/common/ModalPup';
 import { AuthContext } from '../contexts/AuthContext';
 import { BrandContext } from '../contexts/BrandContext';
 import { useLocation } from 'react-router-dom';
+import { baseUrl } from '../utils/service';
 
 
 
@@ -18,7 +19,7 @@ function DashboardPage() {
   const [showToast, setShowToast] = useState(false);  
   const { token, userRole, logout, user, getUser } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
-  const { getAllBrands, allBrands } = useContext(BrandContext);
+  const { allBrands } = useContext(BrandContext);
   const [brandId, setBrandId] = useState(null); 
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([
@@ -31,14 +32,14 @@ function DashboardPage() {
     inactiveUsers: 1,
   });
   const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
+  const [brand, setBrand] = useState({
+    image_url: '',
+    kbis_pdf: '',
+    display_name: '',
+  });
+
 
   const history = useLocation();
-
-  const allBrandsWithDate = allBrands.map(brand => ({
-    ...brand,
-    date: 'N/A', 
-  }));
-
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -90,6 +91,43 @@ function DashboardPage() {
     }
     setView(selectedView);
   };
+  
+  const handleAddImage = async (id, base64Files) => {
+    try {
+      const imageFile = base64Files[0];
+      const pdfFile = base64Files[1];
+  
+      const formData = new FormData();
+      if (imageFile) {
+        const response = await fetch(imageFile);
+        const blob = await response.blob();
+        formData.append('imageFile', blob, 'image.jpg');
+      }
+      if (pdfFile) {
+        const response = await fetch(pdfFile);
+        const blob = await response.blob();
+        formData.append('pdfFile', blob, 'file.pdf');
+      }
+  
+      const response = await fetch(`${baseUrl}/brands/${id}/image`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log('Files uploaded:', data);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
+  };
+
 
   return (
     <>
@@ -248,7 +286,12 @@ function DashboardPage() {
             ) : view === 'table' ? (
               <>
                 <ModalPup />
-                <Table data={allBrands} onEdit={handleEdit} onDelete={handleDelete} />
+                <Table
+                data={allBrands}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onAddImage={handleAddImage}
+              />
               </>
             ) : (
               <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>

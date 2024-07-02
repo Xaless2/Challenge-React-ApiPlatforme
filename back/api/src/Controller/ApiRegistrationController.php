@@ -34,15 +34,26 @@ class ApiRegistrationController extends AbstractController
                 'path' => 'src/Controller/ApiRegistrationController.php',
             ], Response::HTTP_BAD_REQUEST);
         }
-   
+
+        $allowedRoles = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'];
+
         if (!isset($data['roles']) || empty($data['roles'])) {
             $data['roles'] = ['ROLE_USER'];
+        } else {
+            foreach ($data['roles'] as $role) {
+                if (!in_array($role, $allowedRoles)) {
+                    return $this->json([
+                        'message' => 'Invalid role',
+                        'path' => 'src/Controller/ApiRegistrationController.php',
+                    ], Response::HTTP_BAD_REQUEST);
+                }
+            }
         }
 
         $user = new User();
         $user->setEmail($data['email']);
         $user->setPassword($hasher->hashPassword($user, $data['password']));
-        $user->setRoles($data['roles'] ?? []);
+        $user->setRoles($data['roles']);
         $user->setFirstname($data['firstname']);
         $user->setLastname($data['lastname']);
         $user->setPhone($data['phone'] ?? "");

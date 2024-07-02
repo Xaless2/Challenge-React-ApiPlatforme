@@ -1,91 +1,181 @@
 <?php
 
-namespace App\Controller;
+namespace App\Entity;
 
-use App\Entity\Brand;
+use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Delete;
 use App\Repository\BrandRepository;
-use App\Repository\EstablishmentRepository;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Repository\PerformanceRepository;
-use App\Repository\SlotRepository;
-use App\Repository\ReservationRepository;
-use App\Repository\UserRepository;
-use App\Repository\SlotCoachRepository;
-use Symfony\Component\HttpFoundation\Request;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\BrandImageEndPdfController;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-
-
-/**
- * @Route("/api/brands")
- */
-class BrandController extends AbstractController
+#[Vich\Uploadable]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/brands/{id}',
+            normalizationContext: ['groups' => ['read:collection', 'read:item', 'read:collection:brand']],
+            security: "is_granted('ROLE_ADMIN', 'ROLE_COACH')",
+        ),
+        new GetCollection(
+            uriTemplate: '/brands',
+            normalizationContext: ['groups' => ['read:collection', 'read:item', 'read:collection:brand']],
+        ),
+        new Post(
+            uriTemplate: '/brands',
+        ),
+        new Post(
+            uriTemplate: '/brands/{id}/image',
+            controller: BrandImageEndPdfController::class,
+            normalizationContext: ['groups' => ['read:collection', 'read:item', 'read:collection:brand']],
+            deserialize: false,
+        ),
+        new Put(
+            uriTemplate: '/brands/{id}',
+        ),
+        new Delete(
+            uriTemplate: '/brands/{id}',
+        ),
+    ]
+)]
+#[ORM\Entity(repositoryClass: BrandRepository::class)]
+class Brand
 {
-    #[Route('api/brands', name: 'api_brand', methods: ['GET'])]
-    public function brand(BrandRepository $brandRepository): Response
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column]
+    private ?int $user_id = null;
+
+    #[Groups(['read:item'])]
+    #[ORM\Column(length: 255)]
+    private ?string $display_name = null;
+
+    #[ORM\Column( type: Types::STRING, length: 255, nullable: true )]
+    #[Groups(['read:item', 'read:collection'])]
+    private ?string $kbis_pdf = null;
+
+    #[Vich\UploadableField(mapping: 'brand_pdf', fileNameProperty: 'kbis_pdf')]
+    private ?File $pdfFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read:item', 'read:collection'])]
+    private ?string $image_url = null;
+
+    #[Vich\UploadableField(mapping: 'brand_image', fileNameProperty: 'image_url')]
+    private ?File $imageFile = null;
+
+    #[Groups(['read:item'])]
+    #[ORM\Column]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
     {
-        return $this->json($brand);
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
-    #[IsGranted("ROLE_ADMIN")]
-    #[Route('/api/brands/{brandId}/establishments', name: 'brands_establishment', methods: ['GET'])]
-    public function getEstablishmentsByBrand(
-        BrandRepository $brandRepository,
-        EstablishmentRepository $establishmentRepository,
-        Request $request,
-        int $brandId
-    ): JsonResponse {
-        $user = $this->getUser();
-        $brand = $brandRepository->findOneBy(['id' => $brandId, 'user' => $user]);
-        
-        if (!$brand) {
-            return new JsonResponse(['error' => 'Brand not found'], JsonResponse::HTTP_NOT_FOUND);
-        }
-    
-        $establishments = $establishmentRepository->findBy(['brand' => $brand]);
-    
-        $result = [];
-        foreach ($establishments as $establishment) {
-            $result[] = [
-                'id' => $establishment->getId(),
-                'brand' => $establishment->getBrand()->getId(),
-                'display_name' => $establishment->getDisplayName()
-            ];
-        }
-    
-        return new JsonResponse($result);
+    public function getId(): ?int
+    {
+        return $this->id;
     }
-    
-    
 
-    #[IsGranted("ROLE_ADMIN")]
-    #[Route('/api/brands/brands_by_admin', name: 'brand_by_admin', methods: ['GET'])]
-    public function getBrandsByAdmin(
-        BrandRepository $brandRepository
-    ): JsonResponse {
+    public function setId(int $id): static
+    {
+        $this->id = $id;
 
-        $user = $this->getUser();
-        $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
-
-        if (!$brands) {
-            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
-        }
-
-        $result = [];
-
-        foreach ($brands as $brand) {
-            $result[] = [
-                'id' => $brand->getId(),
-                'name' => $brand->getDisplayName(),
-                'image' => $brand->getImageUrl()
-            ];
-        }
-
-        return new JsonResponse($result);
+        return $this;
     }
-   
-    
+
+    public function getUserId(): ?int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): static
+    {
+        $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getDisplayName(): ?string
+    {
+        return $this->display_name;
+    }
+
+    public function setDisplayName(string $display_name): static
+    {
+        $this->display_name = $display_name;
+
+        return $this;
+    }
+
+    public function getKbisPdf(): ?string
+    {
+        return $this->kbis_pdf;
+    }
+
+    public function setKbisPdf(?string $kbis_pdf): static
+    {
+        $this->kbis_pdf = $kbis_pdf;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->image_url;
+    }
+
+    public function setImageUrl(?string $image_url): static
+    {
+        $this->image_url = $image_url;
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile): static
+    {
+        $this->imageFile = $imageFile;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getPdfFile(): ?File
+    {
+        return $this->pdfFile;
+    }
+
+    public function setPdfFile(?File $pdfFile): static
+    {
+        $this->pdfFile = $pdfFile;
+
+        return $this;
+    }
 }

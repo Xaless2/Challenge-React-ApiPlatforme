@@ -21,15 +21,6 @@ class EstablishmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Establishment::class);
     }
 
-    public function findAll(): array
-    {
-        return $this->createQueryBuilder('e')
-            ->orderBy('e.id', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
     public function findByName(string $name)
     {
         return $this->createQueryBuilder('e')
@@ -39,28 +30,7 @@ class EstablishmentRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findSlotsByEstablishment(int $establishmentId): array
-    {
-        return $this->createQueryBuilder('e')
-            ->select('e, s')
-            ->leftJoin('e.slots', 's')
-            ->where('e.id = :establishmentId')
-            ->setParameter('establishmentId', $establishmentId)
-            ->getQuery()
-            ->getResult();
-    }
 
-
-
-    public function countSlotsByEstablishment(): array
-    {
-        return $this->createQueryBuilder('e')
-            ->select('e.id, e.display_name, COUNT(s.id) AS slot_count')
-            ->leftJoin('e.slots', 's')
-            ->groupBy('e.id')
-            ->getQuery()
-            ->getResult();
-    }
 
 //    /**
 //     * @return Establishment[] Returns an array of Establishment objects

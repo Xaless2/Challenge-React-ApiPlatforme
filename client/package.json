@@ -36,6 +36,7 @@
     "react-perfect-scrollbar": "^1.5.8",
     "react-responsive": "^10.0.0",
     "react-router-dom": "^6.23.1",
+    "react-select": "^5.8.0",
     "react-simple-maps": "^3.0.0",
     "react-slick": "^0.30.2",
     "react-time-picker": "^7.0.0",

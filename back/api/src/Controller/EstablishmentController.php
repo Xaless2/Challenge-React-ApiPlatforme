@@ -3,21 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Establishment;
-use App\Repository\UserRepository;
-use App\Repository\EstablishmentRepository;
-use App\Repository\BrandRepository;
 use App\Repository\SlotRepository;
-use App\Repository\PerformanceRepository;
-use App\Repository\ReservationRepository;
+use App\Repository\UserRepository;
+use App\Repository\BrandRepository;
 use App\Repository\SlotCoachRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\PerformanceRepository;
+use App\Repository\ReservationRepository;
+use App\Repository\EstablishmentRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EstablishmentController extends AbstractController
 {
@@ -36,7 +35,12 @@ class EstablishmentController extends AbstractController
         foreach($establishments as $establishment){
             $result[] = [
                 'id' => $establishment->getId(),
-                'display_name' => $establishment->getDisplayName()
+                'display_name' => $establishment->getDisplayName(),
+                'address' => $establishment->getAddress(),
+                'zip_code' => $establishment->getZipCode(),
+                'city' => $establishment->getCity(),
+                'phone' => $establishment->getPhone(),
+                'brand_id' => $establishment->getBrandId()->getId()
             ];
         }
         return new JsonResponse($result);
@@ -44,31 +48,40 @@ class EstablishmentController extends AbstractController
 
 
     #[Route('/api/establishments', name: 'establishment_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em): JsonResponse
+    public function create(Request $request, EntityManagerInterface $em, BrandRepository $brandRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+    
+       
+        $brandId = $data['brand_id'];
+        $brand = $brandRepository->find($brandId);
+        if (!$brand) {
+            return new JsonResponse(['error' => 'Brand not found'], Response::HTTP_BAD_REQUEST);
+        }
+    
         $establishment = new Establishment();
         $establishment->setDisplayName($data['name']);
         $establishment->setAddress($data['address']);
+        $establishment->setZipCode($data['postal_code']);
         $establishment->setCity($data['city']);
         $establishment->setPhone($data['phone']);
-        $establishment->setZipCode($data['zip_code ']);
-
+        $establishment->setBrandId($brand);
+    
         $em->persist($establishment);
         $em->flush();
-
+    
         return new JsonResponse(['status' => 'Establishment created!'], Response::HTTP_CREATED);
     }
-
+    
     #[Route('/api/establishments/{id}', name: 'establishment_update', methods: ['PUT'])]
     public function update(Request $request, Establishment $establishment, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $establishment->setDisplayName($data['name']);
         $establishment->setAddress($data['address']);
+        $establishment->setZipCode($data['postal_code']);
         $establishment->setCity($data['city']);
         $establishment->setPhone($data['phone']);
-        $establishment->setZipCode($data['zip_code ']);
 
         $em->flush();
 
@@ -151,118 +164,4 @@ class EstablishmentController extends AbstractController
 
         return new JsonResponse($responseData);
     }
-
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/api/establishments/{establishmentId}/slots', name: 'establishment_slots', methods: ['GET'])]
-    public function getSlotsByEstablishment(
-        EstablishmentRepository $establishmentRepository,
-        PerformanceRepository $performanceRepository,
-        SlotRepository $slotRepository,
-        int $establishmentId 
-    ): JsonResponse {
-        $user = $this->getUser();
-        $establishment = $establishmentRepository->findOneBy(['id' => $establishmentId]);
-
-        if (!$establishment) {
-            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
-        }
-
-        $result = [];
-        $performances = $performanceRepository->findBy(['establishment' => $establishment]);
-
-
-        foreach ($performances as $performance) {
-            $slots = $slotRepository->findBy(['performance' => $performance]);
-    
-            foreach ($slots as $slot) {
-                // Fetch coaches associated with the slot
-                $coaches = $slot->getCoachId();                
-
-                $coachesInfo = [];
-                foreach ($coaches as $coach) {
-                    $coachesInfo[] = [
-                        'id' => $coach->getId(),
-                        'coach_name' => $coach->getFirstname() . ' ' . $coach->getLastname()
-
-                    ];
-                }
-    
-                $result[] = [
-                    'id' => $slot->getId(),
-                    'establishment' => $slot->getPerformance()->getEstablishment()->getDisplayName(),
-                    'performance' => $slot->getPerformance()->getId(),
-                    'coach_ids' => $coachesInfo,
-                    'number_of_clients' => $slot->getNumberOfClients(),
-                    'day_start_at' => $slot->getDayStartAt()->format('Y-m-d H:i:s'),
-                    'day_end_at' => $slot->getDayEndAt()->format('Y-m-d H:i:s'),
-                    'duration_minutes' => $slot->getDurationMinutes()
-
-
-                    
-                ];
-            }
-        }
-        return new JsonResponse($result);
-    }
-
-
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/api/establishments/{establishmentId}/slots/{date}', name: 'establishment_slots_by_date', methods: ['GET'])]
-    public function getSlotsByEstablishmentAndDate(
-        EstablishmentRepository $establishmentRepository,
-        PerformanceRepository $performanceRepository,
-        SlotRepository $slotRepository,
-        int $establishmentId,
-        string $date
-    ): JsonResponse {
-        $user = $this->getUser();
-        $establishment = $establishmentRepository->findOneBy(['id' => $establishmentId]);
-    
-        if (!$establishment) {
-            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
-        }
-    
-        $result = [];
-        $performances = $performanceRepository->findBy(['establishment' => $establishment]);
-        
-        // Parse the date string to a DateTime object
-        $selectedDate = new \DateTime($date);
-        $selectedDateStart = $selectedDate->setTime(0, 0, 0);
-        $selectedDateEnd = clone $selectedDateStart;
-        $selectedDateEnd->setTime(23, 59, 59);
-    
-        foreach ($performances as $performance) {
-            $slots = $slotRepository->createQueryBuilder('s')
-                ->where('s.performance = :performance')
-                ->andWhere('s.dayStartAt BETWEEN :start AND :end')
-                ->setParameter('performance', $performance)
-                ->setParameter('start', $selectedDateStart)
-                ->setParameter('end', $selectedDateEnd)
-                ->getQuery()
-                ->getResult();
-    
-            foreach ($slots as $slot) {
-                $coaches = $slot->getCoachId();
-                $coachIds = [];
-                foreach ($coaches as $coach) {
-                    $coachIds[] = $coach->getId();
-                }
-    
-                $result[] = [
-                    'id' => $slot->getId(),
-                    'performance' => $slot->getPerformance()->getId(),
-                    'coach_ids' => $coachIds,
-                    'number_of_clients' => $slot->getNumberOfClients(),
-                    'day_start_at' => $slot->getDayStartAt()->format('Y-m-d H:i:s'),
-                    'day_end_at' => $slot->getDayEndAt()->format('Y-m-d H:i:s'),
-                    'duration_minutes' => $slot->getDurationMinutes()
-                ];
-            }
-        }
-    
-        return new JsonResponse($result);
-    }
-    
-
-
 }

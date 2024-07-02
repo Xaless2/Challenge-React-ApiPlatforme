@@ -22,6 +22,7 @@ function DashboardPage() {
   const { token, userRole, logout, user, getUser } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
   const { getBrandById } = useContext(BrandContext);
+  const { allBrands } = useContext(BrandContext);
   const [brandId, setBrandId] = useState(null); 
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([
@@ -34,7 +35,7 @@ function DashboardPage() {
     inactiveUsers: 1,
   });
   const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
-
+ 
   const history = useLocation();
 
   useEffect(() => {
@@ -100,6 +101,43 @@ function DashboardPage() {
       return; 
     }
     setView(selectedView);
+  };
+
+  const handleAddImage = async (id, base64Files) => {
+    try {
+      const image_url = base64Files[0];
+      const pdfFile = base64Files[1];
+  
+      const formData = new FormData();
+      if (image_url) {
+        const response = await fetch(image_url);
+        const blob = await response.blob();
+        formData.append('image_url', blob, 'image.jpg');
+      }
+      if (pdfFile) {
+        const response = await fetch(pdfFile);
+        const blob = await response.blob();
+        formData.append('pdfFile', blob, 'file.pdf');
+      }
+  
+      const response = await fetch(`${baseUrl}/brands/${id}/image`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      console.log('Response:', response);
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log('Files uploaded:', data);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
   };
 
   return (
@@ -258,24 +296,24 @@ function DashboardPage() {
             </div>
           </div>
           <div className='mt-12'>
-  {view === 'dashboard' ? (
-    <>
-    
-      <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>
-
-    </>
-  ) : view === 'table' ? (
-    <>
-      <ModalPup />
-      <Table data={data} onEdit={handleEdit} onDelete={handleDelete} />
-    </>
-  ) : view === 'calendar' ? (
-    <CalendarPage />
-  ) : (
-    <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>
-  )}
-</div>
-
+            {view === 'dashboard' ? (
+              <>
+                <Stats stats={stats} />
+              </>
+            ) : view === 'table' ? (
+              <>
+                <ModalPup />
+                <Table
+                data={allBrands}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onAddImage={handleAddImage}
+              />
+              </>
+            ) : (
+              <h1 className="text-3xl text-center mt-10">Bienvenue sur le Dashboard</h1>
+            )}
+          </div>
           {showToast && (
             <Toast
               message="Êtes-vous sûr de vouloir supprimer cet élément ?"

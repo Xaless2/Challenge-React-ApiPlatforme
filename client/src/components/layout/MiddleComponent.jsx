@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../../styles/components.css";
 import RevealOnScroll from '../common/RevealOnScroll';
-// import AsyncSelect from 'react-select/async';
+import AsyncSelect from 'react-select/async';
+import { baseUrl } from '../../utils/service';
 
-export const baseUrl = "https://localhost:8000/api";
+
 
 function MiddleComponent() {
     const [selectedEstablishment, setSelectedEstablishment] = useState(null);
@@ -27,8 +28,6 @@ function MiddleComponent() {
             }
 
             const data = await response.json();
-            console.log('API data:', data);
-
             return data.map(establishment => ({
                 value: establishment.id,
                 label: establishment.display_name,
@@ -41,7 +40,6 @@ function MiddleComponent() {
 
     const loadOptions = (inputValue, callback) => {
         fetchEstablishments(inputValue).then(options => {
-            console.log('Options:', options);
             callback(options);
         });
     };
@@ -80,7 +78,7 @@ function MiddleComponent() {
                                     </svg>
                                 </div>
                             </div>
-                            {/* <AsyncSelect
+                            <AsyncSelect
                                 className="font-bold uppercase rounded-full w-full py-4 pl-4 text-gray-700 bg-gray-100 leading-tight focus:outline-none focus:shadow-outline lg:text-sm text-xs"
                                 placeholder="Search"
                                 loadOptions={loadOptions}
@@ -95,7 +93,7 @@ function MiddleComponent() {
                                         color: 'black',
                                     }),
                                 }}
-                            /> */}
+                            />
                             <div className="bg-gray-600 p-2 hover:bg-blue-400 cursor-pointer mx-2 rounded-full">
                                 <svg className="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />

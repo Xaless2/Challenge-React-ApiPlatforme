@@ -7,12 +7,13 @@ import CalendarPage from "../pages/CalendarPage.jsx";
 import EtablishmentPage from "../pages/EtablishmentPage.jsx";
 import SlotPage from "../pages/SlotPage.jsx";
 import PerformancePage from "../pages/PerformancePage.jsx";
+import Unauthorized from "../components/EstablishmentDetail/Unauthorized.jsx";
 
 export const routes = [
     {
         path: "/register",
         component: RegisterPage,
-    }, 
+    },
     {
         path: "/login",
         component: LoginPage,
@@ -23,30 +24,39 @@ export const routes = [
     },
     {
         path: "/dashboard",
-        component: DashboardPage
+        component: DashboardPage,
+        protected: true,
+        roles: [],
     },
     {
         path: "/etablishment",
         component: EtablishmentPage,
-        protected: false,
+        protected: true,
+        roles: [],
     },
     {
         path: "/profile",
-        component: ProfilePage
+        component: ProfilePage,
+        protected: true,
     },
     {
-        path: "/establishments/:id", 
-        component: EtablishmentPage
+        path: "/establishments/:id",
+        component: EtablishmentPage,
+        protected: true,
     },
     {
         path: "/create-performance",
         component: PerformancePage,
-        protected: false,
+        protected: true,
     },
     {
         path: "/create-slot",
         component: SlotPage,
-        protected: false,
+        protected: true,
+    },
+    {
+        path: "/unauthorized",
+        component: Unauthorized,
     },
     {
         path: "/calendar",

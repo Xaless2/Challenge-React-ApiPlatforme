@@ -35,31 +35,23 @@ const RegisterPage = () => {
     }));
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const response = await registerUser(register);
-  //   console.log("response data", response);
-  //   if (response) {
-  //     navigate('/login');
-  //   } else {
-  //     console.error('register failed');
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const success = await registerUser(register);
-      if (success) {
-        navigate('/login');
-      } else {
-        console.error('Registration failed');
-      }
+        const response = await registerUser(register);
+        console.log('Response from registerUser:', response);
+        if (response) {
+            navigate('/login');
+        } else {
+            console.error('Registration failed');
+        }
     } catch (error) {
-      console.error('Error registering:', error);
+        console.error('Error during registration:', error);
     }
-  };
-  
+};
+
+
+
 
   const fields = [
     { type: 'text', label: 'First Name', name: 'firstname', value: register.firstname, onChange: handleChange },
@@ -74,8 +66,6 @@ const RegisterPage = () => {
       options: [
         { value: 'ROLE_CLIENT', label: 'Client' },
         { value: 'ROLE_COACH', label: 'Coach' },
-        { value: 'ROLE_CREATOR', label: 'Créateur' },
-        { value: 'ROLE_ADMIN', label: 'Administratif' },
       ],
     },
     { type: 'password', label: 'Password', name: 'password', value: register.password, onChange: handleChange },
@@ -103,7 +93,7 @@ const RegisterPage = () => {
     <div className="flex justify-center items-center min-h-screen">
       <div className="max-w-4xl w-full bg-white rounded-lg overflow-hidden flex flex-col md:flex-row">
         <div className="hidden md:block md:w-1/2 relative">
-          <img src="/path/to/your/image.jpg" alt="Planifit" className="w-full h-full object-cover" />
+          <img src="https://zupimages.net/up/24/27/20qm.png" alt="Planifit" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <h1 className="text-4xl text-white font-bold">Planifit</h1>
           </div>

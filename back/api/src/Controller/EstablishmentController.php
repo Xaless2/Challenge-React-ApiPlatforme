@@ -42,18 +42,21 @@ class EstablishmentController extends AbstractController
 
 
     #[Route('/api/establishments', name: 'establishment_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em): JsonResponse
+    public function create(Request $request, EntityManagerInterface $em, BrandRepository $brandRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        $brand = $brandRepository->find($data['brand_id']);
+        if (!$brand) {
+            return new JsonResponse(['status' => 'Brand not found!'], Response::HTTP_NOT_FOUND);
+        }
+
         $establishment = new Establishment();
-        $establishment->setName($data['name']);
-        $establishment->setAddress($data['address']);
-        $establishment->setPostalCode($data['postal_code']);
-        $establishment->setCity($data['city']);
-        $establishment->setCountry($data['country']);
-        $establishment->setDescription($data['description']);
-        $establishment->setEmail($data['email']);
+        $establishment->setBrandId($brand);
+        $establishment->setDisplayName($data['display_name']);
         $establishment->setPhone($data['phone']);
+        $establishment->setAddress($data['address']);
+        $establishment->setZipCode($data['zip_code']);
+        $establishment->setCity($data['city']);
 
         $em->persist($establishment);
         $em->flush();

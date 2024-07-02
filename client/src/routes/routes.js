@@ -6,6 +6,7 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import EtablishmentPage from "../pages/EtablishmentPage.jsx";
 import SlotPage from "../pages/SlotPage.jsx";
 import PerformancePage from "../pages/PerformancePage.jsx";
+import EstablishmentPage from "../pages/EstablishmentPage.jsx";
 
 export const routes = [
     {
@@ -45,6 +46,11 @@ export const routes = [
     {
         path: "/create-slot",
         component: SlotPage,
+        protected: false,
+    },
+    {
+        path: "/create-establishment",
+        component: EstablishmentPage, 
         protected: false,
     },
 ];

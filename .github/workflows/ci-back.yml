@@ -30,7 +30,7 @@ jobs:
         run: docker compose up -d
 
       - name: Install dependencies
-        run: docker compose exec php composer install --no-dev --optimize-autoloader --no-interaction
+        run: docker compose exec php composer install --no-interaction
 
       - name: Execute Doctrine migration
         run: docker compose exec php bin/console make:migration

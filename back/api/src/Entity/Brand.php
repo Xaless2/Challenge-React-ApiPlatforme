@@ -54,8 +54,9 @@ class Brand
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $user_id = null;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $user;
 
     #[Groups(['read:item'])]
     #[ORM\Column(length: 255)]
@@ -91,22 +92,20 @@ class Brand
 
     public function getName(): ?string
     {
-        $this->id = $id;
-
-        return $this;
+        return $this->display_name;
     }
-
-    public function getUserId(): ?int
+   
+    public function getUser(): ?User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(int $user_id): static
-    {
-        $this->user_id = $user_id;
+    public function setUser(User $user): static
+{
+    $this->user = $user;
+    return $this;
+}
 
-        return $this;
-    }
 
     public function getDisplayName(): ?string
     {

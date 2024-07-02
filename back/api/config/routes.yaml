@@ -23,3 +23,14 @@ api_reservations:
     controller: App\Controller\ReservationController::createReservation
     methods: POST
 
+brands_establishment:
+    path: /api/brands/{brandId}/establishments
+    controller: App\Controller\BrandController::getEstablishmentsByBrand
+    methods: GET
+
+
+establishment_slots:
+    path: /api/establishments/{establishmentId}/slots
+    controller: App\Controller\EstablishmentController::getSlotsByEstablishment
+    methods: GET
+

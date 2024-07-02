@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Entity\User;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SlotController extends AbstractController
 {
@@ -26,13 +27,33 @@ class SlotController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('/slots', name: 'get_slots', methods: ['GET'])]
-    public function getSlots(SlotRepository $slotRepository): Response
+ 
+    #[Route('/api/slots', name: 'get_slots', methods: ['GET'])]
+    public function getSlots(Request $request, SlotRepository $slotRepository): JsonResponse
     {
-        $slots = $slotRepository->findAll();
-        $data = $this->serializer->serialize($slots, 'json', ['groups' => 'slot:read']);
+        $name = trim($request->query->get('name', ''));
+        if ($name) {
+            $slots = $slotRepository->findByName($name);
+        } else {
+            $slots = $slotRepository->findAll();
+        }
 
-        return new Response($data, 200, ['Content-Type' => 'application/json']);
+        $result = [];
+
+        foreach($slots as $slot){
+            $result[] = [
+                'id' => $slot->getId(),
+                'performance_id' => $slot->getPerformanceId(),
+                'number_of_clients' => $slot->getNumberOfClients(),
+                'week_day' => $slot->getWeekDay(),
+                'day_start_at' => $slot->getDayStartAt(),
+                'day_end_at' => $slot->getDayEndAt(),
+                'time_start_at' => $slot->getTimeStartAt(),
+                'time_end_at' => $slot->getTimeEndAt(),
+                'duration_minutes' => $slot->getDurationMinutes(),
+            ];
+        }
+        return new JsonResponse($result);
     }
 
     #[Route('/api/slots/{id}', name: 'get_slot', methods: ['GET'])]
@@ -49,7 +70,7 @@ class SlotController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $slot = new Slot();
-        $slot->setPerformanceId($data['performance_id'])
+        $slot->setPerformance($data['performance_id'])
              ->setNumberOfClients($data['number_of_clients'])
              ->setWeekDay($data['week_day'])
              ->setDayStartAt(new \DateTime($data['day_start_at']))
@@ -82,7 +103,7 @@ class SlotController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $slot->setPerformanceId($data['performance_id'])
+        $slot->setPerformance($data['performance_id'])
              ->setNumberOfClients($data['number_of_clients'])
              ->setWeekDay($data['week_day'])
              ->setDayStartAt(new \DateTime($data['day_start_at']))

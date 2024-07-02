@@ -1,4 +1,3 @@
-// src/components/admin/AdminFormBuilder.jsx
 import React, { useState, useEffect } from 'react';
 import TextInput from '../common/TextInput';
 import SelectInput from '../common/SelectInput';
@@ -44,7 +43,13 @@ const Field = ({ field, handleChange }) => {
 };
 
 const AdminFormBuilder = ({ fields, onSubmit }) => {
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState(
+        fields.reduce((acc, field) => {
+            acc[field.name] = field.value || '';
+            return acc;
+        }, {})
+    );
+
     const [endTimeOptions, setEndTimeOptions] = useState([]);
 
     const handleChange = (e) => {
@@ -77,6 +82,14 @@ const AdminFormBuilder = ({ fields, onSubmit }) => {
             }
         }
     }, [formData.time_start_at, formData.duration_minutes]);
+
+    useEffect(() => {
+        const initialFormData = fields.reduce((acc, field) => {
+            acc[field.name] = field.value || '';
+            return acc;
+        }, {});
+        setFormData(initialFormData);
+    }, [fields]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

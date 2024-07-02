@@ -21,11 +21,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EstablishmentController extends AbstractController
 {
-    #[Route('/establishments', name: 'establishment_list', methods: ['GET'])]
-    public function list(EstablishmentRepository $establishmentRepository): JsonResponse
+    #[Route('/api/establishments', name: 'establishment_list', methods: ['GET'])]
+    public function list(Request $request, EstablishmentRepository $establishmentRepository): JsonResponse
     {
-        return new JsonResponse($establishmentRepository->findAll());
+        $name = trim($request->query->get('name', ''));
+        if ($name) {
+            $establishments = $establishmentRepository->findByName($name);
+        } else {
+            $establishments = $establishmentRepository->findAll();
+        }
+
+        $result = [];
+
+        foreach($establishments as $establishment){
+            $result[] = [
+                'id' => $establishment->getId(),
+                'display_name' => $establishment->getDisplayName()
+            ];
+        }
+        return new JsonResponse($result);
     }
+
 
     #[Route('/api/establishments', name: 'establishment_create', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $em): JsonResponse
@@ -135,4 +151,112 @@ class EstablishmentController extends AbstractController
 
         return new JsonResponse($responseData);
     }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/api/establishments/{establishmentId}/slots', name: 'establishment_slots', methods: ['GET'])]
+    public function getSlotsByEstablishment(
+        EstablishmentRepository $establishmentRepository,
+        PerformanceRepository $performanceRepository,
+        SlotRepository $slotRepository,
+        int $establishmentId 
+    ): JsonResponse {
+        $user = $this->getUser();
+        $establishment = $establishmentRepository->findOneBy(['id' => $establishmentId]);
+
+        if (!$establishment) {
+            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+        }
+
+        $result = [];
+        $performances = $performanceRepository->findBy(['establishment' => $establishment]);
+
+
+        foreach ($performances as $performance) {
+            $slots = $slotRepository->findBy(['performance' => $performance]);
+    
+            foreach ($slots as $slot) {
+                // Fetch coaches associated with the slot
+                $coaches = $slot->getCoachId();
+    
+                // Example: Convert coaches to array of IDs
+                $coachIds = [];
+                foreach ($coaches as $coach) {
+                    $coachIds[] = $coach->getId();
+                }
+    
+                $result[] = [
+                    'id' => $slot->getId(),
+                    'performance' => $slot->getPerformance()->getId(),
+                    'coach_ids' => $coachIds,
+                    'number_of_clients' => $slot->getNumberOfClients(),
+                    'day_start_at' => $slot->getDayStartAt()->format('Y-m-d H:i:s'),
+                    'day_end_at' => $slot->getDayEndAt()->format('Y-m-d H:i:s'),
+                    'duration_minutes' => $slot->getDurationMinutes()
+
+
+                    
+                ];
+            }
+        }
+        return new JsonResponse($result);
+    }
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/api/establishments/{establishmentId}/slots/{date}', name: 'establishment_slots_by_date', methods: ['GET'])]
+    public function getSlotsByEstablishmentAndDate(
+        EstablishmentRepository $establishmentRepository,
+        PerformanceRepository $performanceRepository,
+        SlotRepository $slotRepository,
+        int $establishmentId,
+        string $date
+    ): JsonResponse {
+        $user = $this->getUser();
+        $establishment = $establishmentRepository->findOneBy(['id' => $establishmentId]);
+    
+        if (!$establishment) {
+            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+        }
+    
+        $result = [];
+        $performances = $performanceRepository->findBy(['establishment' => $establishment]);
+        
+        // Parse the date string to a DateTime object
+        $selectedDate = new \DateTime($date);
+        $selectedDateStart = $selectedDate->setTime(0, 0, 0);
+        $selectedDateEnd = clone $selectedDateStart;
+        $selectedDateEnd->setTime(23, 59, 59);
+    
+        foreach ($performances as $performance) {
+            $slots = $slotRepository->createQueryBuilder('s')
+                ->where('s.performance = :performance')
+                ->andWhere('s.dayStartAt BETWEEN :start AND :end')
+                ->setParameter('performance', $performance)
+                ->setParameter('start', $selectedDateStart)
+                ->setParameter('end', $selectedDateEnd)
+                ->getQuery()
+                ->getResult();
+    
+            foreach ($slots as $slot) {
+                $coaches = $slot->getCoachId();
+                $coachIds = [];
+                foreach ($coaches as $coach) {
+                    $coachIds[] = $coach->getId();
+                }
+    
+                $result[] = [
+                    'id' => $slot->getId(),
+                    'performance' => $slot->getPerformance()->getId(),
+                    'coach_ids' => $coachIds,
+                    'number_of_clients' => $slot->getNumberOfClients(),
+                    'day_start_at' => $slot->getDayStartAt()->format('Y-m-d H:i:s'),
+                    'day_end_at' => $slot->getDayEndAt()->format('Y-m-d H:i:s'),
+                    'duration_minutes' => $slot->getDurationMinutes()
+                ];
+            }
+        }
+    
+        return new JsonResponse($result);
+    }
+    
+
+
 }

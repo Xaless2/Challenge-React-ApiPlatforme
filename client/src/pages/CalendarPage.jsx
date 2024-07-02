@@ -12,140 +12,264 @@ import UserList from '../components/common/UserList';
 
 const CalendarPage = () => {
     const [showModal, setShowModal] = useState(false);
-    const [token, setToken] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [coachOptions, setCoachOptions] = useState([]);
     const [selectedTime, setSelectedTime] = useState('12:00'); 
     const [establishments, setEstablishments] = useState([]);
     const [selectedEstablishment, setSelectedEstablishment] = useState('');
-
-
+    const [selectedEstablishmentInfo, setSelectedEstablishmentInfo] = useState(null); 
+    const [slots, setSlots] = useState([]); // New state for slots
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const calendarRef = useRef(null);
+    const [selectedSlot, setSelectedSlot] = useState(null); 
+    const [selectedEvent, setSelectedEvent] = useState(null); // State to hold selected event details
+    const [events, setEvents] = useState([]);
+    const [currentEvents, setCurrentEvents] = useState([])
 
- 
-    const handleDateClick = (arg) => {
-        setSelectedDate(arg.date);
-        setShowModal(true);
-        //fermer le modal au clic extérieur
+
+
+   
+    const handleEventClick = (clickInfo) => {
+        setSelectedEvent(clickInfo.event);
+        setShowEditModal(true);
         window.onclick = function(event) {
-            if (event.target === document.querySelector('.modal')) {
-                setShowModal(false);
-            }
-        };
+                    if (event.target === document.querySelector('.modal')) {
+                        setShowAddModal(false);
+                    }
+                };
     };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
+    const handleDateClick = async (info) => {
+        setSelectedDate(info.dateStr); // Set the selected date
+        setShowAddModal(true);
+    
+        // Fetch slots for the selected date
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return;
+        }
+    
+        try {
+            const response = await getRequest(
+                `${baseUrl}/establishments/${selectedEstablishment}/slots?date=${info.dateStr}`,
+                {
+                    "Authorization": `Bearer ${token}`,
+                }
+            );
+            console.log('Fetched slots for selected date:', response);
+            setSlots(response); // Update slots with the fetched data
+        } catch (error) {
+            console.error(error);
+        }
     };
 
-    const handleSubmitForm = (formData) => {
-        console.log('Form submitted with data:', formData);
+    const handleCloseAddModal = () => setShowAddModal(false);
+    const handleCloseEditModal = () => setShowEditModal(false);
 
-        fetch('/api/reservations', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error('Error:', error));
 
-        setShowModal(false);
-    };
+
+    const getEstablishment = useCallback(async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return;
+        }
+
+        try {
+            const response = await getRequest(
+                `${baseUrl}/establishments`,
+                {
+                    "Authorization": `Bearer ${token}`,
+                }
+            );
+            console.log('Fetched establishments:', response); 
+            setEstablishments(response); 
+        } catch (error) {
+            setError(error?.message || error);
+        }
+    }, []);
 
     useEffect(() => {
         getEstablishment();
-    }, []);
+    }, [getEstablishment]);
 
-    const handleEstablishmentChange = (event) => {
-        setSelectedEstablishment(event.target.value);
+
+    useEffect(() => {
+        // Fetch events from the API
+        const fetchEvents = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                return;
+            }
+
+            try {
+                const response = await getRequest(
+                    `${baseUrl}/establishments/${selectedEstablishment}/slots`,
+                    {
+                        "Authorization": `Bearer ${token}`,
+                    }
+                );
+                console.log('Fetched slots:', response);
+                setEvents(response); 
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (selectedEstablishment) {
+            fetchEvents();
+        }
+    }, [selectedEstablishment]);
+
+
+    const handleEstablishmentChange = async (event) => {
+        const establishmentId = event.target.value;
+        setSelectedEstablishment(establishmentId);
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No token found');
+            }
+
+            const response = await getRequest(
+                `${baseUrl}/establishments/${establishmentId}/slots`,
+                {
+                    "Authorization": `Bearer ${token}`,
+                }
+            );
+         console.log('Fetched slots:', response);
+            setSlots(response); 
+        } catch (error) {
+            setError(error?.message || error);
+        }
     };
- 
 
-    // const getEstablishment = useCallback( async (data) => {
-    //     const token = localStorage.getItem('token');
-    //     console.log('token', token);
-    //     getRequest(`${baseUrl}/brands/establishments`, 
-    //         data,{
-    //             "Authorization": `Bearer ${token}`,
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         setEstablishments(data);
-    //     })
-    //     .catch(error => console.error('Erreur lors de la récupération des établissements:', error));
-    // },[data]);
-
-    const getEstablishment = useCallback( async () => {
-        const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MTk4NDMxMjQsImV4cCI6MTcxOTg0NjcyNCwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQG1haWwuY29tIiwiaWQiOjI0fQ.ukIdRuy1-CVG_S1QYgTS7IJdlEXz6YLzLOyFNfGL26cj7VY-zZTDeLRhw0zu9qq8rLGzUzXyDsdq3Rck6cuRXyaWErem0NRuHEZOJCaT4Nb5eK2F6czjVkhKvshMR0zMYZqC9oYdDlc6BklSo87kmm21BfCrOyjetc5e1o4ci4GfXhRc70684jF6gXQ0B9xciaWuvEUc2M3ESA6tVQyYLJGF9-vNteqNJmiw6PuePQUC6RiPfRTM_q5vQ5Fwg6Rn8wPkMD33b7OjYonGeqcuPsQGHdabPsQBXXckh5t_zszMiwKltWAgMOs9GedSjMdMrwkXKx52cpqj6mJfGrGoGg';
-        console.log('token', token);
-        fetch(`${baseUrl}/brands/establishments`, 
-            {
-                "Authorization": `Bearer ${token}`,
-        })
-        .then(response => response.json())
-        .then(data => {
-            setEstablishments(data);
-        })
-        .catch(error => console.error('Erreur lors de la récupération des établissements:', error));
-    },[]);
-
-    const reservationFields = [
-        { type: FIELD_TYPES.TEXT, label: 'Nom', name: 'name' },
-        { type: FIELD_TYPES.EMAIL, label: 'Email', name: 'email' },
-        { type: FIELD_TYPES.DATE, label: 'Date', name: 'date', value: selectedDate ? selectedDate.toISOString().split('T')[0] : '' },
-        { type: FIELD_TYPES.TIME, label: 'Heure de réservation', name: 'reservationTime', value: selectedTime, onChange: setSelectedTime },
-        { type: FIELD_TYPES.TEXTAREA, label: 'Commentaires', name: 'comments' },
-        { type: FIELD_TYPES.BUTTON, label: 'Enregistrer', onClick: handleSubmitForm },
-    ];
-
- 
     useEffect(() => {
         if (calendarRef.current) {
             const calendarApi = calendarRef.current.getApi();
-            // Configurer les options de localisation
-            calendarApi.setOption('locale', frLocale); // Utiliser le français comme langue par défaut
-            calendarApi.setOption('firstDay', 1); // Définir le premier jour de la semaine (lundi)
-            // Vous pouvez également personnaliser d'autres options de localisation ici
+
+            // Event click handler
+            calendarApi.on('eventClick', function(info) {
+                const modal = document.getElementById('schedule-edit');
+                if (modal) {
+                    
+                }
+            });
+
+            // Day click handler
+            calendarApi.on('dateClick', function(info) {
+                const modal = document.getElementById('schedule-add');
+                if (modal) {
+                    // Example: Bootstrap modal
+                    modal.modal('show');
+                }
+            });
+        }
+    }, []);
+  
+
+    useEffect(() => {
+        if (calendarRef.current) {
+            const calendarApi = calendarRef.current.getApi();
+            calendarApi.setOption('locale', frLocale); 
+            calendarApi.setOption('firstDay', 1);
         }
     }, [calendarRef]);
 
     return (
-        <div style={ {paddingLeft : "5%" , paddingRight:"5%"} }>
- <select value={selectedEstablishment} onChange={handleEstablishmentChange}>
+        <div style={{ paddingLeft: "5%", paddingRight: "5%" }}>
+            <select value={selectedEstablishment} onChange={handleEstablishmentChange}>
                 <option value="">Sélectionnez un établissement</option>
                 {establishments.map((establishment) => (
-                    <option key={establishment.id} value={establishment.display_name}>
+                    <option key={establishment.id} value={establishment.id}>
                         {establishment.display_name}
                     </option>
                 ))}
             </select>
-            <div id="calendar">
+            <div>
+                {/* Add Modal */}
+                <div className={`modal fade ${showAddModal ? 'show' : ''}`} style={{ display: showAddModal ? 'block' : 'none' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h4 className="modal-title">Ajouter ma réservation</h4>
+                                <button type="button" className="close" onClick={handleCloseAddModal}>&times;</button>
+                            </div>
+                            <div className="modal-body">
+                                <form>
+                                    
+                                    {slots.length > 0 && (
+                                        <table className="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Etablissement</th>
+                                                    <th>Nom du coach</th>
+                                                    <th>Durée</th>
+                                                    <th>Heure</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {slots.map(slot => (
+                                                    <tr key={slot.establishment}>
+                                                        <td>{slot.coach}</td>
+                                                        <td>{slot.available ? 'Disponible' : 'Occupé'}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    )}
+                                </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-danger" onClick={handleCloseAddModal}>Fermer</button>
+                                <button type="button" className="btn btn-success">Confirmer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Edit Modal */}
+                <div className={`modal fade ${showEditModal ? 'show' : ''}`} style={{ display: showEditModal ? 'block' : 'none' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h4 className="modal-title">Modifier ma réservation</h4>
+                                <button type="button" className="close" onClick={handleCloseEditModal}>&times;</button>
+                            </div>
+                            <div className="modal-body">
+                                <form>
+                                    <div className="form-group">
+                                        <label>Réservation de coaching:</label>
+                                        <input type="text" className="form-control" defaultValue={selectedEvent ? selectedEvent.title : ''} />
+                                    </div>
+                                </form>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-danger" onClick={handleCloseEditModal}>Fermer</button>
+                                <button type="button" className="btn btn-success">Modifier</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* FullCalendar component */}
                 <FullCalendar
                     ref={calendarRef}
-                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                    initialView="dayGridMonth"
-                    headerToolbar={{
-                        left: 'title',
-                        center: 'dayGridMonth,timeGridWeek,timeGridDay',
-                        right: 'prev,next today'
-                    }}
+                    plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
                     editable={true}
                     selectable={true}
+                    initialView="dayGridMonth"
+                  
+                    headerToolbar={{
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek','timeGridDay',
+                    }}
+                    events={events}
+                    eventClick={handleEventClick}
                     dateClick={handleDateClick}
                 />
             </div>
-
-            {showModal && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={handleCloseModal}>&times;</span>
-                        <FormBuilder fields={reservationFields} />
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

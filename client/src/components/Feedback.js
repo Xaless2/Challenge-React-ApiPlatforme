@@ -8,7 +8,7 @@ const Feedback = ({ reservationId }) => {
         e.preventDefault();
         const feedback = { rating, comment };
 
-        fetch(`http://localhost:8000/reservations/${reservationId}/feedback`, {
+        fetch(`https://localhost:8000/reservations/${reservationId}/feedback`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

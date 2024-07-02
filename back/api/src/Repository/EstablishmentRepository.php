@@ -30,6 +30,38 @@ class EstablishmentRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByName(string $name)
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('LOWER(TRIM(e.display_name)) LIKE LOWER(TRIM(:name))')
+            ->setParameter('name', '%' . $name . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findSlotsByEstablishment(int $establishmentId): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e, s')
+            ->leftJoin('e.slots', 's')
+            ->where('e.id = :establishmentId')
+            ->setParameter('establishmentId', $establishmentId)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+    public function countSlotsByEstablishment(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select('e.id, e.display_name, COUNT(s.id) AS slot_count')
+            ->leftJoin('e.slots', 's')
+            ->groupBy('e.id')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Establishment[] Returns an array of Establishment objects
 //     */

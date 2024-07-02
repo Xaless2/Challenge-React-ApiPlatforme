@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\EstablishmentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: EstablishmentRepository::class)]
 class Establishment
@@ -15,9 +16,14 @@ class Establishment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Brand $brand_id = null;
+    #[ORM\ManyToOne(targetEntity: Brand::class)]
+    #[ORM\JoinColumn(name: 'brand_id', referencedColumnName: 'id')]
+    private ?Brand $brand;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $user;
+    
 
     #[ORM\Column(length: 255)]
     private ?string $display_name = null;
@@ -34,6 +40,8 @@ class Establishment
     #[ORM\Column(length: 255)]
     private ?string $city = null;
 
+ 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,15 +54,25 @@ class Establishment
         return $this;
     }
 
-    public function getBrandId(): ?Brand
+    public function getUser(): ?User
     {
-        return $this->brand_id;
+        return $this->user;
     }
 
-    public function setBrandId(?Brand $brand_id): static
-    {
-        $this->brand_id = $brand_id;
+    public function setUser(User $user): static
+{
+    $this->user = $user;
+    return $this;
+}
 
+    public function getBrand(): ?Brand
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?Brand $brand): self
+    {
+        $this->brand = $brand;
         return $this;
     }
 
@@ -117,4 +135,8 @@ class Establishment
 
         return $this;
     }
+
+
+
+
 }

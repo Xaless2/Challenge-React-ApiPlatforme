@@ -7,9 +7,16 @@ use App\Repository\BrandRepository;
 use App\Repository\EstablishmentRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\PerformanceRepository;
+use App\Repository\SlotRepository;
+use App\Repository\ReservationRepository;
+use App\Repository\UserRepository;
+use App\Repository\SlotCoachRepository;
+use Symfony\Component\HttpFoundation\Request;
+
 
 
 /**
@@ -23,38 +30,39 @@ class BrandController extends AbstractController
         return $this->json($brand);
     }
 
-    #[Route('/api/brands/establishments', name: 'brands_establishment', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
+    #[IsGranted("ROLE_ADMIN")]
+    #[Route('/api/brands/{brandId}/establishments', name: 'brands_establishment', methods: ['GET'])]
     public function getEstablishmentsByBrand(
-        BrandRepository $brandRepository, 
-        EstablishmentRepository $establishmentRepository, 
+        BrandRepository $brandRepository,
+        EstablishmentRepository $establishmentRepository,
+        Request $request,
+        int $brandId
     ): JsonResponse {
-
         $user = $this->getUser();
-        $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
-        if (!$brands) {
-            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+        $brand = $brandRepository->findOneBy(['id' => $brandId, 'user' => $user]);
+        
+        if (!$brand) {
+            return new JsonResponse(['error' => 'Brand not found'], JsonResponse::HTTP_NOT_FOUND);
         }
-
+    
+        $establishments = $establishmentRepository->findBy(['brand' => $brand]);
+    
         $result = [];
-
-        foreach ($brands as $brand) {
-            $establishments = $establishmentRepository->findBy(['brand_id' => $brand->getId()]); 
-
-            foreach ($establishments as $establishment) {
-                $result[] = [
-                    'id' => $establishment->getId(),
-                    'brand' => $establishment->getBrandId(),
-                    'display_name' => $establishment->getDisplayName()
-                ];
-            };
+        foreach ($establishments as $establishment) {
+            $result[] = [
+                'id' => $establishment->getId(),
+                'brand' => $establishment->getBrand()->getId(),
+                'display_name' => $establishment->getDisplayName()
+            ];
         }
-
+    
         return new JsonResponse($result);
     }
+    
+    
 
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/api/brands/brands_by_admin', name: 'brand_by_admin', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function getBrandsByAdmin(
         BrandRepository $brandRepository
     ): JsonResponse {
@@ -79,4 +87,5 @@ class BrandController extends AbstractController
         return new JsonResponse($result);
     }
    
+    
 }

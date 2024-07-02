@@ -18,9 +18,9 @@ class Performance
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Establishment $establishment_id = null;
+    #[ORM\ManyToOne(targetEntity: Establishment::class)]
+    #[ORM\JoinColumn(name: "establishment_id", referencedColumnName: "id", nullable: false)]
+    private ?Establishment $establishment = null;
 
     #[ORM\Column(length: 255)]
     private ?string $performance_name = null;
@@ -58,14 +58,14 @@ class Performance
         return $this;
     }
 
-    public function getEstablishmentId(): ?Establishment
+    public function getEstablishment(): ?Establishment
     {
-        return $this->establishment_id;
+        return $this->establishment;
     }
 
-    public function setEstablishmentId(?Establishment $establishment_id): static
+    public function setEstablishment(?Establishment $establishment): static
     {
-        $this->establishment_id = $establishment_id;
+        $this->establishment = $establishment;
 
         return $this;
     }

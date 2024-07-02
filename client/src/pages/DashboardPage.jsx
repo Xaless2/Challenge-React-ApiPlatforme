@@ -21,7 +21,8 @@ function DashboardPage() {
   const [showToast, setShowToast] = useState(false);  
   const { token, userRole, logout, user, getUser } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
-  const { getBrands } = useContext(BrandContext);
+  const { getBrandById } = useContext(BrandContext);
+  const [brandId, setBrandId] = useState(null); 
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([
     { id: 1, name: 'John Doe' },
@@ -38,12 +39,12 @@ function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const brands = await getBrands();
+      const brands = await getBrandById(brandId);
       setData(brands);
     };
 
     fetchData();
-  }, [getBrands]);
+  }, [getBrandById]);
 
 
   useEffect(() => {

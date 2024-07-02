@@ -503,8 +503,6 @@
     "twig/twig": {
         "version": "v3.3.7"
     },
-<<<<<<< HEAD
-=======
     "vich/uploader-bundle": {
         "version": "2.4",
         "recipe": {
@@ -517,7 +515,6 @@
             "config/packages/vich_uploader.yaml"
         ]
     },
->>>>>>> feat/dashboard
     "willdurand/negotiation": {
         "version": "3.0.0"
     },

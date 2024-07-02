@@ -1,7 +1,6 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
 import { postRequest, baseUrl, updateRequest, authUrl, getRequest } from '../utils/service';
-// import { jwtDecode } from "jwt-decode";
-import * as jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -21,42 +20,24 @@ export const AuthContextProvider = ({ children }) => {
     }, [token]);
 
 
-    // const registerUser = useCallback(async (data) => {
-    //     setIsLoading(true);
-    //     try {
-    //         const response = await postRequest(
-    //             `${authUrl}/register`,
-    //             data
-    //         );
-    //         if (response && (response.user || response.token)) {
-    //             setUser(response.user);
-    //             setToken(response.token);
-    //             localStorage.setItem('token', response.token);
-    //             localStorage.setItem('currentUser', JSON.stringify(response.user));
-    //         }
-    //     } catch (error) {
-    //         setError(error?.message || error);
-    //     }
-    //     setIsLoading(false);
-    // }, []);
-
-    const registerUser = async (data) => {
+    const registerUser = useCallback(async (data) => {
+        setIsLoading(true);
         try {
-          const response = await postRequest(`${authUrl}/register`, data);
-          if (response && response.token) {
-            setToken(response.token);
-            localStorage.setItem('token', response.token);
-            const decodedToken = jwtDecode(response.token);
-            setUser(decodedToken.user);
-            return true; // Indicate success
-          } else {
-            throw new Error('Registration failed'); // Or handle specific failure cases
-          }
+            const response = await postRequest(
+                `${authUrl}/register`,
+                data
+            );
+            if (response && (response.user || response.token)) {
+                setUser(response.user);
+                setToken(response.token);
+                localStorage.setItem('token', response.token);
+                localStorage.setItem('currentUser', JSON.stringify(response.user));
+            }
         } catch (error) {
-          setError(error?.message || error);
-          return false; // Indicate failure
+            setError(error?.message || error);
         }
-      };
+        setIsLoading(false);
+    }, []);
 
     const loginUser = useCallback(async (data) => {
         setIsLoading(true);
@@ -141,6 +122,7 @@ export const AuthContextProvider = ({ children }) => {
             token,
             logout,
             error,
+            setError,
             isLoading,
             userRole,
             setUserRole,
@@ -152,5 +134,3 @@ export const AuthContextProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-
-export default AuthContextProvider;

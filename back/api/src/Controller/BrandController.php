@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
-
 /**
  * @Route("/api/brands")
  */
@@ -24,16 +23,15 @@ class BrandController extends AbstractController
         return $this->json($brand);
     }
 
-    #[Route('/api/brands/establishments', name: 'brand_establishment', methods: ['GET'])]
+    #[Route('/api/brands/establishments', name: 'brands_establishment', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function getUsersByEstablishment(
+    public function getEstablishmentsByBrand(
         BrandRepository $brandRepository, 
         EstablishmentRepository $establishmentRepository, 
     ): JsonResponse {
 
         $user = $this->getUser();
-        $brands = $brandRepository->findBy(['user_id' => $user->getUserIdentifier()]);
-
+        $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
         if (!$brands) {
             return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
         }
@@ -50,6 +48,32 @@ class BrandController extends AbstractController
                     'display_name' => $establishment->getDisplayName()
                 ];
             };
+        }
+
+        return new JsonResponse($result);
+    }
+
+    #[Route('/api/brands/brands_by_admin', name: 'brand_by_admin', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function getBrandsByAdmin(
+        BrandRepository $brandRepository
+    ): JsonResponse {
+
+        $user = $this->getUser();
+        $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
+
+        if (!$brands) {
+            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+        }
+
+        $result = [];
+
+        foreach ($brands as $brand) {
+            $result[] = [
+                'id' => $brand->getId(),
+                'name' => $brand->getDisplayName(),
+                'image' => $brand->getImageUrl()
+            ];
         }
 
         return new JsonResponse($result);

@@ -6,12 +6,13 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import EtablishmentPage from "../pages/EtablishmentPage.jsx";
 import SlotPage from "../pages/SlotPage.jsx";
 import PerformancePage from "../pages/PerformancePage.jsx";
+import Unauthorized from "../components/EstablishmentDetail/Unauthorized.jsx";
 
 export const routes = [
     {
         path: "/register",
         component: RegisterPage,
-    }, 
+    },
     {
         path: "/login",
         component: LoginPage,
@@ -29,6 +30,7 @@ export const routes = [
         path: "/etablishment",
         component: EtablishmentPage,
         protected: true,
+        // roles: ['ROLE_ADMIN'],
     },
     {
         path: "/profile",
@@ -36,7 +38,7 @@ export const routes = [
         protected: true,
     },
     {
-        path: "/establishments/:id", 
+        path: "/establishments/:id",
         component: EtablishmentPage,
         protected: true,
     },
@@ -49,6 +51,10 @@ export const routes = [
         path: "/create-slot",
         component: SlotPage,
         protected: true,
+    },
+    {
+        path: "/unauthorized",
+        component: Unauthorized,
     },
 ];
 

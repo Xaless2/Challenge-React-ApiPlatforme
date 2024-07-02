@@ -1,21 +1,21 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
+import React, { useContext } from 'react';
 
-function ProtectedRoute({ children }) {
+function ProtectedRoutes({ roles = [], children }) {
   const isAuthenticated = localStorage.getItem('token');
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, navigate]);
+  const { userRole } = useContext(AuthContext);
+  console.log(userRole);
 
   if (!isAuthenticated) {
-    return null;
+    return <Navigate to="/login" />;
+  }
+
+  if (roles.length > 0 && !roles.includes(userRole)) {
+    return <Navigate to="/unauthorized" />;
   }
 
   return children;
 }
 
-export default ProtectedRoute;
+export default ProtectedRoutes;

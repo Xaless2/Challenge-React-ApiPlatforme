@@ -45,8 +45,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
     ]
 )]
+
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
-#[ApiResource]
+
 class Brand
 {
     #[ORM\Id]
@@ -54,15 +55,14 @@ class Brand
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
-    private ?User $user;
+    #[ORM\Column]
+    private ?int $user_id = null;
 
     #[Groups(['read:item'])]
     #[ORM\Column(length: 255)]
     private ?string $display_name = null;
 
-    #[ORM\Column( type: Types::STRING, length: 255, nullable: true )]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     #[Groups(['read:item', 'read:collection'])]
     private ?string $kbis_pdf = null;
 
@@ -90,22 +90,22 @@ class Brand
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function setId(int $id): static
     {
-        return $this->display_name;
-    }
-   
-    public function getUser(): ?User
-    {
-        return $this->user;
+        $this->id = $id;
+        return $this;
     }
 
-    public function setUser(User $user): static
-{
-    $this->user = $user;
-    return $this;
-}
+    public function getUserId(): ?int
+    {
+        return $this->user_id;
+    }
 
+    public function setUserId(int $user_id): static
+    {
+        $this->user_id = $user_id;
+        return $this;
+    }
 
     public function getDisplayName(): ?string
     {
@@ -115,7 +115,6 @@ class Brand
     public function setDisplayName(string $display_name): static
     {
         $this->display_name = $display_name;
-
         return $this;
     }
 
@@ -127,7 +126,6 @@ class Brand
     public function setKbisPdf(?string $kbis_pdf): static
     {
         $this->kbis_pdf = $kbis_pdf;
-
         return $this;
     }
 
@@ -139,7 +137,6 @@ class Brand
     public function setImageUrl(?string $image_url): static
     {
         $this->image_url = $image_url;
-
         return $this;
     }
 
@@ -151,7 +148,6 @@ class Brand
     public function setImageFile(?File $imageFile): static
     {
         $this->imageFile = $imageFile;
-
         return $this;
     }
 
@@ -163,7 +159,6 @@ class Brand
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
@@ -175,7 +170,6 @@ class Brand
     public function setPdfFile(?File $pdfFile): static
     {
         $this->pdfFile = $pdfFile;
-
         return $this;
     }
 }

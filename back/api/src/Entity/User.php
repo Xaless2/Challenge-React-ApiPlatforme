@@ -70,26 +70,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * Supprime les données sensibles de l'utilisateur.
-     */
-    public function eraseCredentials()
-    {
-        // Ici, vous pouvez effacer ou réinitialiser les propriétés sensibles
-        // Par exemple : $this->plainPassword = null;
-    }
-
-    /**
-     * Retourne l'identifiant unique de l'utilisateur.
-     *
-     * @return string
-     */
-    public function getUserIdentifier(): string
-    {
-        // Supposons que vous utilisez l'email comme identifiant unique
-        return $this->email;
-    }
-
     public function getPassword(): ?string
     {
         return $this->password;
@@ -118,8 +98,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-   
-    // ...
+    public function getSalt(): ?string
+    {
+        // not needed when using bcrypt or argon
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function getUsername(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
 
     public function getFirstname(): ?string
     {
@@ -138,4 +137,70 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastname;
     }
 
+    public function setLastname(string $lastname): self
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    public function getZipCode(): ?string
+    {
+        return $this->zip_code;
+    }
+
+    public function setZipCode(string $zip_code): self
+    {
+        $this->zip_code = $zip_code;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->image_url;
+    }
+
+    public function setImageUrl(string $image_url): static
+    {
+        $this->image_url = $image_url;
+
+        return $this;
+    }
 }

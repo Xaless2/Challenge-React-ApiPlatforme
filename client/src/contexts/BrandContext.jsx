@@ -15,7 +15,6 @@ export const BrandContextProvider = ({ children }) => {
     useEffect(() => {
       if (allBrands.length > 0) {
           const brandIds = allBrands.map(brand => brand.id);
-          console.log(brandIds)
           setBrandId(brandIds);
       }
   }, [allBrands]);
@@ -42,7 +41,6 @@ export const BrandContextProvider = ({ children }) => {
     const addBrand = useCallback(async (data) => {
       try {
         setError(null);
-        console.log(data); 
         const response = await postRequest(
           `${baseUrl}/brands`,
           { ...data, user_id: user.id },

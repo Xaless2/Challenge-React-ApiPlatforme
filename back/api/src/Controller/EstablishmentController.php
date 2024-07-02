@@ -35,7 +35,12 @@ class EstablishmentController extends AbstractController
         foreach($establishments as $establishment){
             $result[] = [
                 'id' => $establishment->getId(),
-                'display_name' => $establishment->getDisplayName()
+                'display_name' => $establishment->getDisplayName(),
+                'address' => $establishment->getAddress(),
+                'zip_code' => $establishment->getZipCode(),
+                'city' => $establishment->getCity(),
+                'phone' => $establishment->getPhone(),
+                'brand_id' => $establishment->getBrandId()->getId()
             ];
         }
         return new JsonResponse($result);

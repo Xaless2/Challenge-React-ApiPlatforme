@@ -4,11 +4,12 @@ export const baseUrl = "https://planifit-198642ff98b0.herokuapp.com/api";
 export const authUrl = "https://planifit-198642ff98b0.herokuapp.com";
 
 
-export const postRequest = async (url, body) => {
+export const postRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...headers
         },
         body: JSON.stringify(body)
     });
@@ -42,6 +43,7 @@ export const getRequest = async (url, headers = {}) => {
     return await response.json();
 };
 
+
 export const updateRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {
         method: 'PUT',
@@ -67,8 +69,24 @@ export const updateRequest = async (url, body, headers = {}) => {
     return data;
 }
 
-export const deleteRequest = async (url) => {
+export const getRequestById = async (url, headers = {}) => {
     const response = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            ...headers
+        },
+        method: 'GET'
+    });
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+
+    return await response.json();
+}
+
+
+export const deleteRequest = async (url) => { const response = await fetch(url, {
         method: 'DELETE'
     });
 

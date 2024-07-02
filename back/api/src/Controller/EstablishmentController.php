@@ -20,24 +20,43 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class EstablishmentController extends AbstractController
 {
     #[Route('/api/establishments', name: 'establishment_list', methods: ['GET'])]
-    public function list(EstablishmentRepository $establishmentRepository): JsonResponse
+    public function list(Request $request, EstablishmentRepository $establishmentRepository): JsonResponse
     {
-        return new JsonResponse($establishmentRepository->findAll());
+        $name = trim($request->query->get('name', ''));
+        if ($name) {
+            $establishments = $establishmentRepository->findByName($name);
+        } else {
+            $establishments = $establishmentRepository->findAll();
+        }
+
+        $result = [];
+
+        foreach($establishments as $establishment){
+            $result[] = [
+                'id' => $establishment->getId(),
+                'display_name' => $establishment->getDisplayName()
+            ];
+        }
+        return new JsonResponse($result);
     }
 
+
     #[Route('/api/establishments', name: 'establishment_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em): JsonResponse
+    public function create(Request $request, EntityManagerInterface $em, BrandRepository $brandRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        $brand = $brandRepository->find($data['brand_id']);
+        if (!$brand) {
+            return new JsonResponse(['status' => 'Brand not found!'], Response::HTTP_NOT_FOUND);
+        }
+
         $establishment = new Establishment();
-        $establishment->setName($data['name']);
-        $establishment->setAddress($data['address']);
-        $establishment->setPostalCode($data['postal_code']);
-        $establishment->setCity($data['city']);
-        $establishment->setCountry($data['country']);
-        $establishment->setDescription($data['description']);
-        $establishment->setEmail($data['email']);
+        $establishment->setBrandId($brand);
+        $establishment->setDisplayName($data['display_name']);
         $establishment->setPhone($data['phone']);
+        $establishment->setAddress($data['address']);
+        $establishment->setZipCode($data['zip_code']);
+        $establishment->setCity($data['city']);
 
         $em->persist($establishment);
         $em->flush();
@@ -85,47 +104,48 @@ class EstablishmentController extends AbstractController
     ): JsonResponse {
         $user = $this->getUser();
         $brands = $brandRepository->findBy(['user_id' => $user->getId()]);
-        $brandId = !empty($brands) ? end($brands)->getId() : null;
 
-        if (!$brandId) {
+        if (!$brands) {
             return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
         }
-
-        $establishments = $establishmentRepository->findBy(['brand_id' => $brandId]);
 
         $clients = [];
         $coachs = [];
 
-        foreach ($establishments as $es) {
-            $performances = $performanceRepository->findBy(['establishment_id' => $es->getId()]);
-            foreach ($performances as $performance) {
-                $slots = $slotRepository->findBy(['performance_id' => $performance->getId()]);
-                foreach ($slots as $slot) {
-                    $reservations = $reservationRepository->findBy(['slot_id' => $slot->getId()]);
-                    $slotCoachs = $slotCoachRepository->findBy(['slot_id' => $slot->getId()]);
+        foreach ($brands as $brand ) {
+            $establishments = $establishmentRepository->findBy(['brand_id' => $brand->getId()]);
 
-                    foreach ($reservations as $reservation) {
-                        $client = $reservation->getClientId();
-                        if ($client && !isset($clients[$client->getId()])) {
-                            $clients[$client->getId()] = [
-                                'id' => $client->getId(),
-                                'firstname' => $client->getFirstname(),
-                                'lastname' => $client->getLastname(),
-                                'email' => $client->getEmail()
-                            ];
-                        } 
-                    }
+            foreach ($establishments as $es) {
+                $performances = $performanceRepository->findBy(['establishment_id' => $es->getId()]);
+                foreach ($performances as $performance) {
+                    $slots = $slotRepository->findBy(['performance_id' => $performance->getId()]);
+                    foreach ($slots as $slot) {
+                        $reservations = $reservationRepository->findBy(['slot_id' => $slot->getId()]);
+                        $slotCoachs = $slotCoachRepository->findBy(['slot_id' => $slot->getId()]);
 
-                    foreach ($slotCoachs as $slotCoach) {
-                        $coach = $slotCoach->getCoachId();
-                        if ($coach && !isset($coachs[$coach->getId()])) {
-                            $coachs[$coach->getId()] = [
-                                'id' => $coach->getId(),
-                                'firstname' => $coach->getFirstname(),
-                                'lastname' => $coach->getLastname(),
-                                'email' => $coach->getEmail()
-                            ];
-                        } 
+                        foreach ($reservations as $reservation) {
+                            $client = $reservation->getClientId();
+                            if ($client && !isset($clients[$client->getId()])) {
+                                $clients[$client->getId()] = [
+                                    'id' => $client->getId(),
+                                    'firstname' => $client->getFirstname(),
+                                    'lastname' => $client->getLastname(),
+                                    'email' => $client->getEmail()
+                                ];
+                            } 
+                        }
+
+                        foreach ($slotCoachs as $slotCoach) {
+                            $coach = $slotCoach->getCoachId();
+                            if ($coach && !isset($coachs[$coach->getId()])) {
+                                $coachs[$coach->getId()] = [
+                                    'id' => $coach->getId(),
+                                    'firstname' => $coach->getFirstname(),
+                                    'lastname' => $coach->getLastname(),
+                                    'email' => $coach->getEmail()
+                                ];
+                            } 
+                        }
                     }
                 }
             }

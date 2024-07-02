@@ -38,6 +38,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await registerUser(register);
+
     if (response) {
       navigate('/login');
     } else {

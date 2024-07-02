@@ -28,7 +28,13 @@ function CardCutomEtablishement({ id, image, name, address, rating, price, descr
           {description}
         </div>
         <div className="mt-2 flex space-x-4">
-          <Button onClick={handleOnClick} text={'Voir plus de détails'} />
+        <Button onClick={handleOnClick} text={'Faire une résérvation'} 
+              style={{
+                width: '90%',
+                backgroundColor: 'black',
+                margin: 'auto',
+              }}
+            />
         </div>
       </div>
     </div>

@@ -23,12 +23,12 @@ export const routes = [
     {
         path: "/dashboard",
         component: DashboardPage,
-        protected: false,
+        protected: true,
     },
     {
         path: "/etablishment",
         component: EtablishmentPage,
-        protected: false,
+        protected: true,
     },
     {
         path: "/profile",

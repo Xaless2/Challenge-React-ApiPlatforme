@@ -3,18 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Establishment;
-use App\Repository\UserRepository;
-use App\Repository\EstablishmentRepository;
-use App\Repository\BrandRepository;
 use App\Repository\SlotRepository;
-use App\Repository\PerformanceRepository;
-use App\Repository\ReservationRepository;
+use App\Repository\UserRepository;
+use App\Repository\BrandRepository;
 use App\Repository\SlotCoachRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\PerformanceRepository;
+use App\Repository\ReservationRepository;
+use App\Repository\EstablishmentRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EstablishmentController extends AbstractController
@@ -42,36 +43,39 @@ class EstablishmentController extends AbstractController
 
 
     #[Route('/api/establishments', name: 'establishment_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em): JsonResponse
+    public function create(Request $request, EntityManagerInterface $em, BrandRepository $brandRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+    
+       
+        $brandId = $data['brand_id'];
+        $brand = $brandRepository->find($brandId);
+        if (!$brand) {
+            return new JsonResponse(['error' => 'Brand not found'], Response::HTTP_BAD_REQUEST);
+        }
+    
         $establishment = new Establishment();
-        $establishment->setName($data['name']);
+        $establishment->setDisplayName($data['name']);
         $establishment->setAddress($data['address']);
-        $establishment->setPostalCode($data['postal_code']);
+        $establishment->setZipCode($data['postal_code']);
         $establishment->setCity($data['city']);
-        $establishment->setCountry($data['country']);
-        $establishment->setDescription($data['description']);
-        $establishment->setEmail($data['email']);
         $establishment->setPhone($data['phone']);
-
+        $establishment->setBrandId($brand);
+    
         $em->persist($establishment);
         $em->flush();
-
+    
         return new JsonResponse(['status' => 'Establishment created!'], Response::HTTP_CREATED);
     }
-
+    
     #[Route('/api/establishments/{id}', name: 'establishment_update', methods: ['PUT'])]
     public function update(Request $request, Establishment $establishment, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $establishment->setName($data['name']);
+        $establishment->setDisplayName($data['name']);
         $establishment->setAddress($data['address']);
-        $establishment->setPostalCode($data['postal_code']);
+        $establishment->setZipCode($data['postal_code']);
         $establishment->setCity($data['city']);
-        $establishment->setCountry($data['country']);
-        $establishment->setDescription($data['description']);
-        $establishment->setEmail($data['email']);
         $establishment->setPhone($data['phone']);
 
         $em->flush();

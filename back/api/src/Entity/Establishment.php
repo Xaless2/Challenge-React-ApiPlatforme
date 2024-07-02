@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\EstablishmentRepository;
-use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: EstablishmentRepository::class)]

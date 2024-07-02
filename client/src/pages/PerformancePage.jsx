@@ -74,7 +74,7 @@ const PerformancePage = () => {
 
             const data = await response.json();
             console.log('Performance created successfully:', data);
-            navigate('/create-slot', { state: { performanceId: data.id, numberOfClients: formData.number_of_clients_max } });
+            navigate('/dashboard');
         } catch (error) {
             console.error('Error creating performance:', error);
         }

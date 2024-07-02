@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import AdminFormBuilder from '../components/builder/AdminFormBuilder';
 import createSlotFormFields from '../components/form/createSlotFormFields';
+import { baseUrl } from '../utils/service';
 
-export const baseUrl = "http://localhost:8000/api";
 
 const SlotPage = () => {
     const location = useLocation();

@@ -20,10 +20,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class EstablishmentController extends AbstractController
 {
     #[Route('/api/establishments', name: 'establishment_list', methods: ['GET'])]
-    public function list(EstablishmentRepository $establishmentRepository): JsonResponse
+    public function list(Request $request, EstablishmentRepository $establishmentRepository): JsonResponse
     {
-        return new JsonResponse($establishmentRepository->findAll());
+        $name = trim($request->query->get('name', ''));
+        if ($name) {
+            $establishments = $establishmentRepository->findByName($name);
+        } else {
+            $establishments = $establishmentRepository->findAll();
+        }
+
+        $result = [];
+
+        foreach($establishments as $establishment){
+            $result[] = [
+                'id' => $establishment->getId(),
+                'display_name' => $establishment->getDisplayName()
+            ];
+        }
+        return new JsonResponse($result);
     }
+
 
     #[Route('/api/establishments', name: 'establishment_create', methods: ['POST'])]
     public function create(Request $request, EntityManagerInterface $em): JsonResponse

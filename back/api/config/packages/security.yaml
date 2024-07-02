@@ -46,6 +46,7 @@ security:
        ROLE_COACH: ROLE_CLIENT
        ROLE_CREATOR: ROLE_COACH
        ROLE_ADMIN: ROLE_CREATOR
+       ROLE_SUPER_ADMIN: ROLE_SUPER_ADMIN
        
     access_control:
         - { path: ^/(login|register), roles: IS_AUTHENTICATED_ANONYMOUSLY }

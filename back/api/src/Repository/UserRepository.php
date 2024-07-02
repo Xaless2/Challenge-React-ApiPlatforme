@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Entity\Establishment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -39,20 +38,33 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function findUsersWithReservationsForEstablishment(Establishment $establishment, User $user)
+    public function findUsersWithReservationsForEstablishment(Establishment $establishment, User $user): array
     {
-        $qb = $this->createQueryBuilder('u')
-            ->innerJoin('u.reservation', 'r')
+        return $this->createQueryBuilder('u')
+            ->innerJoin('u.reservations', 'r')
             ->innerJoin('r.slot', 's')
             ->innerJoin('s.performance', 'p')
             ->innerJoin('p.establishment', 'e')
             ->innerJoin('e.brand', 'b')
             ->where('e = :establishment')
-            ->andWhere('b.user_id = :user_id')
+            ->andWhere('b.user = :user')
             ->setParameter('establishment', $establishment)
-            ->setParameter('user_id', $user)
-            ->getQuery();
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
 
-        return $qb->getResult();
+    public function findByRole(string $role): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT *
+            FROM "member"
+            WHERE :role = ANY (SELECT jsonb_array_elements_text(roles::jsonb))
+        ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['role' => $role]);
+
+        return $resultSet->fetchAllAssociative();
     }
 }

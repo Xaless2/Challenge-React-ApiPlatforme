@@ -24,7 +24,6 @@ function EtablishmentPage() {
         }
       });
       const data = await response.json();
-      console.log(data);
       setEstablishment(data);
       setLoading(false);
     };

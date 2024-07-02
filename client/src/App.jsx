@@ -4,7 +4,6 @@ import { routes } from './routes/routes.js';
 import React from "react";
 import ProtectedRoute from './routes/ProtectedRoutes.jsx';
 
-
 function App() {
     return (
         <>
@@ -22,10 +21,8 @@ function App() {
                         />
                     ))}
                 </Routes>
-        </Router>
-        
+            </Router>
         </>
-  
     );
 }
 

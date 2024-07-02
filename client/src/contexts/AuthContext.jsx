@@ -11,14 +11,16 @@ export const AuthContextProvider = ({ children }) => {
     const [userRole, setUserRole] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-
     useEffect(() => {
-        if (token) {
-            const decodedToken = jwtDecode(token); 
-            setUserRole(decodedToken.roles); 
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+            setToken(storedToken);
+            const decodedToken = jwtDecode(storedToken);
+            setUser(decodedToken.user);
+            setUserRole(decodedToken.roles);
         }
-    }, [token]);
-
+        setIsLoading(false);
+    }, []);
 
     const registerUser = useCallback(async (data) => {
         setIsLoading(true);
@@ -92,7 +94,6 @@ export const AuthContextProvider = ({ children }) => {
                 }
             );
             setUser(response);
-    
             return response; 
         } catch (error) {
             setError(error?.message || error);
@@ -122,7 +123,6 @@ export const AuthContextProvider = ({ children }) => {
             token,
             logout,
             error,
-            setError,
             isLoading,
             userRole,
             setUserRole,

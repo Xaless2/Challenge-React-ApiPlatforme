@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import "../../styles/components.css";
 import RevealOnScroll from '../common/RevealOnScroll';
 import AsyncSelect from 'react-select/async';
-import { baseUrl } from '../../utils/service';
 
-
+export const baseUrl = "http://localhost:8000/api";
 
 function MiddleComponent() {
     const [selectedEstablishment, setSelectedEstablishment] = useState(null);
@@ -28,6 +27,8 @@ function MiddleComponent() {
             }
 
             const data = await response.json();
+            console.log('API data:', data);
+
             return data.map(establishment => ({
                 value: establishment.id,
                 label: establishment.display_name,
@@ -40,6 +41,7 @@ function MiddleComponent() {
 
     const loadOptions = (inputValue, callback) => {
         fetchEstablishments(inputValue).then(options => {
+            console.log('Options:', options);
             callback(options);
         });
     };

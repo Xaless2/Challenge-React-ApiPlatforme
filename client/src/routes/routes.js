@@ -23,33 +23,30 @@ export const routes = [
     },
     {
         path: "/dashboard",
-        component: DashboardPage,
-        protected: true,
+        component: DashboardPage
     },
     {
         path: "/etablishment",
         component: EtablishmentPage,
-        protected: true,
+        protected: false,
     },
     {
         path: "/profile",
-        component: ProfilePage,
-        protected: true,
+        component: ProfilePage
     },
     {
         path: "/establishments/:id", 
-        component: EtablishmentPage,
-        protected: true,
+        component: EtablishmentPage
     },
     {
         path: "/create-performance",
         component: PerformancePage,
-        protected: true,
+        protected: false,
     },
     {
         path: "/create-slot",
         component: SlotPage,
-        protected: true,
+        protected: false,
     },
     {
         path: "/create-establishment",

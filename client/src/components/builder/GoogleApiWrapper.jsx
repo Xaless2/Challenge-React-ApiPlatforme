@@ -2,25 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { Map, Marker, GoogleApiWrapper, InfoWindow } from 'google-maps-react';
 import CardCutomEtablishement from '../common/CardCutomEtablishement';
 
-const GoogleMap = ({ google, establishments, onMarkerClickHandler }) => {
+const GoogleMap = ({ google, image, name, addresses, rating, price, description }) => {
   const [infoWindow, setInfoWindow] = useState(false);
-  const [activeMarker, setActiveMarker] = useState(null);
+  const [activeMarker, setActiveMarker] = useState({});
   const [selectedPlace, setSelectedPlace] = useState({});
   const [coordinates, setCoordinates] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
 
   useEffect(() => {
-    if (!establishments) {
+    if (!addresses) {
       return;
     }
-
+  
     const geocoder = new google.maps.Geocoder();
-
-    establishments.forEach((establishment) => {
-      const address = `${establishment.address}, ${establishment.zip_code}, ${establishment.city}`;
+  
+    addresses.forEach(address => {
       geocoder.geocode({ address: address }, (results, status) => {
         if (status === 'OK') {
-          setCoordinates((prevCoordinates) => [
+          setCoordinates(prevCoordinates => [
             ...prevCoordinates,
             {
               lat: results[0].geometry.location.lat(),
@@ -32,9 +31,9 @@ const GoogleMap = ({ google, establishments, onMarkerClickHandler }) => {
         }
       });
     });
-  }, [establishments, google.maps.Geocoder]);
+  }, [addresses, google.maps.Geocoder]);
 
-  const handleMarkerClick = (props, marker, e, index) => {
+  const onMarkerClick = (props, marker, e, index) => {
     if (infoWindow) {
       setInfoWindow(false);
     }
@@ -42,10 +41,6 @@ const GoogleMap = ({ google, establishments, onMarkerClickHandler }) => {
     setActiveMarker(marker);
     setActiveMarkerIndex(index);
     setTimeout(() => setInfoWindow(true), 0);
-
-    if (onMarkerClickHandler) {
-      onMarkerClickHandler(props.address);
-    }
   };
 
   const onMapClick = (props) => {
@@ -56,42 +51,50 @@ const GoogleMap = ({ google, establishments, onMarkerClickHandler }) => {
   };
 
   const style = {
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
   };
 
   return (
     <div>
-      {establishments && establishments.length > 0 ? (
+      {coordinates.length > 0 ? (
         <Map
           onClick={onMapClick}
           google={google}
-          zoom={10}
+          zoom={8}
           style={style}
-          initialCenter={{ lat: 48.8566, lng: 2.3522 }}
+          initialCenter={coordinates[0]}
         >
           {coordinates.map((coordinate, index) => (
-            <Marker
-              key={index}
-              onClick={(props, marker, e) => handleMarkerClick(props, marker, e, index)}
-              position={coordinate}
+          <Marker
+            key={index}
+            onClick={(props, marker, e) => onMarkerClick(props, marker, e, index)}
+            title={"The marker's title will appear as a tooltip."}
+            name={name}
+            position={coordinate}
+          />
+        ))}
+          <InfoWindow
+            marker={activeMarker}
+            visible={infoWindow}
+          >
+            <CardCutomEtablishement 
+              image={image}
+              name={name}
+              address={addresses[activeMarkerIndex]}
+              rating={rating}
+              price={price}
+              description={description}
             />
-          ))}
-          <InfoWindow marker={activeMarker} visible={infoWindow}>
-            <div>
-              <CardCutomEtablishement
-                
-              />
-            </div>
           </InfoWindow>
         </Map>
       ) : (
-        <div>Pas encore d'établissements disponibles</div>
+        <div>Loading...</div>
       )}
     </div>
   );
 };
 
 export default GoogleApiWrapper({
-  apiKey: import.meta.env.VITE_API_KEY_GOOGLE,
+  apiKey:"AIzaSyCJSMrBuEV5AeQFGC_4lCI24Ewyj9Axq54",
 })(GoogleMap);

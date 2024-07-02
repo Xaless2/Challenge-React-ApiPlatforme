@@ -68,8 +68,8 @@ class BrandController extends AbstractController
         foreach ($brands as $brand) {
             $result[] = [
                 'id' => $brand->getId(),
-                'display_name' => $brand->getDisplayName(),
-                'image_url' => $brand->getImageUrl()
+                'name' => $brand->getDisplayName(),
+                'image' => $brand->getImageUrl()
             ];
         }
 

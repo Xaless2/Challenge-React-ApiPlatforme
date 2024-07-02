@@ -17,7 +17,7 @@ export default function WelcomePage() {
         <RevealOnScroll>
             <div className='mt-12 text-center'>
                 <h2 className="text-3xl font-bold text-black md:text-4xl dark:text-black underline decoration-sky-500">
-                    Syteme de la carte map
+                    Sysyteme de la carte map
                 </h2>
             </div>
         </RevealOnScroll>
@@ -37,15 +37,13 @@ export default function WelcomePage() {
         </RevealOnScroll>
 
         <RevealOnScroll>
-        <div className="mb-12 space-y-2 text-center mt-4">
-        <h2 className="text-3xl font-bold text-black md:text-4xl dark:text-white">
-          Réservez vos séances de sport dès aujourd'hui
-        </h2>
-        <p className="text-gray-600 dark:text-black lg:mx-auto lg:w-6/12">
-          Découvrez une nouvelle façon de rester actif et en forme avec notre plateforme de réservation de séances de sport. Que vous recherchiez des cours en salle, des sessions d'entraînement personnalisé ou des activités en plein air, nous avons ce qu'il vous faut.
-          Réservez facilement vos séances préférées, gérez votre emploi du temps et suivez vos progrès, le tout depuis votre appareil.
-        </p>
-      </div>
+            <div className="mb-12 space-y-2 text-center mt-4">
+                <h2 className="text-3xl font-bold text-black md:text-4xl dark:text-white">Sharing is Caring</h2>
+                <p className="text-gray-600 dark:text-black lg:mx-auto lg:w-6/12">
+                    Quam hic dolore cumque voluptate rerum beatae et quae, tempore sunt, debitis dolorum
+                    officia aliquid explicabo? Excepturi, voluptate?
+                </p>
+            </div>
             <RevealOnScroll>
                 <CartdInfo />
             </RevealOnScroll>

@@ -65,9 +65,7 @@ export default function MapChart() {
   return (
     <MapContainer>
       <GoogleMapReact
-        bootstrapURLKeys={
-          { key: import.meta.env.VITE_API_KEY_GOOGLE}
-        }
+        bootstrapURLKeys={{ key: 'AIzaSyCJSMrBuEV5AeQFGC_4lCI24Ewyj9Axq54' }}
         defaultCenter={center}
         defaultZoom={5}
       >

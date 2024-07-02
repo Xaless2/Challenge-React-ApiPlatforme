@@ -38,7 +38,6 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await registerUser(register);
-
     if (response) {
       navigate('/login');
     } else {
@@ -59,6 +58,8 @@ const RegisterPage = () => {
       options: [
         { value: 'ROLE_CLIENT', label: 'Client' },
         { value: 'ROLE_COACH', label: 'Coach' },
+        { value: 'ROLE_CREATOR', label: 'Créateur' },
+        { value: 'ROLE_ADMIN', label: 'Administratif' },
       ],
     },
     { type: 'password', label: 'Password', name: 'password', value: register.password, onChange: handleChange },

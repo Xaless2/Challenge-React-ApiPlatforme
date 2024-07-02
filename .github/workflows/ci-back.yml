@@ -29,8 +29,11 @@ jobs:
       - name: Start API Platform Docker containers
         run: docker compose up -d
 
+      - name: Clear Composer Cache
+        run: docker compose exec php composer clear-cache
+
       - name: Install dependencies
-        run: docker compose exec php composer install --no-interaction
+        run: docker compose exec php composer install --no-interaction --no-cache --optimize-autoloader
 
       - name: Execute Doctrine migration
         run: docker compose exec php bin/console make:migration

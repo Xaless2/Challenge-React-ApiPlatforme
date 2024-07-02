@@ -40,8 +40,6 @@ class Reservation
         return $this;
     }
 
-
-
     public function getSlot(): ?Slot
     {
         return $this->slot;
@@ -53,7 +51,6 @@ class Reservation
 
         return $this;
     }
-
 
     public function getClientId(): ?User
     {
@@ -78,4 +75,15 @@ class Reservation
 
         return $this;
     }
+
+    public function toArray(): array
+{
+    return [
+        'id' => $this->getId(),
+        'slot_id' => $this->getSlot() ? $this->getSlot()->getId() : null,
+        'client_id' => $this->getClientId() ? $this->getClientId()->getId() : null,
+        'status' => $this->getStatus(),
+    ];
+}
+
 }

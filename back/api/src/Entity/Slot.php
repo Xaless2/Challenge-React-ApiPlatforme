@@ -187,4 +187,6 @@ class Slot
 
         return $this;
     }
+
+   
 }

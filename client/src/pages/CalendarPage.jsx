@@ -1,103 +1,172 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import FormBuilder, { FIELD_TYPES } from '../components/builder/FormBuilder';
 import '../styles/calendar.css';
-import frLocale from '@fullcalendar/core/locales/fr'; 
+import { baseUrl, getRequest, postRequest } from '../utils/service';
 import Button from '../components/common/Button';
-import { baseUrl, getRequest } from '../utils/service';
-import UserList from '../components/common/UserList';
+import frLocale from '@fullcalendar/core/locales/fr';
+import { AuthContext } from '../contexts/AuthContext';
+
 
 const CalendarPage = () => {
-    const [showModal, setShowModal] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [selectedTime, setSelectedTime] = useState('12:00'); 
+    const [showAddModal, setShowAddModal] = useState(false);
     const [establishments, setEstablishments] = useState([]);
     const [selectedEstablishment, setSelectedEstablishment] = useState('');
-    const [selectedEstablishmentInfo, setSelectedEstablishmentInfo] = useState(null); 
-    const [slots, setSlots] = useState([]); // New state for slots
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [slots, setSlots] = useState([]);
     const calendarRef = useRef(null);
-    const [selectedSlot, setSelectedSlot] = useState(null); 
-    const [selectedEvent, setSelectedEvent] = useState(null); // State to hold selected event details
+    const [selectedDate, setSelectedDate] = useState(null);
     const [events, setEvents] = useState([]);
-    const [currentEvents, setCurrentEvents] = useState([])
+    const [visibleSlots, setVisibleSlots] = useState(2); 
+    const [selectedSlot, setSelectedSlot] = useState(null);
+    const { user, token, getUser } = useContext(AuthContext);
 
 
+    useEffect(() => {
+        if (user) {
+           const user_id = user.id;
+        }
+      }, [user]);
 
-   
     const handleEventClick = (clickInfo) => {
-        setSelectedEvent(clickInfo.event);
-        setShowEditModal(true);
-        window.onclick = function(event) {
-                    if (event.target === document.querySelector('.modal')) {
-                        setShowAddModal(false);
-                    }
-                };
     };
 
     const handleDateClick = async (info) => {
-        setSelectedDate(info.dateStr); // Set the selected date
-        setShowAddModal(true);
+        setSelectedDate(info.dateStr);
     
-        // Fetch slots for the selected date
         const token = localStorage.getItem('token');
-        if (!token) {
+        if (!token || !selectedEstablishment) {
             return;
         }
     
         try {
-            const response = await getRequest(
+            const response = await fetch(
                 `${baseUrl}/establishments/${selectedEstablishment}/slots?date=${info.dateStr}`,
                 {
-                    "Authorization": `Bearer ${token}`,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
                 }
             );
-            console.log('Fetched slots for selected date:', response);
-            setSlots(response); // Update slots with the fetched data
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            console.log('Fetched slots for selected date and establishment:', data);
+    
+            const filteredSlots = data.filter(slot => formatDate(slot.day_start_at) === info.dateStr);
+            setSlots(filteredSlots);
+    
+            setShowAddModal(true);
         } catch (error) {
-            console.error(error);
+            console.error('Error fetching slots:', error);
         }
     };
 
     const handleCloseAddModal = () => setShowAddModal(false);
-    const handleCloseEditModal = () => setShowEditModal(false);
-
-
 
     const getEstablishment = useCallback(async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            return;
+          setLoading(false);
+          return;
         }
-
+    
         try {
-            const response = await getRequest(
-                `${baseUrl}/establishments`,
-                {
-                    "Authorization": `Bearer ${token}`,
-                }
-            );
-            console.log('Fetched establishments:', response); 
-            setEstablishments(response); 
+          const response = await fetch(`${baseUrl}/establishments`, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+    
+          const data = await response.json();
+          console.log('Fetched establishments:', data);
+          setEstablishments(data);
         } catch (error) {
-            setError(error?.message || error);
+          console.error('Error fetching establishments:', error);
+        } finally {
+         
         }
-    }, []);
-
-    useEffect(() => {
+      }, [baseUrl]);
+    
+      useEffect(() => {
         getEstablishment();
-    }, [getEstablishment]);
+      }, [getEstablishment]);
 
-
-    useEffect(() => {
-        // Fetch events from the API
+      useEffect(() => {
         const fetchEvents = async () => {
+          const token = localStorage.getItem('token');
+          if (!token || !selectedEstablishment || !selectedDate) {
+           
+            return;
+          }
+    
+          try {
+            const response = await fetch(
+              `${baseUrl}/establishments/${selectedEstablishment}/slots?date=${selectedDate}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            console.log('Fetched slots for selected date:', data);
+            setSlots(data);
+            updateCalendarEvents(data);
+          } catch (error) {
+            console.error('Error fetching slots:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchEvents();
+      }, [baseUrl, selectedEstablishment, selectedDate]);
+
+
+    const updateCalendarEvents = (slots) => {
+        const calendarApi = calendarRef.current.getApi();
+
+        calendarApi.removeAllEvents();
+
+        const events = slots.slice(0, visibleSlots).map(slot => ({
+            id: slot.id,
+            title: slot.establishment,
+            start: slot.day_start_at,
+            end: slot.day_end_at,
+            extendedProps: {
+                coaches: slot.coach_ids.map(coach => coach.coach_name).join(', '),
+                duration: `${slot.duration_minutes} minutes`,
+                numberOfClients: slot.number_of_clients,
+            },
+        }));
+
+        calendarApi.addEventSource(events);
+    };
+    
+    useEffect(() => {
+        const fetchSlots = async () => {
             const token = localStorage.getItem('token');
-            if (!token) {
+            if (!token || !selectedEstablishment) {
                 return;
             }
 
@@ -105,68 +174,22 @@ const CalendarPage = () => {
                 const response = await getRequest(
                     `${baseUrl}/establishments/${selectedEstablishment}/slots`,
                     {
-                        "Authorization": `Bearer ${token}`,
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
                     }
                 );
-                console.log('Fetched slots:', response);
-                setEvents(response); 
+                console.log('Fetched slots for selected establishment:', response);
+                setSlots(response); 
+
+                updateCalendarEvents(response);
             } catch (error) {
-                console.error(error);
+                console.error('Error fetching slots:', error);
             }
         };
 
-        if (selectedEstablishment) {
-            fetchEvents();
-        }
+        fetchSlots();
     }, [selectedEstablishment]);
-
-
-    const handleEstablishmentChange = async (event) => {
-        const establishmentId = event.target.value;
-        setSelectedEstablishment(establishmentId);
-
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('No token found');
-            }
-
-            const response = await getRequest(
-                `${baseUrl}/establishments/${establishmentId}/slots`,
-                {
-                    "Authorization": `Bearer ${token}`,
-                }
-            );
-         console.log('Fetched slots:', response);
-            setSlots(response); 
-        } catch (error) {
-            setError(error?.message || error);
-        }
-    };
-
-    useEffect(() => {
-        if (calendarRef.current) {
-            const calendarApi = calendarRef.current.getApi();
-
-            // Event click handler
-            calendarApi.on('eventClick', function(info) {
-                const modal = document.getElementById('schedule-edit');
-                if (modal) {
-                    
-                }
-            });
-
-            // Day click handler
-            calendarApi.on('dateClick', function(info) {
-                const modal = document.getElementById('schedule-add');
-                if (modal) {
-                    // Example: Bootstrap modal
-                    modal.modal('show');
-                }
-            });
-        }
-    }, []);
-  
 
     useEffect(() => {
         if (calendarRef.current) {
@@ -176,9 +199,51 @@ const CalendarPage = () => {
         }
     }, [calendarRef]);
 
+    const reservation = async (user_id) => { 
+        const token = localStorage.getItem('token');
+    
+        if (!token || !selectedSlot || !selectedEstablishment) {
+            console.error('Missing token, selectedSlot or selectedEstablishment');
+            return;
+        }
+    
+        try {
+            const response = await fetch(`${baseUrl}/reservations`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    establishment_id: selectedEstablishment,
+                    slot_id: selectedSlot.id,
+                    client_id: user?.id, 
+                    status: 'confirmed'
+                })
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to create reservation');
+            }
+    
+            const result = await response.json();
+            console.log('Reservation created:', result);
+        } catch (error) {
+            console.error('Error creating reservation:', error);
+        }
+    };
+
+    const handleReservationClick = () => {
+        if (!selectedEstablishment || !selectedSlot || !selectedSlot.id) {
+            console.error('No establishment or slot selected');
+            return;
+        }
+        reservation(selectedSlot.id); 
+    };
+
     return (
         <div style={{ paddingLeft: "5%", paddingRight: "5%" }}>
-            <select value={selectedEstablishment} onChange={handleEstablishmentChange}>
+            <select value={selectedEstablishment} onChange={(event) => setSelectedEstablishment(event.target.value)}>
                 <option value="">Sélectionnez un établissement</option>
                 {establishments.map((establishment) => (
                     <option key={establishment.id} value={establishment.id}>
@@ -187,83 +252,79 @@ const CalendarPage = () => {
                 ))}
             </select>
             <div>
-                {/* Add Modal */}
                 <div className={`modal fade ${showAddModal ? 'show' : ''}`} style={{ display: showAddModal ? 'block' : 'none' }}>
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h4 className="modal-title">Ajouter ma réservation</h4>
+                                <h4 className="modal-title">SÉANCES DU {selectedDate}</h4>
                                 <button type="button" className="close" onClick={handleCloseAddModal}>&times;</button>
                             </div>
                             <div className="modal-body">
-                                <form>
-                                    
-                                    {slots.length > 0 && (
+                            {slots.length > 0 ? (
+                                    <>
                                         <table className="table">
                                             <thead>
                                                 <tr>
                                                     <th>Etablissement</th>
                                                     <th>Nom du coach</th>
                                                     <th>Durée</th>
-                                                    <th>Heure</th>
+                                                    <th>Date de fin</th>
+                                                    <th>Nombre de clients</th>
+                                                    <th>Durée (minutes)</th>
+                                                    <th>Sélectionner</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {slots.map(slot => (
-                                                    <tr key={slot.establishment}>
-                                                        <td>{slot.coach}</td>
-                                                        <td>{slot.available ? 'Disponible' : 'Occupé'}</td>
+                                                {slots.slice(0, visibleSlots).map((slot) => (
+                                                    <tr key={slot.id}>
+                                                        <td>{slot.establishment}</td>
+                                                        <td>{slot.coach_ids.map(coach => coach.coach_name).join(', ')}</td>
+                                                        <td>{slot.duration_minutes} minutes</td>
+                                                        <td>{formatDate(slot.day_end_at)}</td>
+                                                        <td>{slot.number_of_clients}</td>
+                                                        <td>{slot.duration_minutes}</td>
+                                                        <td>
+                                                            <input
+                                                                type="radio"
+                                                                name="selectedSlot"
+                                                                value={slot.id}
+                                                                onChange={() => setSelectedSlot(slot)}
+                                                            />
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
-                                    )}
-                                </form>
+                                        <button className="btn btn-primary" onClick={handleReservationClick}>
+                                            Réserver
+                                        </button>
+                                        {slots.length > visibleSlots && (
+                                            <button className="btn btn-primary" onClick={() => setVisibleSlots(visibleSlots + 2)}>
+                                                Voir plus
+                                            </button>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p>Aucun créneau disponible pour cette date et cet établissement.</p>
+                                )}
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-danger" onClick={handleCloseAddModal}>Fermer</button>
-                                <button type="button" className="btn btn-success">Confirmer</button>
+                                <button className="btn btn-danger" onClick={handleCloseAddModal}>Fermer</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Edit Modal */}
-                <div className={`modal fade ${showEditModal ? 'show' : ''}`} style={{ display: showEditModal ? 'block' : 'none' }}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h4 className="modal-title">Modifier ma réservation</h4>
-                                <button type="button" className="close" onClick={handleCloseEditModal}>&times;</button>
-                            </div>
-                            <div className="modal-body">
-                                <form>
-                                    <div className="form-group">
-                                        <label>Réservation de coaching:</label>
-                                        <input type="text" className="form-control" defaultValue={selectedEvent ? selectedEvent.title : ''} />
-                                    </div>
-                                </form>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-danger" onClick={handleCloseEditModal}>Fermer</button>
-                                <button type="button" className="btn btn-success">Modifier</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* FullCalendar component */}
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
                     editable={true}
                     selectable={true}
                     initialView="dayGridMonth"
-                  
                     headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',
-                        right: 'dayGridMonth,timeGridWeek','timeGridDay',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
                     }}
                     events={events}
                     eventClick={handleEventClick}
@@ -273,5 +334,10 @@ const CalendarPage = () => {
         </div>
     );
 };
+
+function formatDate(dateTimeString) {
+    const date = new Date(dateTimeString);
+    return date.toISOString().split('T')[0]; 
+}
 
 export default CalendarPage;

@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "prettier": "3.3.2"
+  },
+  "dependencies": {
+    "react-big-calendar": "^1.13.0"
   }
 }

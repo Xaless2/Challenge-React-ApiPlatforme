@@ -176,18 +176,22 @@ class EstablishmentController extends AbstractController
     
             foreach ($slots as $slot) {
                 // Fetch coaches associated with the slot
-                $coaches = $slot->getCoachId();
-    
-                // Example: Convert coaches to array of IDs
-                $coachIds = [];
+                $coaches = $slot->getCoachId();                
+
+                $coachesInfo = [];
                 foreach ($coaches as $coach) {
-                    $coachIds[] = $coach->getId();
+                    $coachesInfo[] = [
+                        'id' => $coach->getId(),
+                        'coach_name' => $coach->getFirstname() . ' ' . $coach->getLastname()
+
+                    ];
                 }
     
                 $result[] = [
                     'id' => $slot->getId(),
+                    'establishment' => $slot->getPerformance()->getEstablishment()->getDisplayName(),
                     'performance' => $slot->getPerformance()->getId(),
-                    'coach_ids' => $coachIds,
+                    'coach_ids' => $coachesInfo,
                     'number_of_clients' => $slot->getNumberOfClients(),
                     'day_start_at' => $slot->getDayStartAt()->format('Y-m-d H:i:s'),
                     'day_end_at' => $slot->getDayEndAt()->format('Y-m-d H:i:s'),
@@ -200,6 +204,8 @@ class EstablishmentController extends AbstractController
         }
         return new JsonResponse($result);
     }
+
+
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/api/establishments/{establishmentId}/slots/{date}', name: 'establishment_slots_by_date', methods: ['GET'])]
     public function getSlotsByEstablishmentAndDate(

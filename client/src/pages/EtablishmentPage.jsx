@@ -1,42 +1,69 @@
-import React from 'react'
-import NavBar from '../components/layout/NavBar'
-import GoogleApiWrapper from '../components/builder/GoogleApiWrapper'
+import React,{useContext, useEffect} from 'react';
+import NavBar from '../components/layout/NavBar';
+import GoogleApiWrapper from '../components/builder/GoogleApiWrapper';
+import CardCutomEtablishement from '../components/common/CardCutomEtablishement';
+import Footer from '../components/layout/Footer';
+import { baseUrl } from '../utils/service';
+import { useParams } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
 function EtablishmentPage() {
 
-  const addresses = [
-    {
-      "address": "16 avenue François Mitterrand, 94000 Créteil"
-    },
-    {
-      "address": "1 avenue de la République, 75011 Paris"
-    },
-    {
-      "address": "10 rue de la Paix, 78000 Versailles"
-    },
-    {
-      "address": "5 boulevard de l'Indépendance, 93000 Bobigny"
-    },
-    {
-      "address": "20 avenue du Général de Gaulle, 92000 Nanterre"
-    }
-  ]
+  const {token} = useContext(AuthContext)
+  const [establishment, setEstablishment] = React.useState(null); 
+  const [loading, setLoading] = React.useState(true);
+  // const {token} = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchEstablishment = async () => {
+      const response = await fetch(`${baseUrl}/establishments`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+      const data = await response.json();
+      console.log(data);
+      setEstablishment(data);
+      setLoading(false);
+    };
+    fetchEstablishment();
+  }, [token]);
 
   return (
     <>
-      <NavBar/>
-      <div>
-        <GoogleApiWrapper
-          image="url-to-image"
-          name="Nom de l'établissement"
-          addresses={addresses.map(address => address.address)}
-          rating="4.5"
-          price="50€"
-          description="Musculation, Cardio, Fitness, Yoga, Pilates, Crossfit, etc."
-        />
+      <NavBar />
+  
+     <div className="flex h-screen">
+        <div className="flex-1 overflow-y-auto p-4">
+          {!loading && establishment && establishment.address ? (
+            <div className="mb-4">
+              <CardCutomEtablishement
+                id={establishment.brand_id}
+                image="url-to-image"
+                name={establishment.display_name}
+                address={establishment.address}
+              />
+            </div>
+          ) : (
+            <div className='text-center'>Pas encore des établissements disponibles</div>
+          )}
+        </div>
+        <div className="flex-1">
+          {establishment ? (
+            <GoogleApiWrapper
+              name={establishment.display_name}
+              addresses={[establishment.address]}
+            />
+          ) : (
+            <div className='text-center'>Chargement...</div>
+          )}
+        </div>
       </div>
+      <Footer/>
     </>
-  )
+  );
 }
 
-export default EtablishmentPage
+export default EtablishmentPage;

@@ -22,7 +22,8 @@ export const routes = [
     },
     {
         path: "/dashboard",
-        component: DashboardPage
+        component: DashboardPage,
+        protected: false,
     },
     {
         path: "/etablishment",
@@ -31,21 +32,23 @@ export const routes = [
     },
     {
         path: "/profile",
-        component: ProfilePage
+        component: ProfilePage,
+        protected: true,
     },
     {
         path: "/establishments/:id", 
-        component: EtablishmentPage
+        component: EtablishmentPage,
+        protected: true,
     },
     {
         path: "/create-performance",
         component: PerformancePage,
-        protected: false,
+        protected: true,
     },
     {
         path: "/create-slot",
         component: SlotPage,
-        protected: false,
+        protected: true,
     },
 ];
 

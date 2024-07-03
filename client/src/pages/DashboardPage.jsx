@@ -20,6 +20,7 @@ function DashboardPage() {
   const { token, userRole, logout, user, getUser } = useContext(AuthContext);
   const [deleteId, setDeleteId] = useState(null);
   const { getBrandById } = useContext(BrandContext);
+  const { allBrands } = useContext(BrandContext);
   const [brandId, setBrandId] = useState(null); 
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([
@@ -76,6 +77,41 @@ function DashboardPage() {
     setData(newData);
     setShowToast(false);
   };
+  const handleAddImage = async (id, base64Files) => {
+    try {
+      const image_url = base64Files[0];
+      const pdfFile = base64Files[1];
+  
+      const formData = new FormData();
+      if (image_url) {
+        const response = await fetch(image_url);
+        const blob = await response.blob();
+        formData.append('image_url', blob, 'image.jpg');
+      }
+      if (pdfFile) {
+        const response = await fetch(pdfFile);
+        const blob = await response.blob();
+        formData.append('pdfFile', blob, 'file.pdf');
+      }
+  
+      const response = await fetch(`${baseUrl}/brands/${id}/image`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      console.log('Response:', response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log('Files uploaded:', data);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
+  };
 
   const handleCancel = () => {
     setShowToast(false);
@@ -100,6 +136,7 @@ function DashboardPage() {
   const handleSlotClick = () => {
     setView('slot'); 
   };
+
 
   return (
     <>
@@ -348,7 +385,12 @@ function DashboardPage() {
             ) : view === 'table' ? (
               <>
                 <ModalPup />
-                <Table data={data} onEdit={handleEdit} onDelete={handleDelete} />
+                <Table
+                data={allBrands}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onAddImage={handleAddImage}
+              />
               </>
             ) : view === 'performance' ? (
               <div>

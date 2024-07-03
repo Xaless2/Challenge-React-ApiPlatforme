@@ -3,18 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Establishment;
-use App\Repository\UserRepository;
-use App\Repository\EstablishmentRepository;
-use App\Repository\BrandRepository;
 use App\Repository\SlotRepository;
-use App\Repository\PerformanceRepository;
-use App\Repository\ReservationRepository;
+use App\Repository\UserRepository;
+use App\Repository\BrandRepository;
 use App\Repository\SlotCoachRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\PerformanceRepository;
+use App\Repository\ReservationRepository;
+use App\Repository\EstablishmentRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EstablishmentController extends AbstractController
@@ -57,7 +58,7 @@ class EstablishmentController extends AbstractController
         }
 
         $establishment = new Establishment();
-        $establishment->setBrandId($brand);
+        $establishment->setBrand($brand);
         $establishment->setDisplayName($data['display_name']);
         $establishment->setPhone($data['phone']);
         $establishment->setAddress($data['address']);
@@ -74,14 +75,13 @@ class EstablishmentController extends AbstractController
     public function update(Request $request, Establishment $establishment, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $establishment->setName($data['name']);
+        $establishment->setDisplayName($data['name']);
         $establishment->setAddress($data['address']);
-        $establishment->setPostalCode($data['postal_code']);
+        $establishment->setZipCode($data['postal_code']);
         $establishment->setCity($data['city']);
-        $establishment->setCountry($data['country']);
-        $establishment->setDescription($data['description']);
-        $establishment->setEmail($data['email']);
         $establishment->setPhone($data['phone']);
+        
+        
 
         $em->flush();
 

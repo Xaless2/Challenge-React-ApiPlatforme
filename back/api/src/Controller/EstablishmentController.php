@@ -40,7 +40,8 @@ class EstablishmentController extends AbstractController
                 'zip_code' => $establishment->getZipCode(),
                 'city' => $establishment->getCity(),
                 'phone' => $establishment->getPhone(),
-                'brand_id' => $establishment->getBrandId()->getId()
+                // 'brand_id' => $establishment->getBrandId()->getId()
+                
             ];
         }
         return new JsonResponse($result);

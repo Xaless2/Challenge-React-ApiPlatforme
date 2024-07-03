@@ -59,20 +59,17 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $this->addReference('user_admin2', $admin2);
 
         $brand1 = new Brand();
-        // $brand1->setUser($admin->getId());
-        $brand1->setUser($admin);
+        $brand1->setUserId($admin->getId());
         $brand1->setDisplayName("Fitness");
         $manager->persist($brand1);
 
         $brand2 = new Brand();
-        // $brand2->setUser($admin->getId());
-        $brand2->setUser($admin);
+        $brand2->setUserId($admin->getId());
         $brand2->setDisplayName("Basic");
         $manager->persist($brand2);
 
         $brand3 = new Brand();
-        // $brand3->setUser($admin2->getId());
-        $brand3->setUser($admin);
+        $brand3->setUserId($admin2->getId());
         $brand3->setDisplayName("Neoness");
         $manager->persist($brand3);
 

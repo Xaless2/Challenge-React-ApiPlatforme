@@ -1,16 +1,10 @@
 nelmio_cors:
     defaults:
-<<<<<<< HEAD
         origin_regex: true
-        allow_origin: ['https://client-nu-lime.vercel.app']
+        allow_origin: ['https://client-nu-lime.vercel.app','*']
         allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
         allow_headers: ['Content-Type', 'Authorization', 'Preload', 'Fields']
-=======
-        allow_origin: ['*']
         allow_credentials: true
-        allow_headers: ['Content-Type', 'Authorization']
-        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE']
->>>>>>> origin/secureRouter
         expose_headers: ['Link']
         max_age: 3600
     paths:
@@ -19,4 +13,3 @@ nelmio_cors:
             allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE']
             allow_headers: ['Content-Type', 'Authorization']
             max_age: 3600
-

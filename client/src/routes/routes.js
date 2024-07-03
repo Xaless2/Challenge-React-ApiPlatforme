@@ -8,6 +8,7 @@ import EtablishmentPage from "../pages/EtablishmentPage.jsx";
 import SlotPage from "../pages/SlotPage.jsx";
 import PerformancePage from "../pages/PerformancePage.jsx";
 import Unauthorized from "../components/EstablishmentDetail/Unauthorized.jsx";
+import EstablishmentPage from "../pages/EtablishmentPage.jsx";
 
 export const routes = [
     {
@@ -41,7 +42,7 @@ export const routes = [
     },
     {
         path: "/create-establishment",
-        component: EtablishmentPage,
+        component: EstablishmentPage,
         protected: true,
     },
     {

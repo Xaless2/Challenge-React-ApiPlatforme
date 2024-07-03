@@ -1,9 +1,8 @@
 
 
-export const baseUrl = "https://localhost:8000/api"; 
-export const authUrl = "https://localhost:8000";
+export const baseUrl = "http://localhost:8000/api"; 
+export const authUrl = "http://localhost:8000";
 
-const getToken = () => localStorage.getItem('token');
 
 export const postRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {
@@ -20,7 +19,7 @@ export const postRequest = async (url, body, headers = {}) => {
         data = response.status === 204 ? null : await response.json();
     } else {
         data = await response.json();
-        throw new Error(data.error?.message || 'An error occurred while processing the request.');
+        throw new Error(data.error.message);
     }
 
     return data;
@@ -29,14 +28,12 @@ export const postRequest = async (url, body, headers = {}) => {
 
 
 export const getRequest = async (url, headers = {}) => {
-    const token = getToken();
     const response = await fetch(url, {
-        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            ...(token && { 'Authorization': `Bearer ${token}` }),
-            ...headers,
+            ...headers
         },
+        method: 'GET'
     });
 
     if (!response.ok) {
@@ -45,6 +42,7 @@ export const getRequest = async (url, headers = {}) => {
 
     return await response.json();
 };
+
 
 export const updateRequest = async (url, body, headers = {}) => {
     const response = await fetch(url, {

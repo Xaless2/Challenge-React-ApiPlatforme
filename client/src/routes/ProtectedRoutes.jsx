@@ -6,7 +6,7 @@ function ProtectedRoutes({ roles = [], children }) {
   const isAuthenticated = localStorage.getItem('token');
   const { userRole } = useContext(AuthContext);
   const primaryRole = userRole ? userRole[0] : null;
-  console.log(primaryRole);
+  
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;

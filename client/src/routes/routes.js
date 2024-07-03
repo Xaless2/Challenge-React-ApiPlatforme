@@ -61,7 +61,7 @@ export const routes = [
     {
         path: "/calendar",
         component: CalendarPage,
-        protected: false,
+        protected: true,
     },
 
 

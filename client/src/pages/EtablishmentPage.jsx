@@ -14,6 +14,12 @@ function EtablishmentPage() {
   const [activeEstablishmentAddress, setActiveEstablishmentAddress] = useState(null);
   const establishmentContainerRef = useRef(null); 
 
+
+  useEffect(() => {
+    
+  }, [token]);
+
+
   useEffect(() => {
     const fetchEstablishments = async () => {
       try {
@@ -25,8 +31,12 @@ function EtablishmentPage() {
           },
         });
         const data = await response.json();
-        setEstablishments(data);
-        setLoading(false);
+        if (data.code === 401) {
+
+        } else {
+          setEstablishments(data);
+          setLoading(false);
+        }
       } catch (error) {
         console.error('Error fetching establishments:', error);
         setLoading(false);

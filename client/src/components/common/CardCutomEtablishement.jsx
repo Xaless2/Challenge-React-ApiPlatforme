@@ -1,14 +1,10 @@
 import React from 'react';
 import Button from './Button';
-import { useNavigate } from 'react-router-dom';
+import {
+  Link,
+} from "@nextui-org/react";
 
 function CardCutomEtablishement({ id, image, name, address, rating, price, description }) {
-
-
-  const handleOnClick = () => {
-    navigate(`/establishmentDetails/${id}`);
-  };
-
   return (
     <div id={id} className="flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
       <div className="flex-shrink-0">
@@ -28,13 +24,15 @@ function CardCutomEtablishement({ id, image, name, address, rating, price, descr
           {description}
         </div>
         <div className="mt-2 flex space-x-4">
-        <Button onClick={handleOnClick} text={'Faire une résérvation'} 
+          <Link href="/calendar">
+            <Button text={'Faire une résérvation'} 
               style={{
                 width: '90%',
                 backgroundColor: 'black',
                 margin: 'auto',
               }}
             />
+          </Link>
         </div>
       </div>
     </div>

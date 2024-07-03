@@ -8,6 +8,8 @@ import { baseUrl, getRequest, postRequest } from '../utils/service';
 import Button from '../components/common/Button';
 import frLocale from '@fullcalendar/core/locales/fr';
 import { AuthContext } from '../contexts/AuthContext';
+import NavBar from '../components/layout/NavBar';
+import Footer from '../components/layout/Footer';
 
 
 const CalendarPage = () => {
@@ -24,10 +26,13 @@ const CalendarPage = () => {
 
 
     useEffect(() => {
-        if (user) {
-           const user_id = user.id;
-        }
-      }, [user]);
+        if(user){
+                getUser(user.id)
+        }else(error) =>{
+         console.error("no user",error)
+     }
+
+    }, [user]);
 
     const handleEventClick = (clickInfo) => {
     };
@@ -39,7 +44,6 @@ const CalendarPage = () => {
         if (!token || !selectedEstablishment) {
             return;
         }
-    
         try {
             const response = await fetch(
                 `${baseUrl}/establishments/${selectedEstablishment}/slots?date=${info.dateStr}`,
@@ -91,7 +95,6 @@ const CalendarPage = () => {
           }
     
           const data = await response.json();
-          console.log('Fetched establishments:', data);
           setEstablishments(data);
         } catch (error) {
           console.error('Error fetching establishments:', error);
@@ -240,19 +243,48 @@ const CalendarPage = () => {
         }
         reservation(selectedSlot.id); 
     };
+    const centerStyle = {
+        justfiyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+    }
 
     return (
-        <div style={{ paddingLeft: "5%", paddingRight: "5%" }}>
-            <select value={selectedEstablishment} onChange={(event) => setSelectedEstablishment(event.target.value)}>
-                <option value="">Sélectionnez un établissement</option>
-                {establishments.map((establishment) => (
-                    <option key={establishment.id} value={establishment.id}>
-                        {establishment.display_name}
-                    </option>
-                ))}
-            </select>
-            <div>
-                <div className={`modal fade ${showAddModal ? 'show' : ''}`} style={{ display: showAddModal ? 'block' : 'none' }}>
+                                            
+        <>
+        <NavBar />
+        <div className="container" style={centerStyle}>
+            <div className="select-establishment">
+                <select value={selectedEstablishment} onChange={(event) => setSelectedEstablishment(event.target.value)}>
+                    <option value="">Sélectionnez un établissement</option>
+                    {establishments.map((establishment) => (
+                        <option key={establishment.id} value={establishment.id}>
+                            {establishment.display_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div className="calendar-container">
+                <FullCalendar
+                    ref={calendarRef}
+                    plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+                    editable={true}
+                    selectable={true}
+                    initialView="dayGridMonth"
+                    headerToolbar={{
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    }}
+                    events={events}
+                    eventClick={handleEventClick}
+                    dateClick={handleDateClick}
+                />
+            </div>
+
+            {showAddModal && (
+                <div className="modal">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
@@ -260,7 +292,7 @@ const CalendarPage = () => {
                                 <button type="button" className="close" onClick={handleCloseAddModal}>&times;</button>
                             </div>
                             <div className="modal-body">
-                            {slots.length > 0 ? (
+                                {slots.length > 0 ? (
                                     <>
                                         <table className="table">
                                             <thead>
@@ -314,26 +346,13 @@ const CalendarPage = () => {
                         </div>
                     </div>
                 </div>
-
-                <FullCalendar
-                    ref={calendarRef}
-                    plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-                    editable={true}
-                    selectable={true}
-                    initialView="dayGridMonth"
-                    headerToolbar={{
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                    }}
-                    events={events}
-                    eventClick={handleEventClick}
-                    dateClick={handleDateClick}
-                />
-            </div>
+            )}
         </div>
-    );
+        <Footer />
+    </>
+);
 };
+
 
 function formatDate(dateTimeString) {
     const date = new Date(dateTimeString);

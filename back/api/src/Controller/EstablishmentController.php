@@ -57,7 +57,7 @@ class EstablishmentController extends AbstractController
         }
 
         $establishment = new Establishment();
-        $establishment->setBrandId($brand);
+        $establishment->setBrand($brand);
         $establishment->setDisplayName($data['display_name']);
         $establishment->setPhone($data['phone']);
         $establishment->setAddress($data['address']);

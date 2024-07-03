@@ -98,8 +98,7 @@ function EtablishmentPage() {
       <Footer />
     </>
   );
-  );
+  
 }
 
-export default EtablishmentPage;
 export default EtablishmentPage;

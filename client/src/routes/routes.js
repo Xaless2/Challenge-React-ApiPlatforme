@@ -8,7 +8,7 @@ import EtablishmentPage from "../pages/EtablishmentPage.jsx";
 import SlotPage from "../pages/SlotPage.jsx";
 import PerformancePage from "../pages/PerformancePage.jsx";
 import Unauthorized from "../components/EstablishmentDetail/Unauthorized.jsx";
-import EstablishmentPage from "../pages/EtablishmentPage.jsx";
+import EstablishmentPage from "../pages/EstablishmentPage.jsx";
 
 export const routes = [
     {

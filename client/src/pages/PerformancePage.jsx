@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminFormBuilder from '../components/builder/AdminFormBuilder';
 import createPerformanceFormFields from '../components/form/createPerformanceFormFields';
-
-export const baseUrl = "http://localhost:8000/api";
+import { baseUrl } from '../utils/service';
 
 const PerformancePage = () => {
     const [formFields, setFormFields] = useState(createPerformanceFormFields);

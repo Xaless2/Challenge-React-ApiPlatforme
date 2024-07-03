@@ -34,7 +34,13 @@ class EstablishmentController extends AbstractController
         foreach($establishments as $establishment){
             $result[] = [
                 'id' => $establishment->getId(),
-                'display_name' => $establishment->getDisplayName()
+                'display_name' => $establishment->getDisplayName(),
+                'address' => $establishment->getAddress(),
+                'zip_code' => $establishment->getZipCode(),
+                'city' => $establishment->getCity(),
+                'phone' => $establishment->getPhone(),
+                // 'brand_id' => $establishment->getBrandId()->getId()
+                
             ];
         }
         return new JsonResponse($result);
@@ -90,6 +96,36 @@ class EstablishmentController extends AbstractController
 
         return new JsonResponse(['status' => 'Establishment deleted!'], Response::HTTP_NO_CONTENT);
     }
+
+  
+    
+    #[Route('/api/establishments/{id}/slots', name: 'establishment_slots', methods: ['GET'])]
+    public function getSlotsByEstablishment(int $id, SlotRepository $slotRepository, EntityManagerInterface $em): JsonResponse
+    {
+        $establishment = $em->getRepository(Establishment::class)->find($id);
+    
+        if (!$establishment) {
+            throw $this->createNotFoundException(
+                'No establishment found for id '.$id
+            );
+        }
+    
+        $slots = $slotRepository->findBy(['establishment' => $establishment]);
+    
+        $result = [];
+    
+        foreach($slots as $slot){
+            $result[] = [
+                'id' => $slot->getId(),
+                'start' => $slot->getTimeStartAt()->format('Y-m-d H:i:s'),
+                'end' => $slot->getTimeEndAt()->format('Y-m-d H:i:s'),
+            ];
+        }
+    
+        return new JsonResponse($result);
+    }
+
+    
 
     #[Route('/api/establishments/users', name: 'establishment_users', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]

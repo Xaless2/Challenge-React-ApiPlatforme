@@ -100,4 +100,3 @@ export const deleteRequest = async (url) => { const response = await fetch(url, 
 
     return data;
 }
-

@@ -1,4 +1,6 @@
 import {Button as NextButton} from "@nextui-org/react";
+import React from "react";
+
 
 const Button = ({ onClick, text, type = 'button', style = {}, className = '' }) => {
     return (

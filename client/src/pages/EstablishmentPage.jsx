@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import AdminFormBuilder from '../components/builder/AdminFormBuilder';
 import createEstablishmentFormFields from '../components/form/createEstablishmentFormFields';
-
-export const baseUrl = "http://localhost:8000/api";
+import { baseUrl } from '../utils/service';
 
 const EstablishmentPage = () => {
     const location = useLocation();

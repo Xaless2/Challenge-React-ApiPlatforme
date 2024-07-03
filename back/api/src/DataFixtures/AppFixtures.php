@@ -59,17 +59,20 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $this->addReference('user_admin2', $admin2);
 
         $brand1 = new Brand();
-        $brand1->setUserId($admin->getId());
+        // $brand1->setUser($admin->getId());
+        $brand1->setUser($admin);
         $brand1->setDisplayName("Fitness");
         $manager->persist($brand1);
 
         $brand2 = new Brand();
-        $brand2->setUserId($admin->getId());
+        // $brand2->setUser($admin->getId());
+        $brand2->setUser($admin);
         $brand2->setDisplayName("Basic");
         $manager->persist($brand2);
 
         $brand3 = new Brand();
-        $brand3->setUserId($admin2->getId());
+        // $brand3->setUser($admin2->getId());
+        $brand3->setUser($admin);
         $brand3->setDisplayName("Neoness");
         $manager->persist($brand3);
 
@@ -88,7 +91,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             $establishment->setAddress('123 Main St '.$i);
             $establishment->setZipCode('12345');
             $establishment->setCity('City '.$i);
-            $establishment->setBrandId($brands[$random]); 
+            $establishment->setBrand($brands[$random]); 
 
             $manager->persist($establishment);
             $establishments[] = $establishment;
@@ -141,7 +144,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             $randomEstablishment = $establishments[array_rand($establishments)];
             $performance = new Performance();
             $performance->setPerformanceName('Performance'.$i);
-            $performance->setEstablishmentId($randomEstablishment);
+            $performance->setEstablishment($randomEstablishment);
             $performance->setDescription('Description for Performance'.$i);
             $performance->setNumberOfClientsMax(mt_rand(10, 50));
             $performance->setStatus('pending');
@@ -154,7 +157,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         foreach ($performances as $performance) {
             for ($i = 1; $i <= 5; $i++) {
                 $slot = new Slot();
-                $slot->setPerformanceId($performance);
+                $slot->setPerformance($performance);
                 $slot->setWeekDay('lundi');  
                 $slot->setDayStartAt(new \DateTime('2024-06-01'));
                 $slot->setDayEndAt(new \DateTime('2024-12-31'));
@@ -163,7 +166,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
                 $slot->setDurationMinutes(60);
                 $slot->setNumberOfClients(mt_rand(5, 20));
                 $randomCoach = $coachs[array_rand($coachs)];
-                $slot->addCoachId($randomCoach);
+                $slot->addCoach($randomCoach);
 
                 $manager->persist($slot);
                 $this->setReference('slot_' . $i, $slot);
@@ -174,7 +177,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             for ($i = 1; $i <= 3; $i++) {
                 $randomClient = $clients[array_rand($clients)];
                 $reservation = new Reservation();
-                $reservation->setSlotId($slot);
+                $reservation->setSlot($slot);
                 $reservation->setClientId($randomClient);
                 $reservation->setStatus('pending');
 

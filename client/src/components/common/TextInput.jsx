@@ -1,4 +1,5 @@
 import { Input } from "@nextui-org/react";
+import React from "react";
 
 const TextInput = ({ field }) => (
   <div className={`mb-4 ${field.style}`}>

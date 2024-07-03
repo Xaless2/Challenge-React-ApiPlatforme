@@ -1,3 +1,6 @@
+import React from "react";
+
+
 const SelectInput = ({ field }) => (
   <div className={field.style}>
     {field.label && <p className="text-sm mb-1">{field.label}</p>}

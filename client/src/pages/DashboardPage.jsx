@@ -13,6 +13,11 @@ import { useLocation } from 'react-router-dom';
 import PerformancePage from './PerformancePage';
 import { Button } from '@nextui-org/react';
 import SlotPage from './SlotPage'; 
+import  CalendarPage  from './CalendarPage';
+import Navbar from '../components/layout/NavBar';
+
+
+
 
 function DashboardPage() {
   const [view, setView] = useState('dashboard');
@@ -121,6 +126,10 @@ function DashboardPage() {
   const handleBrandClick = () => {
     setView('table'); 
   };
+
+  const handleReservationClick = () => {
+    setView('calendar');
+  };
   
   const handleNavItemClick = (selectedView) => {
     if (selectedView === view) {
@@ -140,6 +149,7 @@ function DashboardPage() {
 
   return (
     <>
+      <Navbar />
       <aside
         className="fixed top-0 z-10 ml-[-100%] flex h-screen w-full flex-col justify-between shadow-md bg-white px-6 pb-3 transition duration-300 md:w-4/12 lg:ml-0 lg:w-[25%] xl:w-[20%] 2xl:w-[15%] dark:border-gray-700"
       >
@@ -184,7 +194,7 @@ function DashboardPage() {
                     className="fill-current "
                   ></path>
                 </svg>
-                <span className="-mr-1 font-medium">Dashboard</span>
+                <span className="-mr-1 font-medium">Tableau de bord</span>
               </a>
             </li>
             <li>
@@ -330,6 +340,35 @@ function DashboardPage() {
   
   
             <li>
+            {userRole !== 'ROLE_COACH' && userRole !== 'ROLE_CLIENT' && (
+              <button
+                onClick={handleReservationClick}
+                className={`group flex items-center space-x-4 rounded-md px-4 py-3 text-black ${view === '' ? 'bg-gray-300 dark:bg-gray-700' : ''}`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    className="fill-current text-gray-300 "
+                    fillRule="evenodd"
+                    d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z"
+                    clipRule="evenodd"
+                  />
+                  <path
+                    className="fill-current text-black group-hover:text-cyan-600 dark:group-hover:text-sky-400"
+                    d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"
+                  />
+                </svg>
+                <span className="group-hover:text-black">Réservations</span>
+              </button>
+            )}
+            </li>
+          
+            <li>
+
               <Link
                 to="/profile"
                 className="group flex items-center space-x-4 rounded-md px-4 py-3 text-blacktext-black"

@@ -4,6 +4,7 @@ import DashboardPage from "../pages/DashboardPage.jsx";
 import WelcomePage from "../pages/WelcomePage.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
 import CalendarPage from "../pages/CalendarPage.jsx";
+import CalendarPage from "../pages/CalendarPage.jsx";
 import EtablishmentPage from "../pages/EtablishmentPage.jsx";
 import SlotPage from "../pages/SlotPage.jsx";
 import PerformancePage from "../pages/PerformancePage.jsx";
@@ -13,6 +14,7 @@ export const routes = [
     {
         path: "/register",
         component: RegisterPage,
+    },
     },
     {
         path: "/login",
@@ -27,10 +29,15 @@ export const routes = [
         component: DashboardPage,
         protected: true,
         roles: [],
+        component: DashboardPage,
+        protected: true,
+        roles: [],
     },
     {
         path: "/etablishment",
         component: EtablishmentPage,
+        protected: true,
+        roles: [],
         protected: true,
         roles: [],
     },
@@ -40,6 +47,9 @@ export const routes = [
         protected: true,
     },
     {
+        path: "/establishments/:id",
+        component: EtablishmentPage,
+        protected: true,
         path: "/establishments/:id",
         component: EtablishmentPage,
         protected: true,

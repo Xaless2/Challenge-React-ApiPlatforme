@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 #[ApiResource(mercure: true)]
 #[ORM\Entity(repositoryClass: SlotRepository::class)]
 class Slot
@@ -19,9 +20,9 @@ class Slot
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Performance $performance_id = null;
+    #[ORM\ManyToOne(targetEntity: Performance::class)]
+    #[ORM\JoinColumn(name: "performance_id", referencedColumnName: "id", nullable: false)]
+    private ?Performance $performance = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $number_of_clients = null;
@@ -45,9 +46,36 @@ class Slot
     #[ORM\Column(nullable: true)]
     private ?int $duration_minutes = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    private Collection $coach_id;
+
     public function __construct()
     {
         $this->coach_id = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getCoachId(): Collection
+    {
+        return $this->coach_id;
+    }
+
+    public function addCoach(User $coach): static
+    {
+        if (!$this->coach_id->contains($coach)) {
+            $this->coach_id->add($coach);
+        }
+
+        return $this;
+    }
+
+    public function removeCoach(User $coach): static
+    {
+        $this->coach_id->removeElement($coach);
+
+        return $this;
     }
 
     public function getId(): ?int
@@ -62,41 +90,19 @@ class Slot
         return $this;
     }
 
-    public function getPerformanceId(): ?Performance
+  
+    public function getPerformance(): ?Performance
     {
-        return $this->performance_id;
+        return $this->performance;
     }
 
-    public function setPerformanceId(?Performance $performanceId): static
+    public function setPerformance(?Performance $performance): static
     {
-        $this->performance_id = $performanceId;
+        $this->performance = $performance;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getCoachId(): Collection
-    {
-        return $this->coach_id;
-    }
-
-    public function addCoachId(User $coach_id): static
-    {
-        if (!$this->coach_id->contains($coach_id)) {
-            $this->coach_id->add($coach_id);
-        }
-
-        return $this;
-    }
-
-    public function removeCoachId(User $coach_id): static
-    {
-        $this->coach_id->removeElement($coach_id);
-
-        return $this;
-    }
 
     public function getNumberOfClients(): ?int
     {
@@ -181,4 +187,6 @@ class Slot
 
         return $this;
     }
+
+   
 }

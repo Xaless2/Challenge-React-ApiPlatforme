@@ -19,7 +19,7 @@ class SlotCoachFixtures extends Fixture implements DependentFixtureInterface, Fi
         $coach = $this->getReference('coach_1'); 
 
         $slotCoach = new SlotCoach();
-        $slotCoach->setSlotId($slot);
+        $slotCoach->setSlot($slot);
         $slotCoach->setCoachId($coach);
         $slotCoach->setStatus('confirmed');
         $slotCoach->setCreatedAt(new \DateTimeImmutable());

@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import "../../styles/components.css";
 import RevealOnScroll from '../common/RevealOnScroll';
 import AsyncSelect from 'react-select/async';
-
-export const baseUrl = "http://localhost:8000/api";
+import { baseUrl } from '../../utils/service';
 
 function MiddleComponent() {
     const [selectedEstablishment, setSelectedEstablishment] = useState(null);

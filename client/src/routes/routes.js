@@ -40,7 +40,7 @@ export const routes = [
         protected: true,
     },
     {
-        path: "/establishments/:id",
+        path: "/create-establishment",
         component: EtablishmentPage,
         protected: true,
     },

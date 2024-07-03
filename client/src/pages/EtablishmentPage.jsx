@@ -1,104 +1,60 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import NavBar from '../components/layout/NavBar';
-import GoogleApiWrapper from '../components/builder/GoogleApiWrapper';
-import CardCutomEtablishement from '../components/common/CardCutomEtablishement';
-import Footer from '../components/layout/Footer';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import AdminFormBuilder from '../components/builder/AdminFormBuilder';
+import createEstablishmentFormFields from '../components/form/createEstablishmentFormFields';
 import { baseUrl } from '../utils/service';
 
-import { AuthContext } from '../contexts/AuthContext';
-
-function EtablishmentPage() {
-  const { token } = useContext(AuthContext);
-  const [establishments, setEstablishments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [activeEstablishmentAddress, setActiveEstablishmentAddress] = useState(null);
-  const establishmentContainerRef = useRef(null); 
 
 
-  useEffect(() => {
-    
-  }, [token]);
+const EstablishmentPage = () => {
+    const location = useLocation();
+    const { brandId } = location.state || {};
+    const [formFields, setFormFields] = useState(createEstablishmentFormFields);
 
-
-  useEffect(() => {
-    const fetchEstablishments = async () => {
-      try {
-        const response = await fetch(`${baseUrl}/establishments`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await response.json();
-        if (data.code === 401) {
-
-        } else {
-          setEstablishments(data);
-          setLoading(false);
+    useEffect(() => {
+        if (brandId) {
+            console.log('Setting brand ID:', brandId);
+            const updatedFields = createEstablishmentFormFields.map(field => {
+                if (field.name === 'brand_id') {
+                    return { ...field, value: brandId, readOnly: true };
+                }
+                return field;
+            });
+            setFormFields(updatedFields);
         }
-      } catch (error) {
-        console.error('Error fetching establishments:', error);
-        setLoading(false);
-      }
+    }, [brandId]);
+
+    const handleSubmit = async (formData) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${baseUrl}/establishments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log('Établissement créé avec succès:', data);
+        } catch (error) {
+            console.error('Erreur lors de la création de l\'établissement:', error);
+        }
     };
-    fetchEstablishments();
-  }, [token]);
 
-  
-
-  useEffect(() => {
-    if (activeEstablishmentAddress && establishmentContainerRef.current) {
-      establishmentContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [activeEstablishmentAddress]);
-
-  const handleMarkerClick = (address) => {
-    setActiveEstablishmentAddress(address);
-    if (establishmentContainerRef.current) {
-      establishmentContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  return (
-    <>
-      <NavBar />
-      <div className="flex h-screen">
-        <div className="flex-1 overflow-y-auto p-4" ref={establishmentContainerRef}>
-          {!loading && establishments && establishments.length > 0 ? (
-            establishments.map((data, index) => {
-              const address = `${data.address}, ${data.zip_code}, ${data.city}`;
-              return (
-                <div key={index} className="mb-4">
-                  <CardCutomEtablishement
-                    id={data.brand_id}
-                    image="https://zupimages.net/up/24/23/qc6t.jpg"
-                    name={data.display_name}
-                    address={address}
-                    description={data.description}
-                  />
-                </div>
-              );
-            })
-          ) : (
-            <div className="text-center">Pas encore d'établissements disponibles</div>
-          )}
+    return (
+        <div className="container mx-auto p-4">
+            <h1 className="text-2xl font-bold mb-4">Créer un Établissement</h1>
+            {formFields.length > 0 && (
+                <AdminFormBuilder fields={formFields} onSubmit={handleSubmit} />
+            )}
         </div>
-        <div className="flex-1">
-          {establishments && establishments.length > 0 ? (
-            <GoogleApiWrapper
-              establishments={establishments} 
-              onMarkerClickHandler={handleMarkerClick}
-            />
-          ) : (
-            <div className="text-center">Chargement...</div>
-          )}
-        </div>
-      </div>
-      <Footer />
-    </>
-  );
-  
-}
+    );
+};
 
-export default EtablishmentPage;
+export default EstablishmentPage;

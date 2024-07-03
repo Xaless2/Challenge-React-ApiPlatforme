@@ -11,12 +11,12 @@ import { AuthContext } from '../contexts/AuthContext';
 import NavBar from '../components/layout/NavBar';
 import Footer from '../components/layout/Footer';
 
-
 const CalendarPage = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [establishments, setEstablishments] = useState([]);
     const [selectedEstablishment, setSelectedEstablishment] = useState('');
     const [slots, setSlots] = useState([]);
+    const [loading, setLoading] = useState(false);  // Add this line
     const calendarRef = useRef(null);
     const [selectedDate, setSelectedDate] = useState(null);
     const [events, setEvents] = useState([]);
@@ -24,22 +24,18 @@ const CalendarPage = () => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const { user, token, getUser } = useContext(AuthContext);
 
-
     useEffect(() => {
         if(user){
-                getUser(user.id)
-        }else(error) =>{
-         console.error("no user",error)
-     }
-
+            getUser(user.id)
+        } else {
+            console.error("no user");
+        }
     }, [user]);
 
-    const handleEventClick = (clickInfo) => {
-    };
+    const handleEventClick = (clickInfo) => {};
 
     const handleDateClick = async (info) => {
         setSelectedDate(info.dateStr);
-    
         const token = localStorage.getItem('token');
         if (!token || !selectedEstablishment) {
             return;
@@ -99,7 +95,7 @@ const CalendarPage = () => {
         } catch (error) {
           console.error('Error fetching establishments:', error);
         } finally {
-         
+          setLoading(false);
         }
       }, [baseUrl]);
     
@@ -111,7 +107,6 @@ const CalendarPage = () => {
         const fetchEvents = async () => {
           const token = localStorage.getItem('token');
           if (!token || !selectedEstablishment || !selectedDate) {
-           
             return;
           }
     
@@ -145,12 +140,9 @@ const CalendarPage = () => {
         fetchEvents();
       }, [baseUrl, selectedEstablishment, selectedDate]);
 
-
     const updateCalendarEvents = (slots) => {
         const calendarApi = calendarRef.current.getApi();
-
         calendarApi.removeAllEvents();
-
         const events = slots.slice(0, visibleSlots).map(slot => ({
             id: slot.id,
             title: slot.establishment,
@@ -162,7 +154,6 @@ const CalendarPage = () => {
                 numberOfClients: slot.number_of_clients,
             },
         }));
-
         calendarApi.addEventSource(events);
     };
     
@@ -184,7 +175,6 @@ const CalendarPage = () => {
                 );
                 console.log('Fetched slots for selected establishment:', response);
                 setSlots(response); 
-
                 updateCalendarEvents(response);
             } catch (error) {
                 console.error('Error fetching slots:', error);
@@ -204,12 +194,10 @@ const CalendarPage = () => {
 
     const reservation = async (user_id) => { 
         const token = localStorage.getItem('token');
-    
         if (!token || !selectedSlot || !selectedEstablishment) {
             console.error('Missing token, selectedSlot or selectedEstablishment');
             return;
         }
-    
         try {
             const response = await fetch(`${baseUrl}/reservations`, {
                 method: 'POST',
@@ -224,11 +212,9 @@ const CalendarPage = () => {
                     status: 'confirmed'
                 })
             });
-    
             if (!response.ok) {
                 throw new Error('Failed to create reservation');
             }
-    
             const result = await response.json();
             console.log('Reservation created:', result);
         } catch (error) {
@@ -243,116 +229,115 @@ const CalendarPage = () => {
         }
         reservation(selectedSlot.id); 
     };
+
     const centerStyle = {
-        justfiyContent: 'center',
+        justifyContent: 'center',
         alignItems: 'center',
         marginLeft: 'auto',
         marginRight: 'auto',
-    }
+    };
 
     return (
-                                            
         <>
-        <NavBar />
-        <div className="container" style={centerStyle}>
-            <div className="select-establishment">
-                <select value={selectedEstablishment} onChange={(event) => setSelectedEstablishment(event.target.value)}>
-                    <option value="">Sélectionnez un établissement</option>
-                    {establishments.map((establishment) => (
-                        <option key={establishment.id} value={establishment.id}>
-                            {establishment.display_name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div className="calendar-container">
-                <FullCalendar
-                    ref={calendarRef}
-                    plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-                    editable={true}
-                    selectable={true}
-                    initialView="dayGridMonth"
-                    headerToolbar={{
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                    }}
-                    events={events}
-                    eventClick={handleEventClick}
-                    dateClick={handleDateClick}
-                />
-            </div>
+            <NavBar />
+            <div className="container" style={centerStyle}>
+                <div className="select-establishment">
+                    <select value={selectedEstablishment} onChange={(event) => setSelectedEstablishment(event.target.value)}>
+                        <option value="">Sélectionnez un établissement</option>
+                        {establishments.map((establishment) => (
+                            <option key={establishment.id} value={establishment.id}>
+                                {establishment.display_name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="calendar-container">
+                    <FullCalendar
+                        ref={calendarRef}
+                        plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+                        editable={true}
+                        selectable={true}
+                        initialView="dayGridMonth"
+                        headerToolbar={{
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        }}
+                        events={events}
+                        eventClick={handleEventClick}
+                        dateClick={handleDateClick}
+                    />
+                </div>
 
-            {showAddModal && (
-                <div className="modal">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h4 className="modal-title">SÉANCES DU {selectedDate}</h4>
-                                <button type="button" className="close" onClick={handleCloseAddModal}>&times;</button>
-                            </div>
-                            <div className="modal-body">
-                                {slots.length > 0 ? (
-                                    <>
-                                        <table className="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Etablissement</th>
-                                                    <th>Nom du coach</th>
-                                                    <th>Durée</th>
-                                                    <th>Date de fin</th>
-                                                    <th>Nombre de clients</th>
-                                                    <th>Durée (minutes)</th>
-                                                    <th>Sélectionner</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {slots.slice(0, visibleSlots).map((slot) => (
-                                                    <tr key={slot.id}>
-                                                        <td>{slot.establishment}</td>
-                                                        <td>{slot.coach_ids.map(coach => coach.coach_name).join(', ')}</td>
-                                                        <td>{slot.duration_minutes} minutes</td>
-                                                        <td>{formatDate(slot.day_end_at)}</td>
-                                                        <td>{slot.number_of_clients}</td>
-                                                        <td>{slot.duration_minutes}</td>
-                                                        <td>
-                                                            <input
-                                                                type="radio"
-                                                                name="selectedSlot"
-                                                                value={slot.id}
-                                                                onChange={() => setSelectedSlot(slot)}
-                                                            />
-                                                        </td>
+                {showAddModal && (
+                    <div className="modal">
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h4 className="modal-title">SÉANCES DU {selectedDate}</h4>
+                                    <button type="button" className="close" onClick={handleCloseAddModal}>&times;</button>
+                                </div>
+                                <div className="modal-body">
+                                    {slots.length > 0 ? (
+                                        <>
+                                            <table className="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Etablissement</th>
+                                                        <th>Nom du coach</th>
+                                                        <th>Durée</th>
+                                                        <th>Date de fin</th>
+                                                        <th>Nombre de clients</th>
+                                                        <th>Durée (minutes)</th>
+                                                        <th>Sélectionner</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                        <button className="btn btn-primary" onClick={handleReservationClick}>
-                                            Réserver
-                                        </button>
-                                        {slots.length > visibleSlots && (
-                                            <button className="btn btn-primary" onClick={() => setVisibleSlots(visibleSlots + 2)}>
-                                                Voir plus
+                                                </thead>
+                                                <tbody>
+                                                    {slots.slice(0, visibleSlots).map((slot) => (
+                                                        <tr key={slot.id}>
+                                                            <td>{slot.establishment}</td>
+                                                            <td>{slot.coach_ids.map(coach => coach.coach_name).join(', ')}</td>
+                                                            <td>{slot.duration_minutes} minutes</td>
+                                                            <td>{formatDate(slot.day_end_at)}</td>
+                                                            <td>{slot.number_of_clients}</td>
+                                                            <td>{slot.duration_minutes}</td>
+                                                            <td>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="selectedSlot"
+                                                                    value={slot.id}
+                                                                    onChange={() => setSelectedSlot(slot)}
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                            <button className="btn btn-primary" onClick={handleReservationClick}>
+                                                Réserver
                                             </button>
-                                        )}
-                                    </>
-                                ) : (
-                                    <p>Aucun créneau disponible pour cette date et cet établissement.</p>
-                                )}
-                            </div>
-                            <div className="modal-footer">
-                                <button className="btn btn-danger" onClick={handleCloseAddModal}>Fermer</button>
+                                            {slots.length > visibleSlots && (
+                                                <button className="btn btn-primary" onClick={() => setVisibleSlots(visibleSlots + 2)}>
+                                                    Voir plus
+                                                </button>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <p>Aucun créneau disponible pour cette date et cet établissement.</p>
+                                    )}
+                                </div>
+                                <div className="modal-footer">
+                                    <button className="btn btn-danger" onClick={handleCloseAddModal}>Fermer</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
-        <Footer />
-    </>
-);
+                )}
+            </div>
+            <Footer />
+        </>
+    );
 };
-
 
 function formatDate(dateTimeString) {
     const date = new Date(dateTimeString);

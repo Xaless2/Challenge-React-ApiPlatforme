@@ -45,7 +45,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
     ]
 )]
+
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
+
 class Brand
 {
     #[ORM\Id]
@@ -60,7 +62,7 @@ class Brand
     #[ORM\Column(length: 255)]
     private ?string $display_name = null;
 
-    #[ORM\Column( type: Types::STRING, length: 255, nullable: true )]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     #[Groups(['read:item', 'read:collection'])]
     private ?string $kbis_pdf = null;
 
@@ -91,7 +93,6 @@ class Brand
     public function setId(int $id): static
     {
         $this->id = $id;
-
         return $this;
     }
 
@@ -103,7 +104,6 @@ class Brand
     public function setUserId(int $user_id): static
     {
         $this->user_id = $user_id;
-
         return $this;
     }
 
@@ -115,7 +115,6 @@ class Brand
     public function setDisplayName(string $display_name): static
     {
         $this->display_name = $display_name;
-
         return $this;
     }
 
@@ -127,7 +126,6 @@ class Brand
     public function setKbisPdf(?string $kbis_pdf): static
     {
         $this->kbis_pdf = $kbis_pdf;
-
         return $this;
     }
 
@@ -139,7 +137,6 @@ class Brand
     public function setImageUrl(?string $image_url): static
     {
         $this->image_url = $image_url;
-
         return $this;
     }
 
@@ -151,7 +148,6 @@ class Brand
     public function setImageFile(?File $imageFile): static
     {
         $this->imageFile = $imageFile;
-
         return $this;
     }
 
@@ -163,7 +159,6 @@ class Brand
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
@@ -175,7 +170,6 @@ class Brand
     public function setPdfFile(?File $pdfFile): static
     {
         $this->pdfFile = $pdfFile;
-
         return $this;
     }
 }

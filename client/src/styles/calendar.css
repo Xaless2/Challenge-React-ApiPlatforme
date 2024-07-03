@@ -1,0 +1,75 @@
+
+  
+
+.fc-event {
+  border: 1px solid #ff6600;
+  background-color: #ff6600;
+}
+
+/* calendar.css */
+
+/* Base styles for the modal */
+.modal.show {
+  display: block;
+  padding-right: 17px; /* Adjust this value based on your scrollbar width */
+  background-color: rgba(0, 0, 0, 0.5); /* Optional: Adds a dark background overlay */
+}
+
+/* Modal content styling */
+.modal-dialog {
+  margin: 1.75rem auto;
+}
+
+.modal-content {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.3rem;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  background-color: #fff;
+  padding: 1rem;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+.modal-body {
+  position: relative;
+  padding: 1rem;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.75rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.close {
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border: 1px solid #212529;
+}
+
+.popover{
+  position: fixed;
+  top: 50%;
+   left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

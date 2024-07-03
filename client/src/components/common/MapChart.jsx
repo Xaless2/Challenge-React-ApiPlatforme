@@ -1,5 +1,6 @@
 import GoogleMapReact from 'google-map-react';
-import "../../styles/components.css"
+import "../../styles/components.css";
+import React from 'react';
 
 
 const Marker = ({ text }) => (

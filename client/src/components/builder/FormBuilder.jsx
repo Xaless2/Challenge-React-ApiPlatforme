@@ -1,10 +1,11 @@
+import React from 'react';
 import TextInput from '../common/TextInput';
 import SelectInput from '../common/SelectInput';
-import  PasswordInput from '../common/PasswordInput'; 
+import PasswordInput from '../common/PasswordInput';
 import Button from '../common/Button';
 import FileInput from '../common/FileInput';
 
-const FIELD_TYPES = {
+export const FIELD_TYPES = {
   TEXT: 'text',
   EMAIL: 'email',
   NUMBER: 'number',
@@ -24,6 +25,8 @@ const Field = ({ field }) => {
     case FIELD_TYPES.NUMBER:
     case FIELD_TYPES.DATE:
     case FIELD_TYPES.TEXTAREA:
+    case FIELD_TYPES.TIME:
+      
     case FIELD_TYPES.LABEL:
       return <TextInput field={field} />;
     case FIELD_TYPES.PASSWORD:

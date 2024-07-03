@@ -16,9 +16,9 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Slot $slot_id = null;
+    #[ORM\ManyToOne(targetEntity: Slot::class)]
+    #[ORM\JoinColumn(name: 'slot_id', referencedColumnName: 'id')]
+    private ?Slot $slot;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -40,14 +40,14 @@ class Reservation
         return $this;
     }
 
-    public function getSlotId(): ?Slot
+    public function getSlot(): ?Slot
     {
-        return $this->slot_id;
+        return $this->slot;
     }
 
-    public function setSlotId(?Slot $slot_id): static
+    public function setSlot(?Slot $slot): static
     {
-        $this->slot_id = $slot_id;
+        $this->slot = $slot;
 
         return $this;
     }
@@ -75,4 +75,15 @@ class Reservation
 
         return $this;
     }
+
+    public function toArray(): array
+{
+    return [
+        'id' => $this->getId(),
+        'slot_id' => $this->getSlot() ? $this->getSlot()->getId() : null,
+        'client_id' => $this->getClientId() ? $this->getClientId()->getId() : null,
+        'status' => $this->getStatus(),
+    ];
+}
+
 }

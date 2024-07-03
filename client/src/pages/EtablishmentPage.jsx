@@ -4,39 +4,60 @@ import GoogleApiWrapper from '../components/builder/GoogleApiWrapper'
 
 function EtablishmentPage() {
 
-  const addresses = [
-    {
-      "address": "16 avenue François Mitterrand, 94000 Créteil"
-    },
-    {
-      "address": "1 avenue de la République, 75011 Paris"
-    },
-    {
-      "address": "10 rue de la Paix, 78000 Versailles"
-    },
-    {
-      "address": "5 boulevard de l'Indépendance, 93000 Bobigny"
-    },
-    {
-      "address": "20 avenue du Général de Gaulle, 92000 Nanterre"
+
+  useEffect(() => {
+    
+  }, [token]);
+
+
+  useEffect(() => {
+    const fetchEstablishments = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/establishments`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const data = await response.json();
+        if (data.code === 401) {
+
+        } else {
+          setEstablishments(data);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error fetching establishments:', error);
+        setLoading(false);
+      }
+    };
+    fetchEstablishments();
+  }, [token]);
+
+  
+
+  useEffect(() => {
+    if (activeEstablishmentAddress && establishmentContainerRef.current) {
+      establishmentContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  ]
+  });
 
   return (
     <>
-      <NavBar/>
+      <NavBar />
       <div>
         <GoogleApiWrapper
           image="url-to-image"
           name="Nom de l'établissement"
-          addresses={addresses.map(address => address.address)}
+          addresses={establishments.map(est => est.address)}
           rating="4.5"
           price="50€"
           description="Musculation, Cardio, Fitness, Yoga, Pilates, Crossfit, etc."
         />
       </div>
     </>
-  )
+  );
 }
 
-export default EtablishmentPage
+export default EtablishmentPage;
